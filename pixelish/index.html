@@ -8,9 +8,9 @@
     <p>Choose watchapp settings</p>
  
     <p>Invert watchapp:
-    <select id="invert_select">
-      <option value="off">Off</option>
-      <option value="on">On</option>
+    <select id="unit">
+      <option value="c">C</option>
+      <option value="f">F</option>
     </select>
     </p>
  
@@ -22,10 +22,10 @@
   <script>
   //Setup to allow easy adding more options later
   function saveOptions() {
-    var invertSelect = document.getElementById("invert_select");
+    var unit = document.getElementById("unit");
  
     var options = {
-      "invert": invertSelect.options[invertSelect.selectedIndex].value
+      "unit": unit.options[unit.selectedIndex].value
     }
      
     return options;
