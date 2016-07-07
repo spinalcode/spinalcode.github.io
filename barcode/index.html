@@ -11,51 +11,33 @@
     <form id="form" class="center" onsubmit="return onSubmit(this)">
         <p>
 		<label for="text">Title:</label></td>
-		<input type="text" id="text" maxlength="13" size="13" style="width:20em"/></td>
+		<input type="text" id="title" maxlength="13" size="13" style="width:20em"/></td>
         </p>
         <p>
 		<label for="text">Barcode:</label></td>
-		<input type="text" id="text" maxlength="13" size="13" style="width:20em"/></td>
+		<input type="text" id="barcode" maxlength="13" size="13" style="width:20em"/></td>
         </p>
         <a class="button save" href="javascript:onSubmit(document.form)" id="savebutton">Save</a>
         <a class="button delete" href="javascript:onCancel()"  id="cancelbutton">Cancel</a>
     </form>
     
     <script>
-    function toggle_visibility(id) {
-       var e = document.getElementById(id);
-     e.style.display = 'block';
-    ( e.style.height == '0px' || e.style.height == '' )
-        ? e.style.height = '220px' 
-        : e.style.height = '0px';
-    }
-        
+
         (function() {        
             load();
         })();
         function save(){
-            localStorage.setItem('1', document.getElementById('background').checked);
-            localStorage.setItem('2', document.getElementById('animbg').checked);
-            localStorage.setItem('3', document.getElementById('radio1').checked);
-            localStorage.setItem('4', document.getElementById('radio2').checked);
-            localStorage.setItem('5', document.getElementById('radio3').checked);
-            localStorage.setItem('6', document.getElementById('bluetooth').checked);
-            localStorage.setItem('7', document.getElementById('battery').checked);
+            localStorage.setItem('1', document.getElementById('title').value);
+            localStorage.setItem('2', document.getElementById('barcode').value);
         }
         function load(){    
-            document.getElementById("background").checked = JSON.parse(localStorage.getItem('1'));
-            document.getElementById("animbg").checked = JSON.parse(localStorage.getItem('2'));
-            document.getElementById("radio1").checked = JSON.parse(localStorage.getItem('3'));
-            document.getElementById("radio2").checked = JSON.parse(localStorage.getItem('4'));
-            document.getElementById("radio3").checked = JSON.parse(localStorage.getItem('5'));
-            document.getElementById("bluetooth").checked = JSON.parse(localStorage.getItem('6'));
-            document.getElementById("battery").checked = JSON.parse(localStorage.getItem('7'));
-            if(document.getElementById("animbg").checked)toggle_visibility('hide-show');
+            document.getElementById("title").value = JSON.parse(localStorage.getItem('1'));
+            document.getElementById("barcode").value = JSON.parse(localStorage.getItem('2'));
         }
         
         // assign function to onclick property of checkbox
-            document.getElementById('savebutton').onclick = function() {
-            save();
+        document.getElementById('savebutton').onclick = function() {
+        save();
         };        
         
         var config = JSON.parse(decodeURIComponent('"REPLACE_ME_AT_RUNTIME"'));
@@ -69,10 +51,7 @@
             var result = {};
             var inputs = form.getElementsByTagName("input");
             for (var i = 0; i < inputs.length; i++){
-                if(inputs[i].checked){
-                    result[inputs[i].id] = '1';
-                }else{
-                    result[inputs[i].id] = '0';
+                result[inputs[i].id] = inputs[i].value;
                 }
             }
             window.location.href = "pebblejs://close#" + encodeURIComponent(JSON.stringify(result));
