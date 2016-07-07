@@ -54,7 +54,11 @@
                 result[inputs[i].id] = inputs[i].value;
                 }
             }
-            window.location.href = "pebblejs://close#" + encodeURIComponent(JSON.stringify(result));
+
+      console.log("Submit");
+      var return_to = getQueryParam('return_to', 'pebblejs://close#');
+      document.location = return_to + encodeURIComponent(JSON.stringify(result));
+
             return false;
         }
             function onCancel() {
