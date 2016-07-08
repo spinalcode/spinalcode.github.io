@@ -10,12 +10,12 @@
   <body>
     <h1>Barcode Config</h1>
 
-    <p>UNITS:
-      <label for="box1">Name:</label><input type="text" id="box1"><br/>
-      <label for="box2">Name:</label><input type="text" id="box2"><br/>
-      <label for="box3">Name:</label><input type="text" id="box3"><br/>
-      <label for="box4">Name:</label><input type="text" id="box4"><br/>
-      <label for="box5">Name:</label><input type="text" id="box5"><br/>
+    <p>
+      <label for="box1">Name:</label><input type="text" id="box1"><br/><label for="code1">Code:</label><input type="text" id="code1"><br/>
+      <label for="box2">Name:</label><input type="text" id="box2"><br/><label for="code2">Code:</label><input type="text" id="code2"><br/>
+      <label for="box3">Name:</label><input type="text" id="box3"><br/><label for="code3">Code:</label><input type="text" id="code3"><br/>
+      <label for="box4">Name:</label><input type="text" id="box4"><br/><label for="code4">Code:</label><input type="text" id="code4"><br/>
+      <label for="box5">Name:</label><input type="text" id="box5"><br/><label for="code5">Code:</label><input type="text" id="code5"><br/>
     </p>
  
     <p>
@@ -39,15 +39,18 @@ function getQueryParam(variable, default_) {
 
   //Setup to allow easy adding more options later
   function saveOptions() {
+    var options = [];
     var maxBoxes = 5;
+
     for(i=1;i<=maxBoxes;i++) {
+     var nameValue = document.getElementById("name"+i).value;
      var boxValue = document.getElementById("box"+i).value;
-     alert("Box" + i + " = " + boxValue);
+     arr.push({
+     NAME: nameValue,
+     CODE: boxValue
+     };)
     }
-    //var options = {
-    //  "unit": unit.options[unit.selectedIndex].value
-    //}
-     
+  }     
     return options;
   };
  
