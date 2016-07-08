@@ -45,7 +45,9 @@ function getQueryParam(variable, default_) {
     for(i=1;i<=maxBoxes;i++) {
      var nameValue = document.getElementById("box"+i).value;
      var boxValue = document.getElementById("code"+i).value;
-     options.push("TITLE"+i : nameValue, "BCODE"+i : boxValue);
+     //options.push("TITLE"+i : nameValue, "BCODE"+i : boxValue);
+     options['Name'+i] = nameValue;
+     options['Code'+i] = boxValue;
     }
      
     return options;
