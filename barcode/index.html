@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Pixelish Configuration</title>
+    <title>Barcode Configuration</title>
   <style>
   </style>
   </head>
@@ -11,20 +11,20 @@
     <h1>Barcode Config</h1>
 
     <p>UNITS:
-    <select id="unit" class="dropdown">
-      <option value="C">C</option>
-      <option value="F">F</option>
-    </select>
+      <label for="box1">Name:</label><input type="text" id="box1"><br/>
+      <label for="box2">Name:</label><input type="text" id="box2"><br/>
+      <label for="box3">Name:</label><input type="text" id="box3"><br/>
+      <label for="box4">Name:</label><input type="text" id="box4"><br/>
+      <label for="box5">Name:</label><input type="text" id="box5"><br/>
     </p>
  
     <p>
-    <button id="save_button" class="button">Save</button>
-      </p>
-    Pixelish By SpinalCode
+      <button id="save_button" class="button">Save</button>
+    </p>
+    By SpinalCode
   </body>
-  
+
   <script>
-  
   // Something like this to get query variables.
 function getQueryParam(variable, default_) {
     var query = location.search.substring(1);
@@ -39,11 +39,14 @@ function getQueryParam(variable, default_) {
 
   //Setup to allow easy adding more options later
   function saveOptions() {
-    var unit = document.getElementById("unit");
- 
-    var options = {
-      "unit": unit.options[unit.selectedIndex].value
+    var maxBoxes = 5;
+    for(i=1;i<=maxBoxes;i++) {
+     var boxValue = document.getElementById("box"+i).value;
+     alert("Box" + i + " = " + boxValue);
     }
+    //var options = {
+    //  "unit": unit.options[unit.selectedIndex].value
+    //}
      
     return options;
   };
