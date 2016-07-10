@@ -46,7 +46,6 @@ function getQueryParam(variable, default_) {
     for(i=1;i<=maxBoxes;i++) {
      var nameValue = document.getElementById("box"+i).value;
      var boxValue = document.getElementById("code"+i).value;
-     //options.push("TITLE"+i : nameValue, "BCODE"+i : boxValue);
      var key1 = 'Name'+i;
      var key2 = 'Code'+i;
      options[key1] = nameValue;
@@ -64,6 +63,7 @@ function getQueryParam(variable, default_) {
       console.log("Submit");
  
       var options = saveOptions();
+      console.log(options);
       //var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(options));
       var return_to = getQueryParam('return_to', 'pebblejs://close#');
       document.location = return_to + encodeURIComponent(JSON.stringify(options));
