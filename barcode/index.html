@@ -61,6 +61,7 @@ function getQueryParam(variable, default_) {
   submitButton.addEventListener("click", 
     function() {
       console.log("Submit");
+      console.log(encodeURIComponent(JSON.stringify(options)));
  
       var options = saveOptions();
       console.log(options);
