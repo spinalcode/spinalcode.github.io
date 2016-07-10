@@ -41,6 +41,7 @@ function getQueryParam(variable, default_) {
   function saveOptions() {
     var options = [];
     var maxBoxes = 5;
+    console.log('SaveOptions');
 
     for(i=1;i<=maxBoxes;i++) {
      var nameValue = document.getElementById("box"+i).value;
