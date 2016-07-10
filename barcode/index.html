@@ -39,6 +39,7 @@ function getQueryParam(variable, default_) {
 
   //Setup to allow easy adding more options later
   function saveOptions() {
+  /*
     var options = new Object();
     var maxBoxes = 5;
     console.log('SaveOptions');
@@ -53,7 +54,19 @@ function getQueryParam(variable, default_) {
      console.log(key1);
      console.log(key2);
     }
-     
+  */
+    var options = {
+      "Name1":  document.getElementById("box1).value;
+      "Code1": document.getElementById("code1).value;
+      "Name2":  document.getElementById("box2).value;
+      "Code2": document.getElementById("code2).value;
+      "Name3":  document.getElementById("box3).value;
+      "Code3": document.getElementById("code3).value;
+      "Name4":  document.getElementById("box4).value;
+      "Code4": document.getElementById("code4).value;
+      "Name5":  document.getElementById("box5).value;
+      "Code5": document.getElementById("code5).value;
+    } 
     return options;
   };
  
