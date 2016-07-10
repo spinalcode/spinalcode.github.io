@@ -64,10 +64,8 @@ function getQueryParam(variable, default_) {
  
       var options = saveOptions();
       console.log(options);
-      //var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(options));
       var return_to = getQueryParam('return_to', 'pebblejs://close#');
       document.location = return_to + encodeURIComponent(options);
-      //document.location = location;
     }, 
   false);
 </script>
