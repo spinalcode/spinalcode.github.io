@@ -52,6 +52,7 @@
               background-color: #fff;
               border: 1px solid black;
               width: 700px;
+		bg-color: #F9D2E5;
             }
 
             #container div {
