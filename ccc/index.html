@@ -9,7 +9,7 @@
             .input-box {
                 padding: 5px;
                 margin: 5px;
-                font-size: 16px;
+                font-size: 32px;
                 width: 100px;
 				border: 1px solid black;
                 border-radius: 5px;
@@ -29,12 +29,14 @@
             .button {
                 padding: 5px;
                 margin: 5px;
-                font-size: 16px;
-                width: 100px;
+				font-size: 24px;
+                width: 140px;
                 border: none;
                 border-radius: 5px;
                 background-color: #4C13A2;
-                color: #ffffff
+                color: #ffffff;
+				text-align: center;
+
             }
 
 
@@ -84,34 +86,16 @@
 				vertical-align:middle;
 			}
             
-            #circle1 {
-                position:absolute;
-                border-radius: 50%;
-                width: 200px;
-                height: 200px;
-                background-image: -moz-radial-gradient(100px 45px 90deg, circle cover, #DFF2F3 0%, #CAE6E9 100%, #88CABC 95%);
-                background-image: -webkit-radial-gradient(100px 45px, circle cover, #DFF2F3, #CAE6E9, #88CABC);
-                background-image: radial-gradient(100px 45px 90deg, circle cover, #DFF2F3 0%, #CAE6E9 100%, #88CABC 95%);
-            }
-
-            #circle2 {
-                position:absolute;
-                border-radius: 50%;
-                width: 100px;
-                height: 100px;
-                background-image: -moz-radial-gradient(100px 45px 90deg, circle cover, #DFF2F3 0%, #CAE6E9 100%, #88CABC 95%);
-                background-image: -webkit-radial-gradient(100px 45px, circle cover, #DFF2F3, #CAE6E9, #88CABC);
-                background-image: radial-gradient(100px 45px 90deg, circle cover, #DFF2F3 0%, #CAE6E9 100%, #88CABC 95%);
-            }
-
+			label {
+				font-size: 24px;
+			}
+			h2 {
+				font-size: 32px;
+			}
+			
         </style>
         <script>
         
-/*
-		<div id="circle1"> </div>
-		<div id="circle2"> </div>
-
-*/        
 			function resetBoxes(){
                 document.getElementById("sim-per-month").value = 0;
                 document.getElementById("handset-cost").value = 0;
@@ -124,7 +108,7 @@
                 document.getElementById("save-total").value = 0;
                 document.getElementById("save-monthly").value = 0;
                 calculate();
-/*
+
                 var testElement = document.getElementById("circle1");
                 var testElement2 = document.getElementById("circle2");
 
@@ -141,7 +125,7 @@
                     testElement2.style.left = Math.floor(Math.random() * widthMax) + "px";
                     testElement2.style.top = Math.floor(Math.random() * heightMax) + "px";
                     testElement2.style.zIndex = "0";
-*/
+
 			}
 		
             function getNum(val) {
@@ -245,6 +229,7 @@
                 <h2>Difference</h2>
                 <label for="save-total">24 Month Saving:</label>    <input type="text" id="save-total" class="input-box" disabled><br/>
                 <label for="con-monthly">Monthly Saving:</label> <input type="text" id="save-monthly" class="input-box" disabled><br/>
+				<button class="button" onclick="calculate()">Calculate</button>
 				<button class="button" onclick="resetBoxes()">Reset</button>
             </div>
 
