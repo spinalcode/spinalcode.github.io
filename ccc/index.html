@@ -1,18 +1,11 @@
 
+
 <!DOCTYPE html>
 <html>
     <head>
         <title>Currys Contract Calculator</title>
         <style>
-            /* Style the grid container */
-            .grid-container {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                grid-template-rows: 1fr;
-                grid-gap: 10px;
-            }
-                  
-            /* Style the input boxes */
+
             .input-box {
                 padding: 5px;
                 margin: 5px;
@@ -50,7 +43,7 @@
               flex-direction: row;
               flex-wrap: wrap;
               border-radius: 5px;
-              background-color: #F9D2E5;
+              background-color: #CFC8F7;
               border: 1px solid black;
               width: 700px;
             }
@@ -61,7 +54,7 @@
               border: 1px solid black;
               margin: 5px; 
               text-align: right;
-              background-color: #CFC8F7;
+              background-color: #CAE7E5;
             }
 
             .div-1, .div-3 {
@@ -90,10 +83,35 @@
 				width: 75px;
 				vertical-align:middle;
 			}
+            
+            #circle1 {
+                position:absolute;
+                border-radius: 50%;
+                width: 200px;
+                height: 200px;
+                background-image: -moz-radial-gradient(100px 45px 90deg, circle cover, #DFF2F3 0%, #CAE6E9 100%, #88CABC 95%);
+                background-image: -webkit-radial-gradient(100px 45px, circle cover, #DFF2F3, #CAE6E9, #88CABC);
+                background-image: radial-gradient(100px 45px 90deg, circle cover, #DFF2F3 0%, #CAE6E9 100%, #88CABC 95%);
+            }
+
+            #circle2 {
+                position:absolute;
+                border-radius: 50%;
+                width: 100px;
+                height: 100px;
+                background-image: -moz-radial-gradient(100px 45px 90deg, circle cover, #DFF2F3 0%, #CAE6E9 100%, #88CABC 95%);
+                background-image: -webkit-radial-gradient(100px 45px, circle cover, #DFF2F3, #CAE6E9, #88CABC);
+                background-image: radial-gradient(100px 45px 90deg, circle cover, #DFF2F3 0%, #CAE6E9 100%, #88CABC 95%);
+            }
 
         </style>
         <script>
         
+/*
+		<div id="circle1"> </div>
+		<div id="circle2"> </div>
+
+*/        
 			function resetBoxes(){
                 document.getElementById("sim-per-month").value = 0;
                 document.getElementById("handset-cost").value = 0;
@@ -106,6 +124,24 @@
                 document.getElementById("save-total").value = 0;
                 document.getElementById("save-monthly").value = 0;
                 calculate();
+/*
+                var testElement = document.getElementById("circle1");
+                var testElement2 = document.getElementById("circle2");
+
+                var docHeight = document.documentElement.clientHeight,
+                    docWidth = document.documentElement.clientWidth,
+                    divWidth = testElement.offsetWidth,
+                    divHeight = testElement.offsetHeight,
+                    heightMax = docHeight - divHeight,
+                    widthMax = docWidth - divWidth;
+
+                    testElement.style.left = Math.floor(Math.random() * widthMax) + "px";
+                    testElement.style.top = Math.floor(Math.random() * heightMax) + "px";
+                    testElement.style.zIndex = "0";
+                    testElement2.style.left = Math.floor(Math.random() * widthMax) + "px";
+                    testElement2.style.top = Math.floor(Math.random() * heightMax) + "px";
+                    testElement2.style.zIndex = "0";
+*/
 			}
 		
             function getNum(val) {
@@ -213,6 +249,5 @@
             </div>
 
         </div>
-		
     </body>
 </html>
