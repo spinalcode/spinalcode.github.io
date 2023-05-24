@@ -39,7 +39,7 @@
                 width: 100px;
                 border: none;
                 border-radius: 5px;
-                background-color: #4C13A2;
+              background-color: #F9D2E5;
 				color: #ffffff
             }
 
