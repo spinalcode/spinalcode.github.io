@@ -60,6 +60,7 @@
               border: 1px solid black;
               margin: 5px; 
               text-align: right;
+              background-color: #F9D2E5;
             }
 
             .div-1, .div-3 {
