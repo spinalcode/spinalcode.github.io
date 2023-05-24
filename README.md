@@ -49,10 +49,9 @@
               flex-direction: row;
               flex-wrap: wrap;
               border-radius: 5px;
-              background-color: #fff;
+              background-color: #F9D2E5;
               border: 1px solid black;
               width: 700px;
-		background-color: #F9D2E5;
             }
 
             #container div {
