@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            align-items: center;
+            justify-content: center;
+            background-color: #CAE7E6;
+            position: relative;
+        }
+        .circle {
+            border-radius: 50%;
+            position: absolute;
+            background: linear-gradient(to bottom, #E2EFF2, #CAE7E6, #8CCABC);
+            z-index: -1; /* Ensure circles stay in the background */
+        }		
+		.container {
+			display: flex;
+		}
+		table {
+			border-collapse: separate; /* Use separate instead of collapse */
+			margin: 2px; /* Remove margins between tables */
+		}
+		th, td {
+			border: 1px solid #4C12A1;
+			padding: 5px;
+			text-align: center;
+		}
+		th {
+			background-color: #4C12A1;
+			color: #E8F0FE;
+		}
+		.highlight {
+			background-color: #E5006E; /* Change this to your desired highlight color */
+			color: #E8F0FE;
+		}
+		.round-top-left {
+			border-top-left-radius: 10px; /* Adjust the value as needed */
+		}
+		.round-top-right {
+			border-top-right-radius: 10px; /* Adjust the value as needed */
+		}
+		button {
+			border: 1px solid #4C12A1;
+			border-radius: 10px; /* Adjust the value as needed */
+			padding: 5px;
+			width: 100px;
+			text-align: center;
+			background-color: #4C12A1;
+			color: #E8F0FE;
+		}
+		input {
+			border: 1px solid #4C12A1;
+			border-radius: 10px; /* Adjust the value as needed */
+			padding: 5px;
+			width: 400px;
+			text-align: center;
+			background-color: #E8F0FE;
+			color: #4C12A1;
+		}
+    </style>
+
+    <title>Accessory Finder</title>
+    <script type="text/javascript">
+	
+        var side = "A"; // Side of the bay
+		var itemNumber = 0;
+
+        var dataArray1 = [ // A Side
+			"1, 930098362, ZAGIPH16PMLUXSNPBLA",
+			"2, 930098361, ZAGIPH16PMILSNPIRI",
+			"3, 930098364, ZAGIPH16PMMILSNPIRI",
+			"4, 930098365, ZAGIPH16PMSCSNPBLA",
+			"5, 930098360, ZAGIPH16PMCPSNPCLR",
+			"6, 930098366, ZAGIPH16PSCSNPBLA",
+			"7, 930098357, ZAGIPH16PLUXSNPBLA",
+			"8, 930098356, ZAGIPH16PLSCSNPBLA",
+			"9, 930098354, ZAGIPH16PLLUXSNPBLA",
+			"10, 930098347, ZAGIPH16LUXSNPBLA",
+			"11, 930098349, ZAGIPH16MILSNPIRI",
+			"12, 930098367, ZAGIPH16SCSNPBLA",
+			"13, 930096367, ZAGIPH15CPSNPCLR",
+			"14, 930096366, ZAGIPH15CPCSECLR",
+			"15, 930096370, ZAGIPH15MANCSEBLA",
+			"16, 930099122, ZAGSAMS25UMILBLU",
+			"17, 930099118, ZAGSAMS25UCPCSECLR",
+			"18, 930099121, ZAGSAMS25ULUXBUN",
+			"19, 930099119, ZAGSAMS25ULUXBLA",
+			"20, 930099120, ZAGSAMS25ULUXBLU",
+			"21, 930099117, ZAGSAMS25PLUXBUN",
+			"22, 930099116, ZAGSAMS25MILBLU",
+			"23, 930099112, ZAGSAMS25CPCSECLR",
+			"24, 930099115, ZAGSAMS25LUXBUN",
+			"25, 930099113, ZAGSAMS25LUXBLA",
+			"26, 930099114, ZAGSAMS25LUXBLU",
+			"27, 930097170, ZAGSAMS24LUXBUN",
+			"28, 930098711, ZAGSAMS24FECPCSECLR",
+			"29, 930098713, ZAGSAMS24FELUXBUN",
+			"30, 930098712, ZAGSAMS24FELUXBLA",
+			"31, 930097852, ZAGSAMA55LUXBUN",
+			"32, 930097847, ZAGSAMA35LUXBUN",
+			"33, 930097160, ZAGSAMA25LUXBUN",
+			"34, 930098734, ZAGSAMA16LUXCSEBLA",
+			"35, 930098331, DEFIPH16PMFOLIOBLA",
+			"36, 930098330, DEFIPH16PMCSECLR",
+			"37, 930098327, DEFIPH16PFOLIOBLA",
+			"38, 930098326, DEFIPH16PCSECLR",
+			"39, 930098505, DEFIPH16PLCSECLR",
+			"40, 930098324, DEFIPH16FOLIOBLA",
+			"41, 930098323, DEFIPH16CSECLR",
+			"42, 930096353, DEFIPH15FOLBLA",
+			"43, 930096352, DEFIPH15CSECLR",
+			"44, 930092049, DEFIPH12CLRCASECLR",
+			"45, 930092064, DEFIPH8SE2FOLIOBLA",
+			"46, 930099105, DEFSAMS25UFOLIOBLK",
+			"47, 930099102, DEFSAMS25FOLIOBLK",
+			"48, 930097850, DEFSAMA55FOLIOBLK",
+			"49, 930097848, DEFSAMA55BUNDLE",
+			"50, 930097849, DEFSAMA55CSECLR",
+			"51, 930097851, DEFSAMA55SP",
+			"52, 930097845, DEFSAMA35FOLIOBLK",
+			"53, 930097843, DEFSAMA35BUNDLE",
+			"54, 930097844, DEFSAMA35CSECLR",
+			"55, 930097846, DEFSAMA35SP",
+			"56, 930098730, DEFSAMA16OLIOBLA",
+			"57, 930098729, DEFSAMA16CSECLR",
+			"58, 930098728, DEFSAMA16BUN",
+			"59, 930098731, DEFSAMA16SP",
+			"60, 930098383, DBIPH16PMROSKILBLA",
+			"61, 930098382, DBIPH16PMICELNDCLR",
+			"62, 930098379, DBIPH16PROSKILDBLA",
+			"63, 930098378, DBIPH16PICELANDCLR",
+			"64, 930098381, DBIPH16PLROSKILBLA",
+			"65, 930098380, DBIPH16PLICELNDCLR",
+			"66, 930098377, DBIPH16ROSKILDBLA",
+			"67, 930098376, DBIPH16ICELANDCLR",
+			"68, 930096349, INVIPH15PRGLSELISP",
+			"69, 930096341, INVIPH15GLSELISP",
+			"70, 930091917, INVIPH13GLSELITE",
+			"71, 930099110, INVSAMS25UXTRSP",
+			"72, 930099109, INVSAMS25UGLSSP",
+			"73, 930099108, INVSAMS25UCAMSP",
+			"74, 930099111, INVSAMS25XTRSP",
+			"75, 930099107, INVSAMS25GLSSP",
+			"76, 930099106, INVSAMS25CAMSP",
+			"77, 930097193, INVIS24CAMSP",
+			"78, 930097176, INVSAMS24GLSSP",
+			"79, 930097177, INVSAMS24XTRSP",
+			"80, 930098714, INVSAMS24FEGLSSP",
+			"81, 930098321, CGIPH16PMGLSSP",
+			"82, 930098319, CGIPH16PGLSSP",
+			"83, 930098320, CGIPH16PLGLSSP",
+			"84, 930098318, CGIPH16GLSSP",
+			"85, 930096364, CGIPH15PLGLSSP",
+			"86, 930096362, CGIPH15GLSSP",
+			"87, 930088898, CGIPHSE2GLASSSCRNPRO",
+        ];
+
+        var dataArray2 = [ // B Side
+			"1, 930098296, INVPIX9PFLDGLSELTSP",
+			"2, 930098155, ZAGPIX9PXLLUXBUN",
+			"3, 930098153, ZAGPIX9PXLCPCSECLR",
+			"4, 930098157, ZAGPIX9PXLMILCSEIRI",
+			"5, 930098159, INVPIX9PXLGLSELTSP",
+			"6, 930098151, ZAGPIX9PXLLUXCSEBLA",
+			"7, 930098154, ZAGPIX9LUXBUN",
+			"8, 930098152, ZAGPIX9CPCSECLR",
+			"9, 930098156, ZAGPIX9MILCSEIRI",
+			"10, 930098158, INVPIX9GLSELTSP",
+			"11, 930098150, ZAGPIX9LUXCSEBLA",
+			"12, 930097909, ZAGGOOPIX8ALUXBUN",
+			"13, 930092062, DEFIPH8SE2BUNDLE",
+			"14, 930097906, DEFGOOPIX8AFOLIOBLK",
+			"15, 930097904, DEFGOOPIX8ABUNDLE",
+			"16, 930097907, DEFGOOPIX8ASP",
+			"17, 930097905, DEFGOOPIX8ACSECLR",
+			"18, 930098289, DBGOOPIX9ICECSE",
+			"19, 930098290, DBGOOPIX9PICECSE",
+			"20, 930097912, DBGOOPIX8AGREENCLR",
+			"21, 930098295, GOOPIX9PFLDCSEWHI",
+			"22, 930098293, GOOPIX9PXLCSEBLA",
+			"23, 930098294, GOOPIX9PXLCSEWHI",
+			"24, 930098291, GOOPIX9CSEBLA",
+			"25, 930098292, GOOPIX9CSEPIN",
+			"26, 930097910, GOOPIX8ACSEBLA",
+			"27, 930097911, GOOPIX8ACSEWHI",
+			"28, 930097908, INVGOOPIX8ASP",
+			"29, 930085971, INT256GBMICROSDU3BLA",
+			"30, 930085970, INT128GBMICROSDU3BLA",
+			"31, 930085969, INT64GBMICROSDU3BLA",
+			"32, 930085968, INT32GBMICROSDU1BLA",
+			"33, 930095384, SBSDASHWLSCGRBLA",
+			"34, 930095383, SBSDASHHOLDERBLA",
+			"35, 930095386, SBSVENTMOUNTBLA",
+			"36, 930095385, SBSVENTCLIPBLA",
+			"37, 930097530, SLB65WMAINSCHGBLA",
+			"38, 930097529, SLB45WMAINSCHGBLA",
+			"39, 930097526, SLB33WMAINSCHGBLA",
+			"40, 930097525, SLB20WMAINSCHGBLA",
+			"41, 930097554, SLB15WMAGSFECHRGBLA",
+			"42, 930097556, SLB15WMAGSFECHRGWHI",
+			"43, 930097551, SLB10KMAGPOWBNKBLA",
+			"44, 930097581, SLB5KMAGPOWBNKBLA",
+			"45, 930097555, SLB15WWLSCHRGBLA",
+			"46, 930097567, SLB20WCARCHRGBLA",
+			"47, 930097575, SLB2PORTCARCHRGBLA",
+			"48, 930097576, SLB3IN1CHRGSTNDBLA",
+			"49, 930097568, SLB2IN1CHRGSTNDBLA",
+			"50, 930097527, SLB18WPD1MA2LBUNBLA",
+			"51, 930097528, SLB18WPD1MA2CBUNBLA",
+			"52, 930097557, SLB1MC2C100WCABBLA",
+			"53, 930097577, SLB3MC2LBRDCABBLA",
+			"54, 930097573, SLB2MC2LBRDCABBLA",
+			"55, 930097574, SLB2MC2LBRDCABWHI",
+			"56, 930097580, SLB3MUSBC2LCABWHI",
+			"57, 930097563, SLB1MUSBC2LCABBLA",
+			"58, 930097564, SLB1MUSBC2LCABWHI",
+			"59, 930097570, SLB2MA2LBRDCABWHI",
+			"60, 930097560, SLB1MUSBA2LCABWHI",
+			"61, 930097571, SLB2MC2CBRDCABBLA",
+			"62, 930097572, SLB2MC2CBRDCABWHI",
+			"63, 930097578, SLB3MUSBC2CCABBLA",
+			"64, 930097579, SLB3MUSBC2CCABWHI",
+			"65, 930097561, SLB1MUSBC2CCABBLA",
+			"66, 930097562, SLB1MUSBC2CCABWHI",
+			"67, 930097569, SLB2MA2CBRDCABBLA",
+			"68, 930097559, SLB1MUSBA2CCABBLA",
+			"69, 930097558, SLB1MMICROUSBCABBLA",
+			"70, 930097565, SLB20KPOWERBANKBLA",
+			"71, 930097566, SLB20KPOWERBANKWHI",
+			"72, 930097552, SLB10KPOWERBANKBLA",
+			"73, 930097553, SLB10KPOWERBANKWHI",
+			"74, 930097582, SLB5KPOWERBANKBLA",
+			"75, 930097583, SLB5KPOWERBANKWHI",
+			"76, 930098405, BEL15WCNVRTMAGBLA",
+			"77, 930089974, APPMAGSAFEWLCHARGWHI",
+			"78, 930089975, APP20WUSBCADAPTERWHI",
+			"79, 930079725, APPLIGHTUSBC1MCABWHI",
+			"80, 930073618, APPLIGHT35MMHPAPTWHI",
+			"81, 930049772, APPLIGHTUSBCABLE",
+			"82, 930056444, APPLIGHTUSBCAB2M",
+			"83, 930073630, APPLIGHTEARPODSWHI",
+        ];
+
+		var dataArray3 = [ // Samsung FSDU
+			"1, -1, SAM25ULTHCSEBRO",
+			"2, -1, SAMS25UGRPCSEGRE",
+			"3, -1, SAMS25USILCSEBLA",
+			"4, -1, SAMS25UMAGCSECLR",
+			"5, -1, SAMS25USILCSEBLU",
+			"6, -1, SAMS25UCSECLR",
+			"7, -1, SAMS25PSILCSEBLA",
+			"8, -1, SAMS25PMAGCSECLR",
+			"9, -1, SAMS25PCSECLR",
+			"10, -1, SAM25LTHCSEBRO",
+			"11, -1, SAMS25GRPCSEGRE",
+			"12, -1, SAMS25SILCSEBLA",
+			"13, -1, SAMS25SILCSEBLU",
+			"14, -1, SAMS25MAGCSECLR",
+			"15, -1, SAMS25CSECLR",
+			"16, -1, SAMWLSMAGCRGPADBLA",
+			"17, -1, SAMS24SUITCSEWHI",
+			"18, -1, SAMS24SMTVWCSEBLA",
+			"19, -1, SAMS24CLRCSECLR",
+			"20, -1, SAMS24FECSECLR",
+			"21, -1, SAMS24FESILCSEGRY",
+			"22, -1, SAMA55WLTCSEBLA",
+			"23, -1, SAMA55CLRCSECLR",
+			"24, -1, SAMA35WLTCSEBLA",
+			"25, -1, SAMA35CLRCSECLR",
+			"26, -1, SAMA16CSECLR",
+			"27, -1, SAMA05SCSECLR",
+			"28, -1, SAMFLIP6CSECLR",
+			"29, -1, SAM45WFASTCGRBLA",
+			"30, -1, SAM25WFASTCGRBLA",
+			"31, -1, SAM10K25WPBBLA",
+			"32, -1, SAMGALAXYTAG2BLA",
+		];
+
+		let dataArray4 = [
+			"1, -1, ZAGIPH16PMMANSNPBLA",
+			"2, -1, ZAGIPH16PMCPSNPCLR",
+			"3, -1, ZAGIPH16PMCPCSECLR",
+			"4, -1, INVIPH16PMXTRSP",
+			"5, -1, INVIPH16PMPRGLSELISP",
+			"6, -1, ZAGIPH16PMANSNPBLA",
+			"7, -1, ZAGIPH16PCPSNPCLR",
+			"8, -1, ZAGIPH16PCPCSECLR",
+			"9, -1, INVIPH16PXTRSP",
+			"10, -1, INVIPH16PPRGLSELISP",
+			"11, -1, ZAGIPH16PLMANSNPBLA",
+			"12, -1, ZAGIPH16PLCPSNPCLR",
+			"13, -1, ZAGIPH16PLCPCSECLR",
+			"14, -1, INVIPH16PROCAMSP",
+			"15, -1, INVIPH16PLPRGLSELISP",
+			"16, -1, ZAGIPH16MANSNPBLA",
+			"17, -1, ZAGIPH16CPSNPCLR",
+			"18, -1, ZAGIPH16CPCSECLR",
+			"19, -1, INVIPH16PRGLSELISP",
+			"20, -1, INVIPH16GLSELISP",
+			"21, -1, INVIPH16PMGLSELISP",
+			"22, -1, INVIPH16PGLSELISP",
+			"23, -1, INVIPH16PLGLSELISP",
+			"24, -1, INVIPH16CAMSP",
+		];
+
+		// Function to compare input text with arrays
+		function compareText() {
+			var inputText = document.getElementById('inputText').value.trim().toUpperCase();
+
+			function searchArray(dataArray, sideIdentifier) {
+				for (var i = 0; i < dataArray.length; i++) {
+					var line = dataArray[i].split(", ");
+					if (line[2] === inputText || line[1] === inputText) {
+						side = sideIdentifier;
+						itemNumber = line[0];
+						return true;
+					}
+				}
+				return false;
+			}
+
+			if (
+				searchArray(dataArray1, "A") || 
+				searchArray(dataArray2, "B") || 
+				searchArray(dataArray3, "C") || 
+				searchArray(dataArray4, "D")
+			) {
+				return;
+			}
+
+			document.getElementById('result').innerText = "Text not found in array.";
+		}
+
+		function searchValue(side, value) {
+			let found = false;
+			let bays = {
+				'A': {
+					'Bay 1': document.getElementById('bay1_A').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_A').getElementsByTagName('td'),
+					'Bay 3': document.getElementById('bay3_A').getElementsByTagName('td')
+				},
+				'B': {
+					'Bay 1': document.getElementById('bay1_B').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_B').getElementsByTagName('td'),
+					'Bay 3': document.getElementById('bay3_B').getElementsByTagName('td')
+				},
+				'C': {
+					'Bay 1': document.getElementById('bay1_C').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_C').getElementsByTagName('td')
+				},
+				'D': {
+					'Bay 1': document.getElementById('bay1_D').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_D').getElementsByTagName('td')
+				}
+			};
+
+			// Remove highlight from all bays
+			['A', 'B', 'C', 'D'].forEach(s => {
+				for (let bay in bays[s]) {
+					for (let cell of bays[s][bay]) {
+						cell.classList.remove('highlight');
+					}
+				}
+			});
+
+			// Search and highlight the value
+			for (let bay in bays[side]) {
+				for (let cell of bays[side][bay]) {
+					if (cell.textContent == value) {
+						cell.classList.add('highlight');
+						found = true;
+					}
+				}
+			}
+
+			document.getElementById('result').innerHTML = found ? `` : 'Value not found';
+		}
+
+		
+		function compareAndFind() {
+			compareText();
+			searchValue(side, itemNumber);
+		}
+    </script>
+</head>
+<body>
+    <h1>Accessory Finder</h1>
+    <p>Enter accessory to find:</p>
+    <input type="text" id="inputText" onkeypress="if(event.key === 'Enter') compareAndFind();"/>
+    <button onclick="compareAndFind()">Find</button>
+    <p id="result"></p>
+
+	<div class="container" id="SIDE_A">
+		<table id="bay1_A">
+			<caption>&nbsp;</caption>
+			<tr><th colspan="6" class="round-top-left">Bay 1</th></tr>
+			<tr><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr>
+			<tr><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td></tr>
+			<tr><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td></tr>
+			<tr><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td><td>23</td></tr>
+			<tr><td>24</td><td>25</td><td>25</td><td>26</td><td>27</td><td>28</td></tr>
+		</table>
+		<table id="bay2_A">
+			<caption>Side A</caption>
+			<tr><th colspan="6">Bay 2</th></tr>
+			<tr><td>29</td><td>30</td><td>31</td><td>32</td><td>33</td><td>34</td></tr>
+			<tr><td>35</td><td>36</td><td>37</td><td>38</td><td>39</td><td>40</td></tr>
+			<tr><td>41</td><td>42</td><td>43</td><td>44</td><td>45</td><td>46</td></tr>
+			<tr><td>47</td><td>48</td><td>49</td><td>50</td><td>51</td><td>52</td></tr>
+			<tr><td>53</td><td>54</td><td>55</td><td>56</td><td>57</td><td>58</td></tr>
+		</table>
+		<table id="bay3_A">
+			<caption>&nbsp;</caption>
+			<tr><th colspan="6" class="round-top-right">Bay 3</th></tr>
+			<tr><td>59</td><td>59</td><td>60</td><td>61</td><td>62</td><td>63</td></tr>
+			<tr><td>64</td><td>65</td><td>66</td><td>67</td><td>68</td><td>69</td></tr>
+			<tr><td>70</td><td>71</td><td>72</td><td>72</td><td>74</td><td>75</td></tr>
+			<tr><td>76</td><td>77</td><td>78</td><td>79</td><td>80</td><td>81</td></tr>
+			<tr><td>82</td><td>83</td><td>84</td><td>85</td><td>86</td><td>87</td></tr>
+		</table>
+	</div>
+
+	<div class="container" id="SIDE_B">
+		<table id="bay1_B">
+			<caption>&nbsp;</caption>
+			<tr><th colspan="6" class="round-top-left">Bay 1</th></tr>
+			<tr><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr>
+			<tr><td>7</td><td>8</td><td>9</td><td>10</td><td>10</td><td>11</td></tr>
+			<tr><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td></tr>
+			<tr><td>18</td><td>18</td><td>19</td><td>19</td><td>20</td><td>21</td></tr>
+			<tr><td>22</td><td>23</td><td>24</td><td>25</td><td>26</td><td>27</td></tr>
+		</table>
+		<table id="bay2_B">
+			<caption>Side B</caption>
+			<tr><th colspan="6">Bay 2</th></tr>
+			<tr><td>28</td><td>28</td><td>29</td><td>30</td><td>31</td><td>32</td></tr>
+			<tr><td>33</td><td>34</td><td>34</td><td>35</td><td>36</td><td>36</td></tr>
+			<tr><td>37</td><td>37</td><td>38</td><td>39</td><td>40</td><td>41</td></tr>
+			<tr><td>42</td><td>43</td><td>44</td><td>45</td><td>46</td><td>47</td></tr>
+			<tr><td>48</td><td>49</td><td>50</td><td>51</td><td>52</td><td>53</td></tr>
+		</table>
+		<table id="bay3_B">
+			<caption>&nbsp;</caption>
+			<tr><th colspan="6" class="round-top-right">Bay 3</th></tr>
+			<tr><td>54</td><td>55</td><td>56</td><td>57</td><td>58</td><td>59</td></tr>
+			<tr><td>60</td><td>61</td><td>62</td><td>63</td><td>64</td><td>65</td></tr>
+			<tr><td>66</td><td>67</td><td>68</td><td>69</td><td>70</td><td>71</td></tr>
+			<tr><td>72</td><td>73</td><td>74</td><td>75</td><td>76</td><td>77</td></tr>
+			<tr><td>78</td><td>79</td><td>80</td><td>81</td><td>82</td><td>83</td></tr>
+		</table>
+	</div>
+	
+	<div class="container" id="SIDE_C">
+		<table id="bay1_C">
+			<caption>Samsung FSDU</caption>
+			<tr><th colspan="4" class="round-top-left">Side 1</th></tr>
+			<tr><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+			<tr><td>5</td><td>6</td><td>7</td><td>8</td></tr>
+			<tr><td>9</td><td>10</td><td>11</td><td>12</td></tr>
+			<tr><td>13</td><td>14</td><td>15</td><td>16</td></tr>
+		</table>
+
+		<table id="bay2_C">
+			<caption>&nbsp;</caption>
+			<tr><th colspan="4" class="round-top-right">Side 2</th></tr>
+			<tr><td>17</td><td>18</td><td>19</td><td>20</td></tr>
+			<tr><td>21</td><td>22</td><td>23</td><td>24</td></tr>
+			<tr><td>25</td><td>26</td><td>27</td><td>28</td></tr>
+			<tr><td>29</td><td>30</td><td>31</td><td>32</td></tr>
+		</table>
+
+		<table id="bay1_D">
+			<caption>ZAGG_FSDU</caption>
+			<tr><th colspan="3" class="round-top-left">Bay 1</th></tr>
+			<tr><td>1</td><td>2</td><td>3</td></tr>
+			<tr><td>6</td><td>7</td><td>8</td></tr>
+			<tr><td>11</td><td>12</td><td>13</td></tr>
+			<tr><td>16</td><td>17</td><td>18</td></tr>
+		</table>
+		<table id="bay2_D">
+			<caption>&nbsp;</caption>
+			<tr><th colspan="3" class="round-top-right">Bay 2</th></tr>
+			<tr><td>4</td><td>5</td><td>21</td></tr>
+			<tr><td>9</td><td>10</td><td>22</td></tr>
+			<tr><td>14</td><td>15</td><td>23</td></tr>
+			<tr><td>19</td><td>20</td><td>24</td></tr>
+		</table>
+	</div>
+
+    <script>
+        function createCircle(size) {
+            const circle = document.createElement('div');
+            circle.style.width = `${size}px`;
+            circle.style.height = `${size}px`;
+
+            let isOverlapping;
+            let top, left;
+            let attempts = 0;
+            const maxAttempts = 100;
+
+            do {
+                isOverlapping = false;
+                top = Math.random() * (window.innerHeight - size);
+                left = Math.random() * (window.innerWidth - size);
+
+                document.querySelectorAll('.circle').forEach(existingCircle => {
+                    const exRect = existingCircle.getBoundingClientRect();
+                    const dx = left - exRect.left;
+                    const dy = top - exRect.top;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < size) {
+                        isOverlapping = true;
+                    }
+                });
+
+                attempts++;
+                if (attempts >= maxAttempts) {
+                    isOverlapping = false;
+                }
+            } while (isOverlapping);
+
+            circle.style.top = `${top}px`;
+            circle.style.left = `${left}px`;
+            circle.classList.add('circle');
+            document.body.appendChild(circle);
+        }
+
+        const numberOfCircles = Math.floor(Math.random() * 4) + 2; // Random number between 2 and 5
+        for (let i = 0; i < numberOfCircles; i++) {
+            const size = 600 - ((600 - 150) / (numberOfCircles - 1)) * i;
+            createCircle(size);
+        }
+		
+    </script>
+	
+</body>
+</html>
