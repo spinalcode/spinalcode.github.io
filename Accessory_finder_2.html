@@ -340,7 +340,7 @@
 				return;
 			}
 
-			document.getElementById('result').innerText = "Text not found in array.";
+			//document.getElementById('result').innerText = "Text not found in array.";
 		}
 
 		function searchValue(side, value) {
@@ -385,7 +385,9 @@
 				}
 			}
 
-			document.getElementById('result').innerHTML = found ? `` : 'Value not found';
+			//document.getElementById('result').innerHTML = found ? `` : 'Value not found';
+			//alert('That PLU code is not found on the display, please check that it is correct. It may be a new item.');
+
 		}
 
 		
@@ -401,7 +403,7 @@
 	<div class="container1">
 		<h1>Accessory Finder</h1>
 		<p>Enter accessory to find:</p>
-		<input type="text" id="inputText" onkeypress="if(event.key === 'Enter') compareAndFind();"/>
+		<input type="text" id="inputText" onkeypress="if(event.key === 'Enter') compareAndFind();" onclick="pasteFromClipboard()"/>
 		<button onclick="compareAndFind()">Find</button>
 		<p id="result"></p>
 
@@ -503,6 +505,10 @@
 		</div>
 	</div>
     <script>
+		function pasteFromClipboard() {
+			const inputBox = document.getElementById('inputText');
+			inputBox.select(); // Select existing text if clipboard is empty
+		}
 	
 	
         // Function to look up the number and return the corresponding string
