@@ -366,24 +366,32 @@
 				}
 			};
 
-			// Remove highlight from all bays
-			['A', 'B', 'C', 'D'].forEach(s => {
-				for (let bay in bays[s]) {
-					for (let cell of bays[s][bay]) {
-						cell.classList.remove('highlight');
-					}
-				}
-			});
+			//// Remove highlight from all bays
+var baysArray = ['A', 'B', 'C', 'D'];
+for (var i = 0; i < baysArray.length; i++) {
+  var s = baysArray[i];
+  for (var bay in bays[s]) {
+    if (bays[s].hasOwnProperty(bay)) {
+      for (var j = 0; j < bays[s][bay].length; j++) {
+        var cell = bays[s][bay][j];
+        cell.classList.remove('highlight');
+      }
+    }
+  }
+}
 
-			// Search and highlight the value
-			for (let bay in bays[side]) {
-				for (let cell of bays[side][bay]) {
-					if (cell.textContent == value) {
-						cell.classList.add('highlight');
-						found = true;
-					}
-				}
-			}
+// Search and highlight the value
+for (var bay in bays[side]) {
+  if (bays[side].hasOwnProperty(bay)) {
+    for (var k = 0; k < bays[side][bay].length; k++) {
+      var cell = bays[side][bay][k];
+      if (cell.textContent == value) {
+        cell.classList.add('highlight');
+        found = true;
+      }
+    }
+  }
+}
 
 			//document.getElementById('result').innerHTML = found ? `` : 'Value not found';
 			//alert('That PLU code is not found on the display, please check that it is correct. It may be a new item.');
