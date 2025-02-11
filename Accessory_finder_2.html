@@ -577,17 +577,23 @@ for (var i = 0; i < cells.length; i++) {
                 top = Math.random() * (window.innerHeight - size);
                 left = Math.random() * (window.innerWidth - size);
 
-                document.querySelectorAll('.circle').forEach(existingCircle => {
-                    const exRect = existingCircle.getBoundingClientRect();
-                    const dx = left - exRect.left;
-                    const dy = top - exRect.top;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
+                // Attach event listeners to all cells in all tables
 
-                    if (distance < size) {
-                        isOverlapping = true;
-                    }
-                });
+var existingCircles = document.querySelectorAll('.circle');
+for (var i = 0; i < existingCircles.length; i++) {
+  var existingCircle = existingCircles[i];
 
+  var exRect = existingCircle.getBoundingClientRect();
+
+  var dx = left - exRect.left;
+  var dy = top - exRect.top;
+
+  var distance = Math.sqrt(dx * dx + dy * dy);
+
+  if (distance < size) {
+    isoverlapping = true;
+  }
+}
                 attempts++;
                 if (attempts >= maxAttempts) {
                     isOverlapping = false;
