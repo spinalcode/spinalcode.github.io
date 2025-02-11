@@ -555,10 +555,11 @@
             //console.log(`Container ID: ${containerId}, Table ID: ${tableId}, Cell: Row ${rowIndex}, Column ${cellIndex}, Number: ${number}, Result: ${result}`);
         }
 
-        // Attach event listeners to all cells in all tables
-        document.querySelectorAll('table td').forEach(cell => {
-            cell.addEventListener('click', cellClicked);
-        });
+        
+var cells = document.querySelectorAll('table td');
+for (var i = 0; i < cells.length; i++) {
+  cells[i].addEventListener('click', cellClicked);
+}
 
 	
         function createCircle(size) {
