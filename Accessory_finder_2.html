@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -316,6 +317,10 @@
 		];
 
 		// Function to compare input text with arrays
+		// Variables to store search result
+		var side = "";
+		var itemNumber = "";
+
 		function compareText() {
 			var inputText = document.getElementById('inputText').value.trim().toUpperCase();
 
@@ -337,13 +342,52 @@
 				searchArray(dataArray3, "C") || 
 				searchArray(dataArray4, "D")
 			) {
-				return;
+				searchValue(side, itemNumber);
+			} else {
+				removeHighlights();
+				alert('That PLU code is not found on the display, please check that it is correct. It may be a new item.');
 			}
+		}
 
-			//document.getElementById('result').innerText = "Text not found in array.";
+		function removeHighlights() {
+			let bays = {
+				'A': {
+					'Bay 1': document.getElementById('bay1_A').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_A').getElementsByTagName('td'),
+					'Bay 3': document.getElementById('bay3_A').getElementsByTagName('td')
+				},
+				'B': {
+					'Bay 1': document.getElementById('bay1_B').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_B').getElementsByTagName('td'),
+					'Bay 3': document.getElementById('bay3_B').getElementsByTagName('td')
+				},
+				'C': {
+					'Bay 1': document.getElementById('bay1_C').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_C').getElementsByTagName('td')
+				},
+				'D': {
+					'Bay 1': document.getElementById('bay1_D').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_D').getElementsByTagName('td')
+				}
+			};
+
+			// Remove highlight from all bays
+			var baysArray = ['A', 'B', 'C', 'D'];
+			for (var i = 0; i < baysArray.length; i++) {
+				var s = baysArray[i];
+				for (var bay in bays[s]) {
+					if (bays[s].hasOwnProperty(bay)) {
+						for (var j = 0; j < bays[s][bay].length; j++) {
+							var cell = bays[s][bay][j];
+							cell.classList.remove('highlight');
+						}
+					}
+				}
+			}
 		}
 
 		function searchValue(side, value) {
+			removeHighlights();
 			let found = false;
 			let bays = {
 				'A': {
@@ -366,42 +410,28 @@
 				}
 			};
 
-			//// Remove highlight from all bays
-var baysArray = ['A', 'B', 'C', 'D'];
-for (var i = 0; i < baysArray.length; i++) {
-  var s = baysArray[i];
-  for (var bay in bays[s]) {
-    if (bays[s].hasOwnProperty(bay)) {
-      for (var j = 0; j < bays[s][bay].length; j++) {
-        var cell = bays[s][bay][j];
-        cell.classList.remove('highlight');
-      }
-    }
-  }
-}
-
-// Search and highlight the value
-for (var bay in bays[side]) {
-  if (bays[side].hasOwnProperty(bay)) {
-    for (var k = 0; k < bays[side][bay].length; k++) {
-      var cell = bays[side][bay][k];
-      if (cell.textContent == value) {
-        cell.classList.add('highlight');
-        found = true;
-      }
-    }
-  }
-}
+			// Search and highlight the value
+			for (var bay in bays[side]) {
+				if (bays[side].hasOwnProperty(bay)) {
+					for (var k = 0; k < bays[side][bay].length; k++) {
+						var cell = bays[side][bay][k];
+						if (cell.textContent == value) {
+							cell.classList.add('highlight');
+							found = true;
+							//alert('Highlight ' + cell.innerHTML + ' added');
+						}
+					}
+				}
+			}
 
 			//document.getElementById('result').innerHTML = found ? `` : 'Value not found';
-			//alert('That PLU code is not found on the display, please check that it is correct. It may be a new item.');
 
 		}
 
 		
 		function compareAndFind() {
 			compareText();
-			searchValue(side, itemNumber);
+			//searchValue(side, itemNumber);
 		}
 		
 		
@@ -411,7 +441,7 @@ for (var bay in bays[side]) {
 	<div class="container1">
 		<h1>Accessory Finder</h1>
 		<p>Enter accessory to find:</p>
-		<input type="text" id="inputText" onkeypress="if(event.key === 'Enter') compareAndFind();" onclick="pasteFromClipboard()"/>
+		<input type="text" id="inputText" onclick="pasteFromClipboard()"/>
 		<button onclick="compareAndFind()">Find</button>
 		<p id="result"></p>
 
@@ -497,7 +527,7 @@ for (var bay in bays[side]) {
 			<div class="container" id="SIDE_D">
 				<table id="bay1_D">
 					<caption>ZAGG_FSDU</caption>
-					<tr><th colspan="3" class="round-top-left">Bay 1</th></tr>
+					<tr><th colspan="3" class="round-top-left">Side 1</th></tr>
 					<tr><td>1</td><td>2</td><td>3</td></tr>
 					<tr><td>6</td><td>7</td><td>8</td></tr>
 					<tr><td>11</td><td>12</td><td>13</td></tr>
@@ -505,7 +535,7 @@ for (var bay in bays[side]) {
 				</table>
 				<table id="bay2_D">
 					<caption>&nbsp;</caption>
-					<tr><th colspan="3" class="round-top-right">Bay 2</th></tr>
+					<tr><th colspan="3" class="round-top-right">Side 2</th></tr>
 					<tr><td>4</td><td>5</td><td>21</td></tr>
 					<tr><td>9</td><td>10</td><td>22</td></tr>
 					<tr><td>14</td><td>15</td><td>23</td></tr>
@@ -519,7 +549,6 @@ for (var bay in bays[side]) {
 			const inputBox = document.getElementById('inputText');
 			inputBox.select(); // Select existing text if clipboard is empty
 		}
-	
 	
         // Function to look up the number and return the corresponding string
         function lookupNumber(number, dataArray) {
@@ -564,10 +593,10 @@ for (var bay in bays[side]) {
         }
 
         
-var cells = document.querySelectorAll('table td');
-for (var i = 0; i < cells.length; i++) {
-  cells[i].addEventListener('click', cellClicked);
-}
+		var cells = document.querySelectorAll('table td');
+		for (var i = 0; i < cells.length; i++) {
+			cells[i].addEventListener('click', cellClicked);
+		}
 
 	
         function createCircle(size) {
@@ -587,21 +616,18 @@ for (var i = 0; i < cells.length; i++) {
 
                 // Attach event listeners to all cells in all tables
 
-var existingCircles = document.querySelectorAll('.circle');
-for (var i = 0; i < existingCircles.length; i++) {
-  var existingCircle = existingCircles[i];
+				var existingCircles = document.querySelectorAll('.circle');
+				for (var i = 0; i < existingCircles.length; i++) {
+					var existingCircle = existingCircles[i];
+					var exRect = existingCircle.getBoundingClientRect();
+					var dx = left - exRect.left;
+					var dy = top - exRect.top;
+					var distance = Math.sqrt(dx * dx + dy * dy);
 
-  var exRect = existingCircle.getBoundingClientRect();
-
-  var dx = left - exRect.left;
-  var dy = top - exRect.top;
-
-  var distance = Math.sqrt(dx * dx + dy * dy);
-
-  if (distance < size) {
-    isoverlapping = true;
-  }
-}
+					if (distance < size) {
+						isoverlapping = true;
+					}
+				}
                 attempts++;
                 if (attempts >= maxAttempts) {
                     isOverlapping = false;
