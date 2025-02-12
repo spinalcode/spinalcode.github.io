@@ -69,7 +69,19 @@
 			float: right;
 			margin-left: auto;
 		}
-		
+        
+		#popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: #E8F0FE;
+			border: 2px solid #4C12A1;
+			border-radius: 10px;
+
+        }
     </style>
 
     <title>Accessory Finder</title>
@@ -345,7 +357,7 @@
 				searchValue(side, itemNumber);
 			} else {
 				removeHighlights();
-				alert('That PLU code is not found on the display, please check that it is correct. It may be a new item.');
+				showPopup();
 			}
 		}
 
@@ -544,6 +556,14 @@
 			</div>
 		</div>
 	</div>
+	
+    <div id="popup">
+        That PLU code is not found on the display, <br>
+		Please check that it is correct. It may be a new item.<br>
+        <br>
+        <button onclick="closePopup()">OK</button>
+    </div>
+
     <script>
 		function pasteFromClipboard() {
 			const inputBox = document.getElementById('inputText');
@@ -646,6 +666,13 @@
             createCircle(size);
         }
 		
+		function showPopup() {
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
     </script>
 	
 </body>
