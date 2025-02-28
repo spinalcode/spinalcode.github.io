@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Text Area Example</title>
+  <style>
+    .container {
+      display: flex;
+      flex-direction: column;
+      width: 640px; /* 80 characters wide assuming a character width of about 8 pixels */
+      margin: auto;
+      padding-top: 50px;
+    }
+    textarea {
+      width: 100%;
+      height: 320px; /* 20 lines high assuming a line height of about 16 pixels */
+      margin-top: 10px;
+    }
+    button {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <textarea id="inputText" placeholder="Enter text here"></textarea>
+    <button onclick="processText()">Process Text</button>
+    <textarea id="outputText" placeholder="Output will appear here" readonly></textarea>
+  </div>
+
+  <script>
+    function processText() {
+      var inputText = document.getElementById('inputText').value;
+      var lines = inputText.split('\n');
+      var nonEmptyLineCounter = 0; // New counter for non-empty lines
+      var outputArray = lines.map(function(line) {
+        var words = line.trim().split(/\s+/);
+        var description = '';
+        var secondLastWord = '';
+
+        // Skip empty lines
+        if (line.trim() === '') {
+          return null;
+        }
+
+        nonEmptyLineCounter++; // Increment counter for non-empty lines
+
+        // Extract description (words that are not numbers, except the last two words)
+        for (var i = 0; i < words.length; i++) {
+          if (!isNaN(words[i])) {
+            continue;
+          }
+
+          if (i < words.length - 2) {
+            description += (description ? ' ' : '') + words[i];
+          }
+        }
+
+        // Extract the second last word
+        if (words.length >= 2) {
+          secondLastWord = words[words.length - 2];
+        }
+
+        return (nonEmptyLineCounter) + ', ' + secondLastWord + ', ' + description;
+      }).filter(Boolean); // Filter out null values
+
+      // Format the output as a JavaScript array
+      var outputString = 'var dataArray1 = [\n';
+      outputString += outputArray.map(function(item) {
+        return '  "' + item + '"';
+      }).join(',\n');
+      outputString += '\n];';
+      
+      document.getElementById('outputText').value = outputString;
+    }
+  </script>
+</body>
+</html>
