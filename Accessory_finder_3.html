@@ -84,116 +84,30 @@
             border: 2px solid #4C12A1;
             border-radius: 10px;
         }
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Table Example</title>
-    <style>
-        body {
-            align-items: center;
-            justify-content: center;
-            background-color: #CAE7E6;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            margin: 0;
-        }
-        .container1 {
-            text-align: center;
-        }
-        .circle {
-            border-radius: 50%;
-            position: absolute;
-            background: linear-gradient(to bottom, #E2EFF2, #CAE7E6, #8CCABC);
-            z-index: -1;
-        }
-        .container {
-            display: flex;
-        }
-        table {
-            border-collapse: separate;
-            margin: 2px;
-        }
-        th, td {
-            border: 1px solid #4C12A1;
-            padding: 5px;
-            text-align: center;
-        }
-        th {
-            background-color: #4C12A1;
-            color: #E8F0FE;
-        }
-        .highlight {
-            background-color: #E5006E;
-            color: #E8F0FE;
-        }
-        .round-top-left {
-            border-top-left-radius: 10px;
-        }
-        .round-top-right {
-            border-top-right-radius: 10px;
-        }
-        button {
-            border: 1px solid #4C12A1;
-            border-radius: 10px;
-            padding: 5px;
-            width: 100px;
-            text-align: center;
-            background-color: #4C12A1;
-            color: #E8F0FE;
-        }
-        input, #display-box {
-            border: 1px solid #4C12A1;
-            border-radius: 10px;
-            padding: 5px;
-            width: 400px;
-            text-align: center;
-            background-color: #E8F0FE;
-            color: #4C12A1;
-            margin-bottom: 10px;
-        }
-        #SIDE_D {
-            float: right;
-            margin-left: auto;
-        }
-        #popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 20px;
-            background: #E8F0FE;
-            border: 2px solid #4C12A1;
-            border-radius: 10px;
-        }
     </style>
 </head>
 <body>
-    <script src="https://cdn.polyfill.io/v3/polyfill.min.js?features=default"></script>
     <script src="data.js"></script>
     <div>
         <input type="text" id="search-input" placeholder="Enter search text">
         <button onclick="searchTable()">Search</button>
     </div>
     <div id="display-box"></div>
+
     <div class="container" id="SIDE_A"></div>
     <div class="container" id="SIDE_B"></div>
 
     <script>
         function createTable(array, containerId, tableIdPrefix) {
-            var container = document.getElementById(containerId);
-            var cellMap = [];
-            for (var section = 0; section < 3; section++) {
-                var table = '<table id="bay' + (section + 1) + '_' + tableIdPrefix + '"><caption>&nbsp;</caption><tbody>';
+            let container = document.getElementById(containerId);
+            let cellMap = [];
+            for (let section = 0; section < 3; section++) {
+                let table = '<table id="bay' + (section + 1) + '_' + tableIdPrefix + '"><caption>&nbsp;</caption><tbody>';
                 table += '<tr><th colspan="6" class="' + (section === 0 ? 'round-top-left' : (section === 2 ? 'round-top-right' : '')) + '">Bay ' + (section + 1) + '</th></tr>';
-                var index = section * 30;
-                for (var row = 0; row < 5; row++) {
+                let index = section * 30;
+                for (let row = 0; row < 5; row++) {
                     table += '<tr>';
-                    for (var cell = 0; cell < 6; cell++) {
+                    for (let cell = 0; cell < 6; cell++) {
                         if (index < array.length) {
                             table += '<td onclick="cellClick(\'' + tableIdPrefix + 'cell' + index + '\', \'' + array[index] + '\')" id="' + tableIdPrefix + 'cell' + index + '">' + array[index].split(',')[0] + '</td>';
                             cellMap.push({ id: tableIdPrefix + 'cell' + index, middleText: array[index].split(',')[1].trim() });
@@ -211,38 +125,55 @@
         }
 
         function displayText(data) {
-            var text = data.split(',').slice(2).join(',').trim();
-            var displayBox = document.getElementById('display-box');
+            const text = data.split(',').slice(2).join(',').trim();
+            const displayBox = document.getElementById('display-box');
             displayBox.textContent = text;
             displayBox.style.display = 'block';
         }
 
-        function searchTable() {
-            var searchText = document.getElementById('search-input').value.toLowerCase();
-            var cells = document.querySelectorAll('td');
-            cells.forEach(function(cell) { cell.classList.remove('highlight'); });
-            cellMaps.forEach(function(map) {
-                map.forEach(function(item) {
-                    if (item.middleText.toLowerCase().includes(searchText)) {
-                        document.getElementById(item.id).classList.add('highlight');
-                        displayText(dataArray1.find(function(data) { return data.includes(item.middleText); }) || dataArray2.find(function(data) { return data.includes(item.middleText); }));
-                    }
-                });
-            });
-        }
+ function searchTable() {
+    const searchText = document.getElementById('search-input').value.toLowerCase();
+    const cells = document.getElementsByTagName('td');
+    const cellsArray = Array.prototype.slice.call(cells);
+    
+    cellsArray.forEach(cell => cell.classList.remove('highlight')); // Use a for loop instead
+    for (let i = 0; i < cellsArray.length; i++) {
+        cellsArray[i].classList.remove('highlight');
+    }
 
-        function cellClick(cellId, data) {
-            var cells = document.querySelectorAll('td');
-            cells.forEach(function(cell) { cell.classList.remove('highlight'); });
-            document.getElementById(cellId).classList.add('highlight');
-            var middleText = data.split(',')[1].trim();
-            document.getElementById('search-input').value = middleText;
-            displayText(data);
-        }
+    cellMaps.forEach(map => {
+        map.forEach(item => {
+            if (item.middleText.toLowerCase().includes(searchText)) {
+                document.getElementById(item.id).classList.add('highlight');
+                displayText(dataArray1.find(data => data.includes(item.middleText)) || dataArray2.find(data => data.includes(item.middleText)));
+            }
+        });
+    });
+}
 
-        var cellMap1 = createTable(dataArray1, 'SIDE_A', 'A'); // dataArray1 loaded from external file
-        var cellMap2 = createTable(dataArray2, 'SIDE_B', 'B'); // dataArray2 loaded from external file
-        var cellMaps = [cellMap1, cellMap2];
+function cellClick(cellId, data) {
+    const cells = document.getElementsByTagName('td');
+    const cellsArray = Array.prototype.slice.call(cells);
+
+    // Use a for loop to remove the 'highlight' class
+    for (let i = 0; i < cellsArray.length; i++) {
+        cellsArray[i].classList.remove('highlight');
+    }
+
+    // Highlight the clicked cell
+    document.getElementById(cellId).classList.add('highlight');
+
+    // Update the input field with the middle text
+    const middleText = data.split(',')[1].trim();
+    document.getElementById('search-input').value = middleText;
+
+    // Display the text
+    displayText(data);
+}
+
+        const cellMap1 = createTable(dataArray1, 'SIDE_A', 'A'); // dataArray1 loaded from external file
+        const cellMap2 = createTable(dataArray2, 'SIDE_B', 'B'); // dataArray2 loaded from external file
+        const cellMaps = [cellMap1, cellMap2];
     </script>
 </body>
 </html>
