@@ -3,13 +3,25 @@
 <head>
   <title>Text Area Example</title>
   <style>
-    .container {
-      display: flex;
-      flex-direction: column;
-      width: 640px; /* 80 characters wide assuming a character width of about 8 pixels */
-      margin: auto;
-      padding-top: 50px;
-    }
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 640px;
+  margin: auto;
+  padding-top: 50px;
+}
+
+.select-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.select-container label, .select-container select {
+  margin-right: 10px;
+}
+
+
     textarea {
       width: 100%;
       height: 320px; /* 20 lines high assuming a line height of about 16 pixels */
@@ -21,56 +33,125 @@
   </style>
 </head>
 <body>
-  <div class="container">
+
+<div class="container">
+    <div class="select-container">
+        <label for="Planogram">Area</label>
+        <select name="Planogram" id="Planogram">
+            <option>AR_Mega_Range_Side_A</option>
+            <option>AR_Mega_Range_Side_B</option>
+            <option>FSDU_B_SWAS</option>
+            <option>FSDU_ONE_SWAS</option>
+        </select>
+
+        <label for="Bays">Bays</label>
+        <select name="Bays" id="Bays">
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+        </select>
+
+        <label for="Width">Width</label>
+        <select name="Width" id="Width">
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+        </select>
+
+        <label for="Height">Height</label>
+        <select name="Height" id="Height">
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+        </select>
+    </div>
+
     <textarea id="inputText" placeholder="Enter text here"></textarea>
     <button onclick="processText()">Process Text</button>
     <textarea id="outputText" placeholder="Output will appear here" readonly></textarea>
-  </div>
+</div>
 
   <script>
     function processText() {
+    
+      document.getElementById('outputText').value = '';
+
       var inputText = document.getElementById('inputText').value;
       var lines = inputText.split('\n');
-      var nonEmptyLineCounter = 0; // New counter for non-empty lines
-      var outputArray = lines.map(function(line) {
-        var words = line.trim().split(/\s+/);
-        var description = '';
-        var secondLastWord = '';
+      var nonEmptyLineCounter = 0;
+      var outputArray = [];
+      var selectElement = document.getElementById('Planogram');
+      var selectedOption = selectElement.options[selectElement.selectedIndex];
+      
+	  var hiddenValue = document.getElementById('Bays').value + ', ' + document.getElementById('Width').value + ', ' + document.getElementById('Height').value
+      
+	  var isFsdu = selectElement.value.startsWith('FSDU');
 
-        // Skip empty lines
-        if (line.trim() === '') {
-          return null;
+      if (isFsdu) {
+        var lineMap = {};
+        
+        lines.forEach(function(line) {
+          var words = line.trim().split(/\s+/);
+          if (line.trim() === '') return;
+          
+          var lineNumber = words[0];
+          if (!lineMap[lineNumber]) {
+            lineMap[lineNumber] = [];
+          }
+          lineMap[lineNumber].push(words);
+        });
+
+        for (var lineNumber in lineMap) {
+          if (lineMap.hasOwnProperty(lineNumber) && lineMap[lineNumber].length >= 2) {
+            var firstInstance = lineMap[lineNumber][0];
+            var secondInstance = lineMap[lineNumber][1];
+            var part1 = firstInstance[0];
+            var part2 = firstInstance[firstInstance.length - 2];
+            var part3 = secondInstance.slice(1, secondInstance.length - 1).join(' '); // Get part of string after the first number and before the last number
+            outputArray.push(part1 + ', ' + part2 + ', ' + part3);
+          }
         }
+      } else {
+        outputArray = lines.map(function(line) {
+          var words = line.trim().split(/\s+/);
+          var description = '';
+          var secondLastWord = '';
 
-        nonEmptyLineCounter++; // Increment counter for non-empty lines
-
-        // Extract description (words that are not numbers, except the last two words)
-        for (var i = 0; i < words.length; i++) {
-          if (!isNaN(words[i])) {
-            continue;
+          if (line.trim() === '') {
+            return null;
           }
 
-          if (i < words.length - 2) {
-            description += (description ? ' ' : '') + words[i];
+          nonEmptyLineCounter++;
+
+          for (var i = 0; i < words.length; i++) {
+            if (!isNaN(words[i])) {
+              continue;
+            }
+
+            if (i < words.length - 2) {
+              description += (description ? ' ' : '') + words[i];
+            }
           }
-        }
 
-        // Extract the second last word
-        if (words.length >= 2) {
-          secondLastWord = words[words.length - 2];
-        }
+          if (words.length >= 2) {
+            secondLastWord = words[words.length - 2];
+          }
 
-        return (nonEmptyLineCounter) + ', ' + secondLastWord + ', ' + description;
-      }).filter(Boolean); // Filter out null values
-
-      // Format the output as a JavaScript array
-      var outputString = 'var dataArray1 = [\n';
+          return (nonEmptyLineCounter) + ', ' + secondLastWord + ', ' + description;
+        }).filter(Boolean);
+      }
+      
+      var resultString = selectElement.value + ', ' + hiddenValue + '",\n';
+      var outputString = 'var dataArray1 = [\n' + '  "' + resultString;
       outputString += outputArray.map(function(item) {
         return '  "' + item + '"';
       }).join(',\n');
       outputString += '\n];';
       
-      document.getElementById('outputText').value = outputString;
+      document.getElementById('outputText').value += outputString;
     }
   </script>
 </body>
