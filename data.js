@@ -1,5 +1,5 @@
 var dataArray1 = [
-  "AR_Mega_Range_Side_A, 3, 6, 5",
+  "Outside, 3, 6, 5",
   "1, ZAGIPH16PMLUXSNPBLA, Zagg iPhone Pro Max Lux Mag-Safe Black",
   "2, ZAGIPH16PMMILSNPIRI, Zagg iPhone Pro Max Mlian Iridescent",
   "3, ZAGIPH16PMSCSNPBLA, Zagg iPhone Pro Max Santa Cruz",
@@ -93,7 +93,7 @@ var dataArray1 = [
 ];
 
 var dataArray2 = [
-  "AR_Mega_Range_Side_B, 3, 6, 5",
+  "Inside, 3, 6, 5",
   "1, INVPIX9PFLDGLSELTSP, Zagg Pixel Pro Fold GlassScreen Protector",
   "2, ZAGPIX9PXLLUXBUN, Zagg Pixel Pro XL Luxe Bundle",
   "3, ZAGPIX9PXLCPCSECLR, Zagg Pixel Pro XL Crystal Palace Case",
@@ -187,7 +187,7 @@ var dataArray2 = [
 ];
 
 var dataArray3 = [
-  "FSDU_B_SWAS, 2, 4, 4",
+  "Samsung, 2, 4, 4",
   "1, SAM25ULTHCSEBRO, Kindsuit Faux Leather Case for Galaxy S25 Ultra - Camel",
   "2, SAMS25UGRPCSEGRE, Standing Grip Case for Galaxy S25 Ultra - Grey",
   "3, SAMS25USILCSEBLA, Silicone Case for Galaxy S25 Ultra - Black",
@@ -223,7 +223,7 @@ var dataArray3 = [
 ];
 
 var dataArray4 = [
-  "FSDU_ONE_SWAS, 2, 3, 4",
+  "Zag, 2, 3, 4",
   "1, ZAGIPH16PMMANSNPBLA, Zagg Man Snap iPhone 16 Pro Max Case Black",
   "2, ZAGIPH16PMCPSNPCLR, Zagg CP Snap iPhone 16 PM Case Clear",
   "3, ZAGIPH16PMCPCSECLR, Zagg CP iPhone 16 Pro Max Case Clear",
