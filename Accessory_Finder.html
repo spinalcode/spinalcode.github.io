@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            align-items: center;
+            justify-content: center;
+            background-color: #CAE7E6;
+            position: relative;
+			display: flex;
+			align-items: center;
+			margin: 0;
+        }
+		.container1 {
+			text-align: center;
+		}
+        .circle {
+            border-radius: 50%;
+            position: absolute;
+            background: linear-gradient(to bottom, #E2EFF2, #CAE7E6, #8CCABC);
+            z-index: -1; /* Ensure circles stay in the background */
+        }		
+		.container {
+			display: flex;
+		}
+		.side-container {
+			display: flex; /* or display: inline-block; */
+		}
+
+		.side-container .container {
+			flex: 1; /* or width: 50%; for inline-block */
+		}
+		
+		table {
+			border-collapse: separate; /* Use separate instead of collapse */
+			margin: 2px; /* Remove margins between tables */
+		}
+		
+		th, td {
+			border: 1px solid #4C12A1;
+			padding: 5px;
+			text-align: center;
+		}
+		th {
+			background-color: #4C12A1;
+			color: #E8F0FE;
+		}
+		.highlight {
+			background-color: #E5006E; /* Change this to your desired highlight color */
+			color: #E8F0FE;
+		}
+		.round-top-left {
+			border-top-left-radius: 10px; /* Adjust the value as needed */
+		}
+		.round-top-right {
+			border-top-right-radius: 10px; /* Adjust the value as needed */
+		}
+		button {
+			border: 1px solid #4C12A1;
+			border-radius: 10px; /* Adjust the value as needed */
+			padding: 5px;
+			width: 100px;
+			text-align: center;
+			background-color: #4C12A1;
+			color: #E8F0FE;
+		}
+		input, #display-box {
+			border: 1px solid #4C12A1;
+			border-radius: 10px; /* Adjust the value as needed */
+			padding: 5px;
+			width: 400px;
+			text-align: center;
+			background-color: #E8F0FE;
+			color: #4C12A1;
+		}
+		#SIDE_D {
+			float: right;
+			margin-left: auto;
+		}
+        
+		#popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: #E8F0FE;
+			border: 2px solid #4C12A1;
+			border-radius: 10px;
+
+        }
+			
+    </style>
+
+    <title>Accessory Finder</title>
+    <script src="data.js"></script>
+
+	<script type="text/javascript">
+	
+        var side = "A"; // Side of the bay
+		var itemNumber = 0;
+
+		var side = "";
+		var itemNumber = "";
+
+		function compareText() {
+			var inputText = document.getElementById('inputText').value.trim().toUpperCase();
+
+			function searchArray(dataArray, sideIdentifier) {
+				for (var i = 0; i < dataArray.length; i++) {
+					var line = dataArray[i].split(", ");
+					if (line[2] === inputText || line[1] === inputText) {
+						side = sideIdentifier;
+						itemNumber = line[0];
+						return true;
+					}
+				}
+				return false;
+			}
+			removeHighlights();
+
+			if (
+				searchArray(dataArray1, "A") || 
+				searchArray(dataArray2, "B") || 
+				searchArray(dataArray3, "C") || 
+				searchArray(dataArray4, "D")
+			) {
+				searchValue(side, itemNumber);
+				const endText = lookupNumber(itemNumber, dataArray1.concat(dataArray2, dataArray3, dataArray4));
+				document.getElementById('display-box').value = endText;
+			} else {
+				removeHighlights();
+				showPopup();
+			}
+		}
+
+		function removeHighlights() {
+			let bays = {
+				'A': {
+					'Bay 1': document.getElementById('bay1_A').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_A').getElementsByTagName('td'),
+					'Bay 3': document.getElementById('bay3_A').getElementsByTagName('td')
+				},
+				'B': {
+					'Bay 1': document.getElementById('bay1_B').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_B').getElementsByTagName('td'),
+					'Bay 3': document.getElementById('bay3_B').getElementsByTagName('td')
+				},
+				'C': {
+					'Bay 1': document.getElementById('bay1_C').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_C').getElementsByTagName('td')
+				},
+				'D': {
+					'Bay 1': document.getElementById('bay1_D').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_D').getElementsByTagName('td')
+				}
+			};
+
+			// Remove highlight from all bays
+			var baysArray = ['A', 'B', 'C', 'D'];
+			for (var i = 0; i < baysArray.length; i++) {
+				var s = baysArray[i];
+				for (var bay in bays[s]) {
+					if (bays[s].hasOwnProperty(bay)) {
+						for (var j = 0; j < bays[s][bay].length; j++) {
+							var cell = bays[s][bay][j];
+							cell.classList.remove('highlight');
+						}
+					}
+				}
+			}
+		}
+
+		function searchValue(side, value) {
+			removeHighlights();
+			let found = false;
+			let bays = {
+				'A': {
+					'Bay 1': document.getElementById('bay1_A').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_A').getElementsByTagName('td'),
+					'Bay 3': document.getElementById('bay3_A').getElementsByTagName('td')
+				},
+				'B': {
+					'Bay 1': document.getElementById('bay1_B').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_B').getElementsByTagName('td'),
+					'Bay 3': document.getElementById('bay3_B').getElementsByTagName('td')
+				},
+				'C': {
+					'Bay 1': document.getElementById('bay1_C').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_C').getElementsByTagName('td')
+				},
+				'D': {
+					'Bay 1': document.getElementById('bay1_D').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_D').getElementsByTagName('td')
+				}
+			};
+
+			// Search and highlight the value
+			for (var bay in bays[side]) {
+				if (bays[side].hasOwnProperty(bay)) {
+					for (var k = 0; k < bays[side][bay].length; k++) {
+						var cell = bays[side][bay][k];
+						if (cell.textContent == value) {
+							cell.classList.add('highlight');
+							found = true;
+						}
+					}
+				}
+			}
+		}
+
+		
+		function compareAndFind() {
+			compareText();
+		}
+		
+		
+    </script>
+</head>
+<body>
+	<div class="container1">
+		<h1>Accessory Finder</h1>
+		<p>Enter accessory to find:</p>
+		<input type="text" id="inputText"/>
+		<button onclick="compareAndFind()">Find</button>
+		<div><input type="value" id="display-box"></input></div>
+		<p id="result"></p>
+
+		<div class="container" id="SIDE_A">
+		</div>
+
+		<div class="container" id="SIDE_B">
+		</div>
+		
+		<div class="side-container">
+			<div class="container" id="SIDE_C">
+			</div>
+
+			<div class="container" id="SIDE_D">
+			</div>
+		</div>
+	</div>
+	
+    <div id="popup">
+        That PLU code is not found on the display, <br>
+		Please check that it is correct. It may be a new item.<br>
+        <br>
+        <button onclick="closePopup()">OK</button>
+    </div>
+
+    <script>
+	
+        // Function to look up the number and return the corresponding string
+        function lookupNumber(number, dataArray) {
+            for (let i = 0; i < dataArray.length; i++) {
+                let parts = dataArray[i].split(', ');
+                if (parts[0] == number) {
+                    return parts[2]; // Return the string from the end of the line
+                }
+            }
+            return "Not found"; // Return 'Not found' if the number is not in the array
+        }
+
+		function cellClick(cellId, data) {
+			const cells = document.getElementsByTagName('td');
+			const cellsArray = Array.prototype.slice.call(cells);
+
+			// Use a for loop to remove the 'highlight' class
+			for (let i = 0; i < cellsArray.length; i++) {
+				cellsArray[i].classList.remove('highlight');
+			}
+
+			// Highlight the clicked cell
+			document.getElementById(cellId).classList.add('highlight');
+
+			// Update the input field with the middle text
+			const middleText = data.split(',')[1].trim();
+			document.getElementById('inputText').value = middleText;
+
+			const endText = data.split(',')[2].trim();
+			document.getElementById('display-box').value = endText;
+		}
+	
+        function createCircle(size) {
+            const circle = document.createElement('div');
+            circle.style.width = `${size}px`;
+            circle.style.height = `${size}px`;
+
+            let isOverlapping;
+            let top, left;
+            let attempts = 0;
+            const maxAttempts = 100;
+
+            do {
+                isOverlapping = false;
+                top = Math.random() * (window.innerHeight - size);
+                left = Math.random() * (window.innerWidth - size);
+
+                // Attach event listeners to all cells in all tables
+
+				var existingCircles = document.querySelectorAll('.circle');
+				for (var i = 0; i < existingCircles.length; i++) {
+					var existingCircle = existingCircles[i];
+					var exRect = existingCircle.getBoundingClientRect();
+					var dx = left - exRect.left;
+					var dy = top - exRect.top;
+					var distance = Math.sqrt(dx * dx + dy * dy);
+
+					if (distance < size) {
+						isoverlapping = true;
+					}
+				}
+                attempts++;
+                if (attempts >= maxAttempts) {
+                    isOverlapping = false;
+                }
+            } while (isOverlapping);
+
+            circle.style.top = `${top}px`;
+            circle.style.left = `${left}px`;
+            circle.classList.add('circle');
+            document.body.appendChild(circle);
+        }
+
+        const numberOfCircles = Math.floor(Math.random() * 4) + 2; // Random number between 2 and 5
+        for (let i = 0; i < numberOfCircles; i++) {
+            const size = 600 - ((600 - 150) / (numberOfCircles - 1)) * i;
+            createCircle(size);
+        }
+		
+		function showPopup() {
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        function createTable(array, containerId, tableIdPrefix) {
+            let container = document.getElementById(containerId);
+            let cellMap = [];
+			
+			var tabWidth = 0;
+			var tabHeight = 0;
+			var sectionCount = 0;
+			var tableCaption = "Test 123..."
+			
+			tableCaption = array[0].split(',')[0];//.substring(0, 6) + '...';
+			sectionCount = array[0].split(',')[1];
+			tabWidth = array[0].split(',')[2];
+			tabHeight = array[0].split(',')[3];
+			
+            for (let section = 0; section < sectionCount; section++) {
+				if(section == 0){
+					var caption = tableCaption;
+				}else{
+					var caption = '&nbsp';
+				}
+                let table = '<table id="bay' + (section + 1) + '_' + tableIdPrefix + '"><caption>'+caption+'</caption><tbody>';
+                table += '<tr><th colspan="6" class="' + (section === 0 ? 'round-top-left' : (section === sectionCount-1 ? 'round-top-right' : '')) + '">Bay ' + (section + 1) + '</th></tr>';
+                let index = 1+section * (tabWidth * tabHeight);
+                for (let row = 0; row < tabHeight; row++) {
+                    table += '<tr>';
+                    for (let cell = 0; cell < tabWidth; cell++) {
+                        if (index < array.length) {
+                            table += '<td onclick="cellClick(\'' + tableIdPrefix + 'cell' + index + '\', \'' + array[index] + '\')" id="' + tableIdPrefix + 'cell' + index + '">' + array[index].split(',')[0] + '</td>';
+                            cellMap.push({ id: tableIdPrefix + 'cell' + index, middleText: array[index].split(',')[1].trim() });
+                            index++;
+                        } else {
+                            table += '<td></td>';
+                        }
+                    }
+                    table += '</tr>';
+                }
+                table += '</tbody></table>';
+                container.innerHTML += table;
+            }
+            return cellMap;
+        }
+
+        const cellMap1 = createTable(dataArray1, 'SIDE_A', 'A'); // dataArray1 loaded from external file
+        const cellMap2 = createTable(dataArray2, 'SIDE_B', 'B'); // dataArray2 loaded from external file
+        const cellMap3 = createTable(dataArray3, 'SIDE_C', 'C'); // dataArray3 loaded from external file
+        const cellMap4 = createTable(dataArray4, 'SIDE_D', 'D'); // dataArray3 loaded from external file
+    </script>
+
+	
+</body>
+</html>
