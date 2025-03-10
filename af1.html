@@ -19,13 +19,32 @@
 			margin: 0;
 			font-family: 'CurrysSans';
         }
+		
 		.container1 {
+			position: relative;
+			border: 2px solid #4C12A1;
 			text-align: center;
-            background-color: #CFC8F7;
+            /*background-color: #CFC8F7;*/
+			background-color: rgba(165, 190, 255, 0.5);
+			/* midpoint * 2 - start point
+			*/
 			border-radius: 20px; /* Adjust the value as needed */
 			padding: 20px;
 			margin-top: 50px;
 		}
+		
+		.h1-container {margin-top:-70px;}
+		
+		.container1 h1 {
+			display:inline-block;
+			border: 2px solid #4C12A1;
+			border-radius: 10px; /* Adjust the value as needed */
+			padding: 5px 20px;
+			text-align: center;
+			background-color: #FFFFFF;
+			color: #4C12A1;
+		}
+		
         .circle {
             border-radius: 50%;
             position: absolute;
@@ -82,7 +101,7 @@
 			color: #E8F0FE;
 		}
 		input, #display-box {
-			border: 1px solid #4C12A1;
+			border: 2px solid #4C12A1;
 			border-radius: 5px; /* Adjust the value as needed */
 			padding: 5px;
 			width: 400px;
@@ -90,6 +109,7 @@
 			background-color: #FFFFFF;
 			color: #4C12A1;
 		}
+
 
 		#display-box {
 			width: 500px;
@@ -136,30 +156,89 @@
 			var inputText = document.getElementById('inputText').value.trim().toUpperCase();
 
 			function searchArray(dataArray, sideIdentifier) {
+				var matches = [];
 				for (var i = 0; i < dataArray.length; i++) {
 					var line = dataArray[i].split(", ");
 					if (line[2] === inputText || line[1] === inputText) {
-						side = sideIdentifier;
-						itemNumber = line[0];
-						return true;
+						matches.push({
+							side: sideIdentifier,
+							itemNumber: line[0],
+							dataArray: dataArray
+						});
 					}
 				}
-				return false;
+				return matches;
 			}
-			removeHighlights();
 
-			if (
-				searchArray(dataArray1, "A") || 
-				searchArray(dataArray2, "B") || 
-				searchArray(dataArray3, "C") || 
-				searchArray(dataArray4, "D")
-			) {
-				searchValue(side, itemNumber);
-				const endText = lookupNumber(itemNumber, dataArray1.concat(dataArray2, dataArray3, dataArray4));
-				document.getElementById('display-box').value = endText;
+			removeHighlights(); // Clear highlights only once before the search
+
+			// Collect matches from all arrays
+			let allMatches = [];
+			allMatches = allMatches.concat(searchArray(dataArray1, "A"));
+			allMatches = allMatches.concat(searchArray(dataArray2, "B"));
+			allMatches = allMatches.concat(searchArray(dataArray3, "C"));
+			allMatches = allMatches.concat(searchArray(dataArray4, "D"));
+
+			let displayBoxUpdated = false;
+
+			if (allMatches.length > 0) {
+				for (let match of allMatches) {
+					searchValue(match.side, match.itemNumber); // Highlight each match
+
+					if (!displayBoxUpdated) {
+						const endText = lookupNumber(match.itemNumber, match.dataArray);
+						document.getElementById('display-box').value = endText;
+						displayBoxUpdated = true;
+					}
+				}
 			} else {
 				removeHighlights();
 				showPopup();
+			}
+		}
+
+		function lookupNumber(itemNumber, dataArray) {
+			for (var i = 0; i < dataArray.length; i++) {
+				var line = dataArray[i].split(", ");
+				if (line[0] === itemNumber) {
+					return line.join(", ");
+				}
+			}
+			return '';
+		}
+
+		function searchValue(side, value) {
+			let bays = {
+				'A': {
+					'Bay 1': document.getElementById('bay1_A').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_A').getElementsByTagName('td'),
+					'Bay 3': document.getElementById('bay3_A').getElementsByTagName('td')
+				},
+				'B': {
+					'Bay 1': document.getElementById('bay1_B').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_B').getElementsByTagName('td'),
+					'Bay 3': document.getElementById('bay3_B').getElementsByTagName('td')
+				},
+				'C': {
+					'Bay 1': document.getElementById('bay1_C').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_C').getElementsByTagName('td')
+				},
+				'D': {
+					'Bay 1': document.getElementById('bay1_D').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_D').getElementsByTagName('td')
+				}
+			};
+
+			// Highlight the matching value
+			for (var bay in bays[side]) {
+				if (bays[side].hasOwnProperty(bay)) {
+					for (var k = 0; k < bays[side][bay].length; k++) {
+						var cell = bays[side][bay][k];
+						if (cell.textContent == value) {
+							cell.classList.add('highlight'); // Add highlight class
+						}
+					}
+				}
 			}
 		}
 
@@ -200,44 +279,6 @@
 			}
 		}
 
-		function searchValue(side, value) {
-			removeHighlights();
-			let found = false;
-			let bays = {
-				'A': {
-					'Bay 1': document.getElementById('bay1_A').getElementsByTagName('td'),
-					'Bay 2': document.getElementById('bay2_A').getElementsByTagName('td'),
-					'Bay 3': document.getElementById('bay3_A').getElementsByTagName('td')
-				},
-				'B': {
-					'Bay 1': document.getElementById('bay1_B').getElementsByTagName('td'),
-					'Bay 2': document.getElementById('bay2_B').getElementsByTagName('td'),
-					'Bay 3': document.getElementById('bay3_B').getElementsByTagName('td')
-				},
-				'C': {
-					'Bay 1': document.getElementById('bay1_C').getElementsByTagName('td'),
-					'Bay 2': document.getElementById('bay2_C').getElementsByTagName('td')
-				},
-				'D': {
-					'Bay 1': document.getElementById('bay1_D').getElementsByTagName('td'),
-					'Bay 2': document.getElementById('bay2_D').getElementsByTagName('td')
-				}
-			};
-
-			// Search and highlight the value
-			for (var bay in bays[side]) {
-				if (bays[side].hasOwnProperty(bay)) {
-					for (var k = 0; k < bays[side][bay].length; k++) {
-						var cell = bays[side][bay][k];
-						if (cell.textContent == value) {
-							cell.classList.add('highlight');
-							found = true;
-						}
-					}
-				}
-			}
-		}
-
 		
 		function compareAndFind() {
 			compareText();
@@ -248,7 +289,7 @@
 </head>
 <body>
 	<div class="container1">
-		<h1>Accessory Finder</h1>
+		<div class="h1-container"><h1>Accessory Finder</h1></div
 		<p>Enter accessory to find:</p>
 		<input type="text" id="inputText"/>
 		<button onclick="compareAndFind()">Find</button>
@@ -311,54 +352,133 @@
 
 			const endText = data.split(',')[2].trim();
 			document.getElementById('display-box').value = endText;
+			
+			compareText();
 		}
 	
-        function createCircle(size) {
-            const circle = document.createElement('div');
-            circle.style.width = `${size}px`;
-            circle.style.height = `${size}px`;
 
-            let isOverlapping;
-            let top, left;
-            let attempts = 0;
-            const maxAttempts = 100;
 
-            do {
-                isOverlapping = false;
-                top = Math.random() * (window.innerHeight - size);
-                left = Math.random() * (window.innerWidth - size);
+		function placeAllCircles() {
+			const maxRetries = 50; // Maximum number of attempts to find a valid position
+			const numberOfCircles = 4; // Number of circles to create
+			const circles = []; // Array to store circle positions
+			const speedModifier = 0.1; // Configurable multiplier for all speeds (adjust for faster/slower motion)
 
-                // Attach event listeners to all cells in all tables
+			function createCircle(id) {
+				const circle = document.createElement('div');
+				var size = Math.random() * (600 - 100) + 100; // Random size between 100px and 1000px
+				let top = Math.random() * (window.innerHeight - size);
 
-				var existingCircles = document.querySelectorAll('.circle');
-				for (var i = 0; i < existingCircles.length; i++) {
-					var existingCircle = existingCircles[i];
-					var exRect = existingCircle.getBoundingClientRect();
-					var dx = left - exRect.left;
-					var dy = top - exRect.top;
-					var distance = Math.sqrt(dx * dx + dy * dy);
+				// Ensure no overlap in the x-direction
+				let left;
+				let validPosition;
+				let retries = 0;
+				do {
+					validPosition = true;
+					left = Math.random() * (window.innerWidth - size); // Generate random left position
+					retries++;
 
-					if (distance < size) {
-						isoverlapping = true;
+					// Check for overlaps with existing circles
+					for (const existingCircle of circles) {
+						const existingLeft = existingCircle.left;
+						const existingSize = existingCircle.size;
+						if (left < existingLeft + existingSize && left + size > existingLeft) {
+							validPosition = false;
+							break;
+						}
 					}
+
+					if (retries >= maxRetries) {
+						removeAllCircles();
+						placeAllCircles(); // Restart the process
+						return false; // Exit the current placement
+					}
+				} while (!validPosition);
+
+				// Store circle's position and size
+				circles.push({ left, size });
+
+				// Use position: fixed to prevent layout shift
+				circle.style.width = `${size}px`;
+				circle.style.height = `${size}px`;
+				circle.style.position = 'fixed';
+				circle.style.borderRadius = '50%'; // Make the element look like a circle
+				circle.style.top = `${top}px`;
+				circle.style.left = `${left}px`;
+				circle.classList.add('circle');
+				document.body.appendChild(circle);
+
+				const minSpeed = 0.05; // Minimum upward speed
+				const maxSpeed = 1.00; // Maximum upward speed
+				var speed = (minSpeed + ((1000 - size - 100) / 300) * (maxSpeed - minSpeed)) * speedModifier; // Scale upward speed based on size and multiplier
+
+				// Oscillation parameters for the sway effect
+				var oscillationAmplitude = size / 10; // Sway distance based on circle size
+				var oscillationFrequency = speed / 100; // Tie sway frequency to upward speed for synchronization
+				let frame = 0; // Frame counter to calculate sine wave
+
+				// Function to manually update position
+				function updatePosition() {
+					top -= speed; // Move the circle upwards
+					const sway = Math.sin(frame * oscillationFrequency) * oscillationAmplitude; // Calculate sway
+					const currentLeft = left + sway; // Apply sway to horizontal position
+
+					if (top + size <= 0) { // Check if the circle is above the screen
+						top = window.innerHeight; // Reset to the bottom
+
+						// Generate a new random size
+						size = Math.random() * (600 - 100) + 100;
+
+						// Update the circle's styles to reflect the new size
+						circle.style.width = `${size}px`;
+						circle.style.height = `${size}px`;
+
+						// Recalculate left position based on the new size
+						left = Math.random() * (window.innerWidth - size);
+
+						// Update oscillation parameters to reflect new size
+						oscillationAmplitude = size / 10; // Update sway distance
+						speed = (minSpeed + ((1000 - size - 100) / 300) * (maxSpeed - minSpeed)) * speedModifier;
+						oscillationFrequency = speed / 100; // Keep sway frequency tied to upward speed
+					}
+
+					// Update circle's position
+					circle.style.top = `${top}px`;
+					circle.style.left = `${currentLeft}px`;
+
+					frame++; // Increment frame counter
 				}
-                attempts++;
-                if (attempts >= maxAttempts) {
-                    isOverlapping = false;
-                }
-            } while (isOverlapping);
 
-            circle.style.top = `${top}px`;
-            circle.style.left = `${left}px`;
-            circle.classList.add('circle');
-            document.body.appendChild(circle);
-        }
+				// Update the position every 16 milliseconds (~60 frames per second)
+				setInterval(updatePosition, 16);
 
-        const numberOfCircles = Math.floor(Math.random() * 2) + 2; // Random number between 2 and 5
-        for (let i = 0; i < numberOfCircles; i++) {
-            const size = 600 - ((600 - 150) / (numberOfCircles - 1)) * i;
-            createCircle(size);
-        }
+				return true; // Indicate success
+			}
+
+			function removeAllCircles() {
+				// Select all circles
+				const allCircles = document.querySelectorAll('.circle');
+
+				// Use a traditional for loop for compatibility
+				for (var i = 0; i < allCircles.length; i++) {
+					allCircles[i].parentNode.removeChild(allCircles[i]); // Remove each circle
+				}
+			}
+
+			// Create all circles
+			for (let i = 0; i < numberOfCircles; i++) {
+				if (!createCircle(i + 1)) return; // If placement fails, restart
+			}
+		}
+
+		// Run the placement process on DOMContentLoaded
+		document.addEventListener('DOMContentLoaded', () => {
+			placeAllCircles();
+		});
+
+
+
+
 		
 		function showPopup() {
             document.getElementById('popup').style.display = 'block';
