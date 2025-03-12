@@ -31,6 +31,7 @@
 			border-radius: 20px; /* Adjust the value as needed */
 			padding: 20px;
 			margin-top: 50px;
+            z-index: 2; /* Ensure circles stay in the background */
 		}
 		
 		.h1-container {margin-top:-70px;}
@@ -50,7 +51,7 @@
             position: absolute;
         /*    background: linear-gradient(to bottom, #E2EFF2, #CAE7E6, #8CCABC); */
             background: linear-gradient(to bottom, #FFFFFF, #F9D2E5, #E9A6B8);
-            z-index: -1; /* Ensure circles stay in the background */
+            z-index: 1; /* Ensure circles stay in the background */
         }		
 		.container {
 			display: flex;
@@ -408,6 +409,25 @@
 				circle.classList.add('circle');
 				document.body.appendChild(circle);
 
+				// Add click event listener to change color and move to bottom
+				circle.addEventListener('click', function () {
+					top = window.innerHeight; // Move to bottom
+					// Generate a new random size
+					size = Math.random() * (600 - 100) + 100;
+
+					// Update the circle's styles to reflect the new size
+					circle.style.width = `${size}px`;
+					circle.style.height = `${size}px`;
+
+					// Recalculate left position based on the new size
+					left = Math.random() * (window.innerWidth - size);
+
+					// Update oscillation parameters to reflect new size
+					oscillationAmplitude = size / 10; // Update sway distance
+					speed = (minSpeed + ((1000 - size - 100) / 300) * (maxSpeed - minSpeed)) * speedModifier;
+					oscillationFrequency = speed / 100; // Keep sway frequency tied to upward speed
+				});
+
 				const minSpeed = 0.05; // Minimum upward speed
 				const maxSpeed = 1.00; // Maximum upward speed
 				var speed = (minSpeed + ((1000 - size - 100) / 300) * (maxSpeed - minSpeed)) * speedModifier; // Scale upward speed based on size and multiplier
@@ -475,6 +495,7 @@
 		document.addEventListener('DOMContentLoaded', () => {
 			placeAllCircles();
 		});
+
 
 
 
