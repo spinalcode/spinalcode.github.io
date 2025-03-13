@@ -53,6 +53,11 @@
             background: linear-gradient(to bottom, #FFFFFF, #F9D2E5, #E9A6B8);
             z-index: 1; /* Ensure circles stay in the background */
         }		
+
+        .purple {
+            background: linear-gradient(to bottom, #CA9BFF, #5400A7, #39007A);
+        }		
+
 		.container {
 			display: flex;
 		}
@@ -411,21 +416,7 @@
 
 				// Add click event listener to change color and move to bottom
 				circle.addEventListener('click', function () {
-					top = window.innerHeight; // Move to bottom
-					// Generate a new random size
-					size = Math.random() * (600 - 100) + 100;
-
-					// Update the circle's styles to reflect the new size
-					circle.style.width = `${size}px`;
-					circle.style.height = `${size}px`;
-
-					// Recalculate left position based on the new size
-					left = Math.random() * (window.innerWidth - size);
-
-					// Update oscillation parameters to reflect new size
-					oscillationAmplitude = size / 10; // Update sway distance
-					speed = (minSpeed + ((1000 - size - 100) / 300) * (maxSpeed - minSpeed)) * speedModifier;
-					oscillationFrequency = speed / 100; // Keep sway frequency tied to upward speed
+					circle.classList.add('purple');
 				});
 
 				const minSpeed = 0.05; // Minimum upward speed
@@ -445,6 +436,7 @@
 
 					if (top + size <= 0) { // Check if the circle is above the screen
 						top = window.innerHeight; // Reset to the bottom
+						circle.classList.remove('purple');
 
 						// Generate a new random size
 						size = Math.random() * (600 - 100) + 100;
