@@ -502,47 +502,48 @@
             document.getElementById('popup').style.display = 'none';
         }
 
-        function createTable(array, containerId, tableIdPrefix) {
-            let container = document.getElementById(containerId);
-            let cellMap = [];
-			
-			var tabWidth = 0;
-			var tabHeight = 0;
-			var sectionCount = 0;
-			var tableCaption = "Test 123..."
-			
-			tableCaption = array[0].split(',')[0];//.substring(0, 6) + '...';
-			sectionCount = array[0].split(',')[1];
-			tabWidth = array[0].split(',')[2];
-			tabHeight = array[0].split(',')[3];
-			
-            for (let section = 0; section < sectionCount; section++) {
-				if(section == 0){
-					var caption = tableCaption;
-				}else{
-					var caption = '&nbsp';
-				}
-                let table = '<table id="bay' + (section + 1) + '_' + tableIdPrefix + '"><caption>'+caption+'</caption><tbody>';
-                table += '<tr><th colspan="6" class="' + (section === 0 ? 'round-top-left' : (section === sectionCount-1 ? 'round-top-right' : '')) + '">Bay ' + (section + 1) + '</th></tr>';
-                let index = 1+section * (tabWidth * tabHeight);
-                for (let row = 0; row < tabHeight; row++) {
-                    table += '<tr>';
-                    for (let cell = 0; cell < tabWidth; cell++) {
-                        if (index < array.length) {
-                            table += '<td onclick="cellClick(\'' + tableIdPrefix + 'cell' + index + '\', \'' + array[index] + '\')" id="' + tableIdPrefix + 'cell' + index + '">' + array[index].split(',')[0] + '</td>';
-                            cellMap.push({ id: tableIdPrefix + 'cell' + index, middleText: array[index].split(',')[1].trim() });
-                            index++;
-                        } else {
-                            table += '<td></td>';
-                        }
-                    }
-                    table += '</tr>';
+function createTable(array, containerId, tableIdPrefix) {
+    let container = document.getElementById(containerId);
+    let cellMap = [];
+
+    var tabWidth = 0;
+    var tabHeight = 0;
+    var sectionCount = 0;
+    var tableCaption = "Test 123...";
+
+    tableCaption = array[0].split(',')[0]; //.substring(0, 6) + '...';
+    sectionCount = array[0].split(',')[1];
+    tabWidth = array[0].split(',')[2];
+    tabHeight = array[0].split(',')[3];
+
+    for (let section = 0; section < sectionCount; section++) {
+        let caption = section === 0 ? tableCaption : '&nbsp';
+        let table = '<table id="bay' + (section + 1) + '_' + tableIdPrefix + '"><caption>' + caption + '</caption><tbody>';
+        table += '<tr><th colspan="6" class="' + (section === 0 ? 'round-top-left' : (section === sectionCount - 1 ? 'round-top-right' : '')) + '">Bay ' + (section + 1) + '</th></tr>';
+        let index = 1 + section * (tabWidth * tabHeight);
+
+        for (let row = 0; row < tabHeight; row++) {
+            table += '<tr>';
+            for (let cell = 0; cell < tabWidth; cell++) {
+                if (index < array.length) {
+                    let cellId = tableIdPrefix + 'cell' + index;
+                    let middleText = array[index].split(',')[1].trim();
+                    table += '<td onclick="cellClick(\'' + cellId + '\', \'' + array[index] + '\')" id="' + cellId + '" title="' + array[index].split(',')[2].trim() + '">' + array[index].split(',')[0] + '</td>';
+                    cellMap.push({ id: cellId, middleText: middleText });
+                    index++;
+                } else {
+                    table += '<td></td>';
                 }
-                table += '</tbody></table>';
-                container.innerHTML += table;
             }
-            return cellMap;
+            table += '</tr>';
         }
+
+        table += '</tbody></table>';
+        container.innerHTML += table;
+    }
+    return cellMap;
+}
+
 
         const cellMap1 = createTable(dataArray1, 'SIDE_A', 'A'); // dataArray1 loaded from external file
         const cellMap2 = createTable(dataArray2, 'SIDE_B', 'B'); // dataArray2 loaded from external file
