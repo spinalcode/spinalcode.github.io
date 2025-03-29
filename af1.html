@@ -365,130 +365,107 @@
 	
 
 
-		function placeAllCircles() {
-			const maxRetries = 50; // Maximum number of attempts to find a valid position
-			const numberOfCircles = 4; // Number of circles to create
-			const circles = []; // Array to store circle positions
-			const speedModifier = 0.1; // Configurable multiplier for all speeds (adjust for faster/slower motion)
+function placeAllCircles() {
+    const numberOfCircles = 4; // Number of circles to create
+    const circles = []; // Array to store circle data
+    const speedModifier = 0.1; // Configurable multiplier for all speeds (adjust for faster/slower motion)
 
-			function createCircle(id) {
-				const circle = document.createElement('div');
-				var size = Math.random() * (600 - 100) + 100; // Random size between 100px and 1000px
-				let top = Math.random() * (window.innerHeight - size);
+    function createCircle(id) {
+        const circle = document.createElement('div');
+        const size = Math.random() * (400 - 100) + 100; // Random size between 100px and 600px
+        let top = Math.random() * (window.innerHeight - size);
+        let left = Math.random() * (window.innerWidth - size);
 
-				// Ensure no overlap in the x-direction
-				let left;
-				let validPosition;
-				let retries = 0;
-				do {
-					validPosition = true;
-					left = Math.random() * (window.innerWidth - size); // Generate random left position
-					retries++;
+        // Velocity (random direction and speed)
+        const dx = (Math.random() - 0.5) * speedModifier * 10; // Horizontal speed
+        const dy = (Math.random() - 0.5) * speedModifier * 10; // Vertical speed
 
-					// Check for overlaps with existing circles
-					for (const existingCircle of circles) {
-						const existingLeft = existingCircle.left;
-						const existingSize = existingCircle.size;
-						if (left < existingLeft + existingSize && left + size > existingLeft) {
-							validPosition = false;
-							break;
-						}
-					}
+        circles.push({ circle, size, top, left, dx, dy }); // Store circle data
 
-					if (retries >= maxRetries) {
-						removeAllCircles();
-						placeAllCircles(); // Restart the process
-						return false; // Exit the current placement
-					}
-				} while (!validPosition);
+		// Use position: fixed to prevent layout shift
+		circle.style.width = `${size}px`;
+		circle.style.height = `${size}px`;
+		circle.style.position = 'fixed';
+		circle.style.borderRadius = '50%'; // Make the element look like a circle
+		circle.style.top = `${top}px`;
+		circle.style.left = `${left}px`;
+		circle.classList.add('circle');
+		document.body.appendChild(circle);
 
-				// Store circle's position and size
-				circles.push({ left, size });
 
-				// Use position: fixed to prevent layout shift
-				circle.style.width = `${size}px`;
-				circle.style.height = `${size}px`;
-				circle.style.position = 'fixed';
-				circle.style.borderRadius = '50%'; // Make the element look like a circle
-				circle.style.top = `${top}px`;
-				circle.style.left = `${left}px`;
-				circle.classList.add('circle');
-				document.body.appendChild(circle);
+        return true;
+    }
 
-				// Add click event listener to change color and move to bottom
-				circle.addEventListener('click', function () {
-					circle.classList.add('purple');
-				});
+    function detectAndHandleCollisions() {
+        for (let i = 0; i < circles.length; i++) {
+            const circleA = circles[i];
+            for (let j = i + 1; j < circles.length; j++) {
+                const circleB = circles[j];
 
-				const minSpeed = 0.05; // Minimum upward speed
-				const maxSpeed = 1.00; // Maximum upward speed
-				var speed = (minSpeed + ((1000 - size - 100) / 300) * (maxSpeed - minSpeed)) * speedModifier; // Scale upward speed based on size and multiplier
+                // Calculate distance between two circles
+                const dx = circleB.left + circleB.size / 2 - (circleA.left + circleA.size / 2);
+                const dy = circleB.top + circleB.size / 2 - (circleA.top + circleA.size / 2);
+                const distance = Math.sqrt(dx * dx + dy * dy);
 
-				// Oscillation parameters for the sway effect
-				var oscillationAmplitude = size / 10; // Sway distance based on circle size
-				var oscillationFrequency = speed / 100; // Tie sway frequency to upward speed for synchronization
-				let frame = 0; // Frame counter to calculate sine wave
+                // Check if circles overlap
+                /*
+				if (distance < (circleA.size / 2 + circleB.size / 2)) {
+                    // Elastic collision response
+                    const angle = Math.atan2(dy, dx);
+                    const speedA = Math.sqrt(circleA.dx * circleA.dx + circleA.dy * circleA.dy);
+                    const speedB = Math.sqrt(circleB.dx * circleB.dx + circleB.dy * circleB.dy);
 
-				// Function to manually update position
-				function updatePosition() {
-					top -= speed; // Move the circle upwards
-					const sway = Math.sin(frame * oscillationFrequency) * oscillationAmplitude; // Calculate sway
-					const currentLeft = left + sway; // Apply sway to horizontal position
+                    const directionA = Math.atan2(circleA.dy, circleA.dx);
+                    const directionB = Math.atan2(circleB.dy, circleB.dx);
 
-					if (top + size <= 0) { // Check if the circle is above the screen
-						top = window.innerHeight; // Reset to the bottom
-						circle.classList.remove('purple');
+                    circleA.dx = speedB * Math.cos(angle);
+                    circleA.dy = speedB * Math.sin(angle);
+                    circleB.dx = speedA * Math.cos(angle + Math.PI);
+                    circleB.dy = speedA * Math.sin(angle + Math.PI);
+                }
+				*/
+            }
+        }
+    }
 
-						// Generate a new random size
-						size = Math.random() * (600 - 100) + 100;
+    function updatePositions() {
+        for (const data of circles) {
+            const { circle, size, top, left, dx, dy } = data;
 
-						// Update the circle's styles to reflect the new size
-						circle.style.width = `${size}px`;
-						circle.style.height = `${size}px`;
+            // Update position based on velocity
+            data.left += dx;
+            data.top += dy;
 
-						// Recalculate left position based on the new size
-						left = Math.random() * (window.innerWidth - size);
+            // Check for boundaries and bounce
+            if (data.left <= 0 || data.left + size >= window.innerWidth) {
+                data.dx = -data.dx; // Reverse horizontal direction
+            }
+            if (data.top <= 0 || data.top + size >= window.innerHeight) {
+                data.dy = -data.dy; // Reverse vertical direction
+            }
 
-						// Update oscillation parameters to reflect new size
-						oscillationAmplitude = size / 10; // Update sway distance
-						speed = (minSpeed + ((1000 - size - 100) / 300) * (maxSpeed - minSpeed)) * speedModifier;
-						oscillationFrequency = speed / 100; // Keep sway frequency tied to upward speed
-					}
+            // Apply updated positions
+            circle.style.top = `${data.top}px`;
+            circle.style.left = `${data.left}px`;
+        }
 
-					// Update circle's position
-					circle.style.top = `${top}px`;
-					circle.style.left = `${currentLeft}px`;
+        // Handle collisions
+        detectAndHandleCollisions();
+    }
 
-					frame++; // Increment frame counter
-				}
+    // Create all circles
+    for (let i = 0; i < numberOfCircles; i++) {
+        createCircle(i + 1);
+    }
 
-				// Update the position every 16 milliseconds (~60 frames per second)
-				setInterval(updatePosition, 16);
+    // Update positions every 16 milliseconds (~60 frames per second)
+    setInterval(updatePositions, 16);
+}
 
-				return true; // Indicate success
-			}
-
-			function removeAllCircles() {
-				// Select all circles
-				const allCircles = document.querySelectorAll('.circle');
-
-				// Use a traditional for loop for compatibility
-				for (var i = 0; i < allCircles.length; i++) {
-					allCircles[i].parentNode.removeChild(allCircles[i]); // Remove each circle
-				}
-			}
-
-			// Create all circles
-			for (let i = 0; i < numberOfCircles; i++) {
-				if (!createCircle(i + 1)) return; // If placement fails, restart
-			}
-		}
-
-		// Run the placement process on DOMContentLoaded
-		document.addEventListener('DOMContentLoaded', () => {
-			placeAllCircles();
-		});
-
+// Run the placement process on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    placeAllCircles();
+});
 
 
 
