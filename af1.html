@@ -166,12 +166,21 @@
 				var matches = [];
 				for (var i = 0; i < dataArray.length; i++) {
 					var line = dataArray[i].split(", ");
-					if (line[2] === inputText || line[1] === inputText) {
+					// check full match
+					if (line[2].toUpperCase() == inputText || line[1].toUpperCase() == inputText) {
 						matches.push({
 							side: sideIdentifier,
 							itemNumber: line[0],
 							dataArray: dataArray
 						});
+					} else { // check partial match
+						if (line[2].toUpperCase().includes(inputText) || line[1].toUpperCase().includes(inputText)) {
+							matches.push({
+								side: sideIdentifier,
+								itemNumber: line[0],
+								dataArray: dataArray
+							});
+						}
 					}
 				}
 				return matches;
