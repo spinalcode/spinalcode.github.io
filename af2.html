@@ -354,7 +354,7 @@
     const html5QrCode = new Html5Qrcode("scanner-container");
     html5QrCode.start(
       { facingMode: "environment" },
-      { fps: 5, qrbox: 500 },
+      { fps: 5, qrbox: 300 },
       (decodedText) => {
         
 		//alert(`Barcode detected: ${decodedText}`);
@@ -368,7 +368,7 @@
 			// Get the last word after splitting by space or comma
             const lastWord = foundEntry.split(", ").pop();
             inputText.value = lastWord;
-            resultElement.textContent = `Found: ${lastWord}`;
+            //resultElement.textContent = `Found: ${lastWord}`;
 			compareAndFind();
         }
 		
