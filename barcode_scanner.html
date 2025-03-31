@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Barcode Scanner</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+</head>
+<body>
+  <h1>Scan a Barcode</h1>
+  <div id="scanner-container"></div>
+  <p id="result">Scanning...</p>
+
+  <script>
+    Quagga.init({
+      inputStream: {
+        name: "Live",
+        type: "LiveStream",
+        target: document.querySelector("#scanner-container"), // Scanner will be displayed in this div
+      },
+      decoder: {
+        readers: ["code_128_reader"], // Specify the type of barcode to decode
+      },
+    }, function(err) {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      Quagga.start();
+    });
+
+    Quagga.onDetected(function(data) {
+      document.querySelector("#result").textContent = `Barcode detected: ${data.codeResult.code}`;
+      Quagga.stop();
+    });
+  </script>
+</body>
+</html>
