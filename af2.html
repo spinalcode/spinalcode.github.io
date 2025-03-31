@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+	
+		@font-face {
+			font-family: 'CurrysSans'; /*a name to be used later*/
+			src: url('Currys Sans.ttf'); /*URL to font*/
+		}
+
+        body {
+            align-items: center;
+            justify-content: center;
+            /* background-color: #CAE7E6; */
+            background-color: #F9D2E5;
+            position: relative;
+			display: flex;
+			align-items: center;
+			margin: 0;
+			font-family: 'CurrysSans';
+        }
+		
+		.container1 {
+			position: relative;
+			border: 2px solid #4C12A1;
+			text-align: center;
+            /*background-color: #CFC8F7;*/
+			background-color: rgba(165, 190, 255, 0.5);
+			/* midpoint * 2 - start point
+			*/
+			border-radius: 20px; /* Adjust the value as needed */
+			padding: 20px;
+			margin-top: 50px;
+            z-index: 2; /* Ensure circles stay in the background */
+		}
+		
+		.h1-container {margin-top:-70px;}
+		
+		.container1 h1 {
+			display:inline-block;
+			border: 2px solid #4C12A1;
+			border-radius: 10px; /* Adjust the value as needed */
+			padding: 5px 20px;
+			text-align: center;
+			background-color: #FFFFFF;
+			color: #4C12A1;
+		}
+		
+        .circle {
+            border-radius: 50%;
+            position: absolute;
+        /*    background: linear-gradient(to bottom, #E2EFF2, #CAE7E6, #8CCABC); */
+            background: linear-gradient(to bottom, #FFFFFF, #F9D2E5, #E9A6B8);
+            z-index: 1; /* Ensure circles stay in the background */
+        }		
+
+        .purple {
+            background: linear-gradient(to bottom, #CA9BFF, #5400A7, #39007A);
+        }		
+
+		.container {
+			display: flex;
+		}
+		.side-container {
+			display: flex; /* or display: inline-block; */
+		}
+
+		.side-container .container {
+			flex: 1; /* or width: 50%; for inline-block */
+		}
+		
+		table {
+			border-collapse: separate; /* Use separate instead of collapse */
+			margin: 10px; /* Remove margins between tables */
+		}
+
+		th, td {
+			border: 1px solid #4C12A1;
+			padding: 5px;
+			text-align: center;
+			width: 20px; /* Set a fixed width */
+			height: 20px; /* Set a fixed height */
+		}
+
+		th {
+			background-color: #4C12A1;
+			color: #E8F0FE;
+		}
+
+		.highlight {
+			background-color: #E5006E; /* Change this to your desired highlight color */
+			color: #E8F0FE;
+		}
+		.round-top-left {
+			border-top-left-radius: 10px; /* Adjust the value as needed */
+		}
+		.round-top-right {
+			border-top-right-radius: 10px; /* Adjust the value as needed */
+		}
+		button {
+			border: 1px solid #E5006D;
+			border-radius: 5px; /* Adjust the value as needed */
+			padding: 5px;
+			width: 100px;
+			text-align: center;
+			background-color: #E5006D;
+			color: #E8F0FE;
+		}
+		input, #display-box {
+			border: 2px solid #4C12A1;
+			border-radius: 5px; /* Adjust the value as needed */
+			padding: 5px;
+			width: 400px;
+			text-align: center;
+			background-color: #FFFFFF;
+			color: #4C12A1;
+		}
+
+
+		#display-box {
+			width: 500px;
+		}
+		
+		#SIDE_D {
+			float: right;
+			margin-left: auto;
+		}
+        
+		#popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: #FFFFFF;
+			border: 1px solid #FFFFFF;
+			border-radius: 5px;
+			height: 200px;
+			width: 400px;
+			text-align:left;
+			z-index: 3;
+        }
+
+		#popup button{
+			float: right;
+        }
+
+    </style>
+
+    <title>Accessory Finder</title>
+    <script src="data.js"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+	<script type="text/javascript">
+	
+        var side = "A"; // Side of the bay
+		var itemNumber = 0;
+
+		var side = "";
+		var itemNumber = "";
+
+		function compareText() {
+			var inputText = document.getElementById('inputText').value.trim().toUpperCase();
+
+			function searchArray(dataArray, sideIdentifier) {
+				var matches = [];
+				for (var i = 0; i < dataArray.length; i++) {
+					var line = dataArray[i].split(", ");
+					// check full match
+					if (line[2].toUpperCase() == inputText || line[1].toUpperCase() == inputText) {
+						matches.push({
+							side: sideIdentifier,
+							itemNumber: line[0],
+							dataArray: dataArray
+						});
+					} else { // check partial match
+						if (line[2].toUpperCase().includes(inputText) || line[1].toUpperCase().includes(inputText)) {
+							matches.push({
+								side: sideIdentifier,
+								itemNumber: line[0],
+								dataArray: dataArray
+							});
+						}
+					}
+				}
+				return matches;
+			}
+
+			removeHighlights(); // Clear highlights only once before the search
+
+			// Collect matches from all arrays
+			let allMatches = [];
+			allMatches = allMatches.concat(searchArray(dataArray1, "A"));
+			allMatches = allMatches.concat(searchArray(dataArray2, "B"));
+			allMatches = allMatches.concat(searchArray(dataArray3, "C"));
+			allMatches = allMatches.concat(searchArray(dataArray4, "D"));
+
+			let displayBoxUpdated = false;
+
+			if (allMatches.length > 0) {
+				for (let match of allMatches) {
+					searchValue(match.side, match.itemNumber); // Highlight each match
+
+					if (!displayBoxUpdated) {
+						const endText = lookupNumber(match.itemNumber, match.dataArray);
+						document.getElementById('display-box').value = endText;
+						displayBoxUpdated = true;
+					}
+				}
+			} else {
+				removeHighlights();
+				showPopup();
+			}
+		}
+
+		function lookupNumber(itemNumber, dataArray) {
+			for (var i = 0; i < dataArray.length; i++) {
+				var line = dataArray[i].split(", ");
+				if (line[0] === itemNumber) {
+					return line.join(", ");
+				}
+			}
+			return '';
+		}
+
+		function searchValue(side, value) {
+			let bays = {
+				'A': {
+					'Bay 1': document.getElementById('bay1_A').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_A').getElementsByTagName('td'),
+					'Bay 3': document.getElementById('bay3_A').getElementsByTagName('td')
+				},
+				'B': {
+					'Bay 1': document.getElementById('bay1_B').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_B').getElementsByTagName('td'),
+					'Bay 3': document.getElementById('bay3_B').getElementsByTagName('td')
+				},
+				'C': {
+					'Bay 1': document.getElementById('bay1_C').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_C').getElementsByTagName('td')
+				},
+				'D': {
+					'Bay 1': document.getElementById('bay1_D').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_D').getElementsByTagName('td')
+				}
+			};
+
+			// Highlight the matching value
+			for (var bay in bays[side]) {
+				if (bays[side].hasOwnProperty(bay)) {
+					for (var k = 0; k < bays[side][bay].length; k++) {
+						var cell = bays[side][bay][k];
+						if (cell.textContent == value) {
+							cell.classList.add('highlight'); // Add highlight class
+						}
+					}
+				}
+			}
+		}
+
+		function removeHighlights() {
+			let bays = {
+				'A': {
+					'Bay 1': document.getElementById('bay1_A').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_A').getElementsByTagName('td'),
+					'Bay 3': document.getElementById('bay3_A').getElementsByTagName('td')
+				},
+				'B': {
+					'Bay 1': document.getElementById('bay1_B').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_B').getElementsByTagName('td'),
+					'Bay 3': document.getElementById('bay3_B').getElementsByTagName('td')
+				},
+				'C': {
+					'Bay 1': document.getElementById('bay1_C').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_C').getElementsByTagName('td')
+				},
+				'D': {
+					'Bay 1': document.getElementById('bay1_D').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_D').getElementsByTagName('td')
+				}
+			};
+
+			// Remove highlight from all bays
+			var baysArray = ['A', 'B', 'C', 'D'];
+			for (var i = 0; i < baysArray.length; i++) {
+				var s = baysArray[i];
+				for (var bay in bays[s]) {
+					if (bays[s].hasOwnProperty(bay)) {
+						for (var j = 0; j < bays[s][bay].length; j++) {
+							var cell = bays[s][bay][j];
+							cell.classList.remove('highlight');
+						}
+					}
+				}
+			}
+		}
+
+		
+		function compareAndFind() {
+			compareText();
+		}
+		
+		
+    </script>
+</head>
+<body>
+	<div class="container1">
+		<div class="h1-container"><h1>Accessory Finder</h1></div>
+		<p>Enter accessory to find:</p>
+		<input type="text" id="inputText"/>
+		<button onclick="compareAndFind()">Find</button>
+		<br/><br/>
+		<input type="value" id="display-box"></input>
+		<br/><br/>
+
+		<button id="start-button">Start Scanning</button>
+		<div id="scanner-container"></div>
+
+
+		<div class="container" id="SIDE_A">
+		</div>
+
+		<div class="container" id="SIDE_B">
+		</div>
+		
+		<div class="side-container">
+			<div class="container" id="SIDE_C">
+			</div>
+
+			<div class="container" id="SIDE_D">
+			</div>
+		</div>
+	</div>
+	
+    <div id="popup">
+		<h2>Oh No!</h2>
+	
+        That PLU code is not found on the display, <br>
+		Please check that it is correct. It may be a new item.<br>
+        <br/><br/><br/><br/>
+        <button onclick="closePopup()">OK</button>
+    </div>
+
+    <script>
+	
+
+  const startButton = document.getElementById("start-button");
+  const scannerContainer = document.getElementById("scanner-container");
+
+  startButton.addEventListener("click", () => {
+    scannerContainer.innerHTML = ""; // Clear scanner container
+    scannerContainer.style.display = "block";
+
+    const html5QrCode = new Html5Qrcode("scanner-container");
+    html5QrCode.start(
+      { facingMode: "environment" },
+      { fps: 5, qrbox: 500 },
+      (decodedText) => {
+        alert(`Barcode detected: ${decodedText}`);
+        html5QrCode.stop();
+        scannerContainer.style.display = "none";
+      },
+      (errorMessage) => {
+        console.warn(`Error: ${errorMessage}`);
+      }
+    ).catch((err) => console.error(`Unable to start scanning: ${err}`));
+  });
+
+
+        // Function to look up the number and return the corresponding string
+        function lookupNumber(number, dataArray) {
+            for (let i = 0; i < dataArray.length; i++) {
+                let parts = dataArray[i].split(', ');
+                if (parts[0] == number) {
+                    return parts[2]; // Return the string from the end of the line
+                }
+            }
+            return "Not found"; // Return 'Not found' if the number is not in the array
+        }
+
+		function cellClick(cellId, data) {
+			const cells = document.getElementsByTagName('td');
+			const cellsArray = Array.prototype.slice.call(cells);
+
+			// Use a for loop to remove the 'highlight' class
+			for (let i = 0; i < cellsArray.length; i++) {
+				cellsArray[i].classList.remove('highlight');
+			}
+
+			// Highlight the clicked cell
+			document.getElementById(cellId).classList.add('highlight');
+
+			// Update the input field with the middle text
+			const middleText = data.split(',')[1].trim();
+			document.getElementById('inputText').value = middleText;
+
+			const endText = data.split(',')[2].trim();
+			document.getElementById('display-box').value = endText;
+			
+			compareText();
+		}
+	
+
+
+function placeAllCircles() {
+    const numberOfCircles = 4; // Number of circles to create
+    const circles = []; // Array to store circle data
+    const speedModifier = 0.1; // Configurable multiplier for all speeds (adjust for faster/slower motion)
+
+    function createCircle(id) {
+        const circle = document.createElement('div');
+        const size = Math.random() * (400 - 100) + 100; // Random size between 100px and 600px
+        let top = Math.random() * (window.innerHeight - size);
+        let left = Math.random() * (window.innerWidth - size);
+
+        // Velocity (random direction and speed)
+        const dx = (Math.random() - 0.5) * speedModifier * 10; // Horizontal speed
+        const dy = (Math.random() - 0.5) * speedModifier * 10; // Vertical speed
+
+        circles.push({ circle, size, top, left, dx, dy }); // Store circle data
+
+		// Use position: fixed to prevent layout shift
+		circle.style.width = `${size}px`;
+		circle.style.height = `${size}px`;
+		circle.style.position = 'fixed';
+		circle.style.borderRadius = '50%'; // Make the element look like a circle
+		circle.style.top = `${top}px`;
+		circle.style.left = `${left}px`;
+		circle.classList.add('circle');
+		document.body.appendChild(circle);
+
+
+        return true;
+    }
+
+    function detectAndHandleCollisions() {
+        for (let i = 0; i < circles.length; i++) {
+            const circleA = circles[i];
+            for (let j = i + 1; j < circles.length; j++) {
+                const circleB = circles[j];
+
+                // Calculate distance between two circles
+                const dx = circleB.left + circleB.size / 2 - (circleA.left + circleA.size / 2);
+                const dy = circleB.top + circleB.size / 2 - (circleA.top + circleA.size / 2);
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                // Check if circles overlap
+                /*
+				if (distance < (circleA.size / 2 + circleB.size / 2)) {
+                    // Elastic collision response
+                    const angle = Math.atan2(dy, dx);
+                    const speedA = Math.sqrt(circleA.dx * circleA.dx + circleA.dy * circleA.dy);
+                    const speedB = Math.sqrt(circleB.dx * circleB.dx + circleB.dy * circleB.dy);
+
+                    const directionA = Math.atan2(circleA.dy, circleA.dx);
+                    const directionB = Math.atan2(circleB.dy, circleB.dx);
+
+                    circleA.dx = speedB * Math.cos(angle);
+                    circleA.dy = speedB * Math.sin(angle);
+                    circleB.dx = speedA * Math.cos(angle + Math.PI);
+                    circleB.dy = speedA * Math.sin(angle + Math.PI);
+                }
+				*/
+            }
+        }
+    }
+
+    function updatePositions() {
+        for (const data of circles) {
+            const { circle, size, top, left, dx, dy } = data;
+
+            // Update position based on velocity
+            data.left += dx;
+            data.top += dy;
+
+            // Check for boundaries and bounce
+            if (data.left <= 0 || data.left + size >= window.innerWidth) {
+                data.dx = -data.dx; // Reverse horizontal direction
+            }
+            if (data.top <= 0 || data.top + size >= window.innerHeight) {
+                data.dy = -data.dy; // Reverse vertical direction
+            }
+
+            // Apply updated positions
+            circle.style.top = `${data.top}px`;
+            circle.style.left = `${data.left}px`;
+        }
+
+        // Handle collisions
+        detectAndHandleCollisions();
+    }
+
+    // Create all circles
+    for (let i = 0; i < numberOfCircles; i++) {
+        createCircle(i + 1);
+    }
+
+    // Update positions every 16 milliseconds (~60 frames per second)
+    setInterval(updatePositions, 16);
+}
+
+// Run the placement process on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    placeAllCircles();
+});
+
+
+
+
+		
+		function showPopup() {
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+function createTable(array, containerId, tableIdPrefix) {
+    let container = document.getElementById(containerId);
+    let cellMap = [];
+
+    var tabWidth = 0;
+    var tabHeight = 0;
+    var sectionCount = 0;
+    var tableCaption = "Test 123...";
+
+    tableCaption = array[0].split(',')[0]; //.substring(0, 6) + '...';
+    sectionCount = array[0].split(',')[1];
+    tabWidth = array[0].split(',')[2];
+    tabHeight = array[0].split(',')[3];
+
+    for (let section = 0; section < sectionCount; section++) {
+        let caption = section === 0 ? tableCaption : '&nbsp';
+        let table = '<table id="bay' + (section + 1) + '_' + tableIdPrefix + '"><caption>' + caption + '</caption><tbody>';
+        table += '<tr><th colspan="6" class="' + (section === 0 ? 'round-top-left' : (section === sectionCount - 1 ? 'round-top-right' : '')) + '">Bay ' + (section + 1) + '</th></tr>';
+        let index = 1 + section * (tabWidth * tabHeight);
+
+        for (let row = 0; row < tabHeight; row++) {
+            table += '<tr>';
+            for (let cell = 0; cell < tabWidth; cell++) {
+                if (index < array.length) {
+                    let cellId = tableIdPrefix + 'cell' + index;
+                    let middleText = array[index].split(',')[1].trim();
+                    table += '<td onclick="cellClick(\'' + cellId + '\', \'' + array[index] + '\')" id="' + cellId + '" title="' + array[index].split(',')[2].trim() + '">' + array[index].split(',')[0] + '</td>';
+                    cellMap.push({ id: cellId, middleText: middleText });
+                    index++;
+                } else {
+                    table += '<td></td>';
+                }
+            }
+            table += '</tr>';
+        }
+
+        table += '</tbody></table>';
+        container.innerHTML += table;
+    }
+    return cellMap;
+}
+
+
+        const cellMap1 = createTable(dataArray1, 'SIDE_A', 'A'); // dataArray1 loaded from external file
+        const cellMap2 = createTable(dataArray2, 'SIDE_B', 'B'); // dataArray2 loaded from external file
+        const cellMap3 = createTable(dataArray3, 'SIDE_C', 'C'); // dataArray3 loaded from external file
+        const cellMap4 = createTable(dataArray4, 'SIDE_D', 'D'); // dataArray3 loaded from external file
+    </script>
+
+	
+</body>
+</html>
