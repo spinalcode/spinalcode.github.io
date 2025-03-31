@@ -1,35 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Barcode Scanner</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+  <title>HTML5 Barcode Scanner</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 <body>
   <h1>Scan a Barcode</h1>
-  <div id="scanner-container"></div>
+  <div id="reader" style="width: 300px;"></div>
   <p id="result">Scanning...</p>
 
   <script>
-    Quagga.init({
-      inputStream: {
-        name: "Live",
-        type: "LiveStream",
-        target: document.querySelector("#scanner-container"), // Scanner will be displayed in this div
+    const html5QrCode = new Html5Qrcode("reader");
+    html5QrCode.start(
+      { facingMode: "environment" }, // Use the back camera
+      {
+        fps: 10, // Frames per second
+        qrbox: 250 // Scanning box size
       },
-      decoder: {
-        readers: ["code_13_reader"], // Specify the type of barcode to decode
+      (decodedText) => {
+        document.getElementById("result").textContent = `Barcode detected: ${decodedText}`;
+        html5QrCode.stop(); // Stop scanning after detection
       },
-    }, function(err) {
-      if (err) {
-        console.error(err);
-        return;
+      (errorMessage) => {
+        console.warn(`Error: ${errorMessage}`);
       }
-      Quagga.start();
-    });
-
-    Quagga.onDetected(function(data) {
-      document.querySelector("#result").textContent = `Barcode detected: ${data.codeResult.code}`;
-      Quagga.stop();
+    ).catch((err) => {
+      console.error(`Unable to start scanning: ${err}`);
     });
   </script>
 </body>
