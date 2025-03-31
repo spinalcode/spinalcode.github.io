@@ -357,8 +357,20 @@
       { facingMode: "environment" },
       { fps: 5, qrbox: 500 },
       (decodedText) => {
-        alert(`Barcode detected: ${decodedText}`);
-        html5QrCode.stop();
+        
+		//alert(`Barcode detected: ${decodedText}`);
+        
+        const foundEntry = EANList.find(item => item.startsWith(decodedText));
+            
+        if (foundEntry) {
+			// Get the last word after splitting by space or comma
+            const lastWord = foundEntry.split(", ").pop();
+            inputText.value = lastWord;
+            resultElement.textContent = `Found: ${lastWord}`;
+        }
+
+		
+		html5QrCode.stop();
         scannerContainer.style.display = "none";
       },
       (errorMessage) => {
