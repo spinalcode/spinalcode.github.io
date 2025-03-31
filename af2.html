@@ -367,8 +367,8 @@
             const lastWord = foundEntry.split(", ").pop();
             inputText.value = lastWord;
             resultElement.textContent = `Found: ${lastWord}`;
+			compareText();
         }
-
 		
 		html5QrCode.stop();
         scannerContainer.style.display = "none";
