@@ -6,7 +6,7 @@
 </head>
 <body>
   <h1>Scan a Barcode</h1>
-  <div id="reader" style="width: 300px;"></div>
+  <div id="reader" style="width: 600px;"></div>
   <p id="result">Scanning...</p>
 
   <script>
@@ -14,7 +14,7 @@
     html5QrCode.start(
       { facingMode: "environment" }, // Use the back camera
       {
-        fps: 10, // Frames per second
+        fps: 5, // Frames per second
         qrbox: 250 // Scanning box size
       },
       (decodedText) => {
