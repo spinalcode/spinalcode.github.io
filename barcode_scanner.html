@@ -1,31 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>HTML5 Barcode Scanner</title>
+  <title>HTML5 Barcode Scanner with Toggle</title>
   <script src="https://unpkg.com/html5-qrcode"></script>
+  <style>
+    #scanner-container {
+      display: none; /* Initially hidden */
+      width: 300px;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Scan a Barcode</h1>
-  <div id="reader" style="width: 600px;"></div>
-  <p id="result">Scanning...</p>
+  <h1>Barcode Scanner</h1>
+  <button id="start-button">Start Scanning</button>
+  <div id="scanner-container"></div>
+  <p id="result">Press the button to scan a barcode.</p>
 
   <script>
-    const html5QrCode = new Html5Qrcode("reader");
-    html5QrCode.start(
-      { facingMode: "environment" }, // Use the back camera
-      {
-        fps: 5, // Frames per second
-        qrbox: 250 // Scanning box size
-      },
-      (decodedText) => {
-        document.getElementById("result").textContent = `Barcode detected: ${decodedText}`;
-        html5QrCode.stop(); // Stop scanning after detection
-      },
-      (errorMessage) => {
-        console.warn(`Error: ${errorMessage}`);
+    const startButton = document.getElementById("start-button");
+    const scannerContainer = document.getElementById("scanner-container");
+    const resultElement = document.getElementById("result");
+    let html5QrCode;
+
+    startButton.addEventListener("click", () => {
+      if (scannerContainer.style.display === "none") {
+        // Show scanner and start scanning
+        scannerContainer.style.display = "block";
+        resultElement.textContent = "Scanning...";
+        html5QrCode = new Html5Qrcode("scanner-container");
+        html5QrCode.start(
+          { facingMode: "environment" }, // Use the back camera
+          {
+            fps: 10, // Frames per second
+            qrbox: 250 // Scanning box size
+          },
+          (decodedText) => {
+            resultElement.textContent = `Barcode detected: ${decodedText}`;
+            html5QrCode.stop(); // Stop scanning after detection
+            scannerContainer.style.display = "none"; // Hide scanner
+          },
+          (errorMessage) => {
+            console.warn(`Error: ${errorMessage}`);
+          }
+        ).catch((err) => {
+          console.error(`Unable to start scanning: ${err}`);
+        });
+      } else {
+        // Stop scanning and hide scanner
+        html5QrCode.stop();
+        scannerContainer.style.display = "none";
+        resultElement.textContent = "Press the button to scan a barcode.";
       }
-    ).catch((err) => {
-      console.error(`Unable to start scanning: ${err}`);
     });
   </script>
 </body>
