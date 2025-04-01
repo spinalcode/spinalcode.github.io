@@ -150,7 +150,12 @@
 			height: 0; /* Start with height 0 for closed state */
 			width: 680px;
 			overflow: hidden; /* Hide overflowing content */
-			transition: height 0.5s ease-out; /* Add a smooth height transition */
+			transition: height 0.5s ease-out, border-width 0.5s ease-out; /* Add a smooth transition for height and border-width */
+			border-radius: 10px;
+		}
+
+		#scanner-container.open {
+			height: 200px; /* Example open height */
 			border: 2px solid #4C12A1;
 			border-radius: 10px;
 		}
@@ -369,6 +374,7 @@
 			scannerContainer.innerHTML = ""; // Clear scanner container
 			scannerContainer.style.height = "509px"; // Expand the container
 			startButton.style.display = "none";
+			scannerContainer.style.border = '2px solid #4C12A1';
 
 			const html5QrCode = new Html5Qrcode("scanner-container");
 			html5QrCode.start(
@@ -376,6 +382,7 @@
 				{ fps: 5, qrbox: 300 },
 				(decodedText) => {
 					html5QrCode.stop();
+
 					scannerContainer.style.height = "0"; // Collapse the container
 
 					const foundEntry = EANList.find(item => item.startsWith(decodedText));
@@ -386,6 +393,8 @@
 						inputText.value = lastWord;
 						startButton.style.display = "block";
 						startButton.style.margin = "0 auto";
+						scannerContainer.style.border = '0px solid #4C12A1';
+
 						compareAndFind();
 					}
 				},
