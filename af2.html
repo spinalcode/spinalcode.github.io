@@ -150,7 +150,7 @@
 			height: 0; /* Start with height 0 for closed state */
 			width: 680px;
 			overflow: hidden; /* Hide overflowing content */
-			transition: height 0.5s ease-out, border-width 0.5s ease-out; /* Add a smooth transition for height and border-width */
+			transition: height 0.25s ease-out, border-width 0.25s ease-out; /* Add a smooth transition for height and border-width */
 			border-radius: 10px;
 		}
 
@@ -159,11 +159,11 @@
 			border: 2px solid #4C12A1;
 			border-radius: 10px;
 		}
-
-		#start-button {
+		#toggle-button {
 			width: 300px;
 			height: 100px;
 			font-size: 30px;
+			margin-top: 20px;
 		}
 
 
@@ -335,10 +335,8 @@
 		<input type="value" id="display-box"></input>
 		<br/><br/>
 
-		<button id="start-button">Start Scanning</button>
-		<br/><br/>
 		<div id="scanner-container"></div>
-
+		<button id="toggle-button">Start Scanning</button>
 
 		<div class="container" id="SIDE_A">
 		</div>
@@ -367,41 +365,48 @@
     <script>
 	
 
-		const startButton = document.getElementById("start-button");
+		const toggleButton = document.getElementById("toggle-button");
 		const scannerContainer = document.getElementById("scanner-container");
 
-		startButton.addEventListener("click", () => {
-			scannerContainer.innerHTML = ""; // Clear scanner container
-			scannerContainer.style.height = "509px"; // Expand the container
-			startButton.style.display = "none";
-			scannerContainer.style.border = '2px solid #4C12A1';
+		let isScanning = false; // Flag to keep track of the scanning state
+		let html5QrCode; // Declare html5QrCode outside the event listener
 
-			const html5QrCode = new Html5Qrcode("scanner-container");
-			html5QrCode.start(
-				{ facingMode: "environment" },
-				{ fps: 5, qrbox: 300 },
-				(decodedText) => {
-					html5QrCode.stop();
+		toggleButton.addEventListener("click", () => {
+			if (!isScanning) {
+				// Start scanning
+				scannerContainer.innerHTML = "";
+				scannerContainer.style.height = "509px";
+				toggleButton.textContent = "Stop Scanner"; // Change button text
+				scannerContainer.style.border = '2px solid #4C12A1';
 
-					scannerContainer.style.height = "0"; // Collapse the container
-
-					const foundEntry = EANList.find(item => item.startsWith(decodedText));
-
-					if (foundEntry) {
-						// Get the last word after splitting by space or comma
-						const lastWord = foundEntry.split(", ").pop();
-						inputText.value = lastWord;
-						startButton.style.display = "block";
-						startButton.style.margin = "0 auto";
+				html5QrCode = new Html5Qrcode("scanner-container");
+				html5QrCode.start(
+					{ facingMode: "environment" },
+					{ fps: 5, qrbox: 300 },
+					(decodedText) => {
+						html5QrCode.stop();
+						scannerContainer.style.height = "0";
+						const foundEntry = EANList.find(item => item.startsWith(decodedText));
+						inputText.value = foundEntry ? foundEntry.split(", ").pop() : "Unknown";
+						toggleButton.textContent = "Start Scanner"; // Reset button text
 						scannerContainer.style.border = '0px solid #4C12A1';
-
+						isScanning = false;
 						compareAndFind();
+					},
+					(errorMessage) => {
+						console.warn(`Error: ${errorMessage}`);
 					}
-				},
-				(errorMessage) => {
-					console.warn(`Error: ${errorMessage}`);
-				}
-			).catch((err) => console.error(`Unable to start scanning: ${err}`));
+				).catch((err) => console.error(`Unable to start scanning: ${err}`));
+
+				isScanning = true; // Update flag to indicate scanning
+			} else {
+				// Stop scanning
+				html5QrCode.stop();
+				scannerContainer.style.height = "0";
+				toggleButton.textContent = "Start Scanner"; // Reset button text
+				scannerContainer.style.border = '0px solid #4C12A1';
+				isScanning = false; // Update flag to indicate not scanning
+			}
 		});
 
 
