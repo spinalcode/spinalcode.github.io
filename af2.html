@@ -150,7 +150,7 @@
 			/* height: 0; /* Start with height 0 for closed state */
 			/*width: 680px;*/
 			/* overflow: hidden; /* Hide overflowing content */
-			transition: height 0.25s ease-out, border-width 0.25s ease-out; /* Add a smooth transition for height and border-width */
+			/* transition: height 0.25s ease-out, border-width 0.25s ease-out; /* Add a smooth transition for height and border-width */
 			border-radius: 10px;
 		}
 
@@ -402,7 +402,7 @@
 			} else {
 				// Stop scanning
 				html5QrCode.stop();
-				scannerContainer.style.height = "0";
+				/* scannerContainer.style.height = "0"; */
 				toggleButton.textContent = "Start Scanner"; // Reset button text
 				scannerContainer.style.border = '0px solid #4C12A1';
 				isScanning = false; // Update flag to indicate not scanning
