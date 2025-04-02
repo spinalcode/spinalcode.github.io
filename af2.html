@@ -385,7 +385,7 @@
 					{ fps: 5, qrbox: 300 },
 					(decodedText) => {
 						html5QrCode.stop();
-						scannerContainer.style.height = "0";
+						/* scannerContainer.style.height = "0"; */
 						const foundEntry = EANList.find(item => item.startsWith(decodedText));
 						inputText.value = foundEntry ? foundEntry.split(", ").pop() : "Unknown";
 						toggleButton.textContent = "Start Scanner"; // Reset button text
