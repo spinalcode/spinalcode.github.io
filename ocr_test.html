@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Barcode and OCR</title>
+    <title>Barcode and OCR with ROI</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js"></script>
     <style>
@@ -11,13 +11,13 @@
     </style>
 </head>
 <body>
-    <h1>Barcode and OCR Scanner</h1>
-    <div id="reader" style="width:500px; height:800px;"></div>
-    <button id="capture">Capture Frame for OCR</button>
+    <h1>Barcode and OCR with ROI</h1>
+    <div id="reader" style="width:500px; height:300px;"></div>
+    <button id="capture">Capture ROI for OCR</button>
     <div id="results">
         <h3>Results:</h3>
         <p>Barcode/QR Code: <span id="barcode-result"></span></p>
-        <p>OCR Text: <span id="ocr-result"></span></p>
+        <p>OCR Text (ROI): <span id="ocr-result"></span></p>
     </div>
 
     <script>
@@ -28,7 +28,7 @@
             { facingMode: "environment" }, // Camera settings
             { fps: 10, qrbox: 250 },
             (decodedText, decodedResult) => {
-                // Barcode/QrCode detected
+                // Barcode/QR Code detected
                 document.getElementById("barcode-result").textContent = decodedText;
             },
             (errorMessage) => {
@@ -39,24 +39,32 @@
             console.error("QR Code scanning failed.", err);
         });
 
-        // OCR functionality
+        // OCR functionality with ROI
         document.getElementById("capture").addEventListener("click", async () => {
             const videoElement = document.querySelector("#reader video");
             const canvas = document.createElement("canvas");
             const context = canvas.getContext("2d");
 
-            // Capture current video frame
-            canvas.width = videoElement.videoWidth;
-            canvas.height = videoElement.videoHeight;
-            context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+            // Define the region of interest (ROI)
+            const roiX = 100; // X coordinate of the top-left corner
+            const roiY = 50;  // Y coordinate of the top-left corner
+            const roiWidth = 300; // Width of the ROI
+            const roiHeight = 100; // Height of the ROI
 
-            const frameDataURL = canvas.toDataURL("image/png");
+            // Set canvas size to match ROI dimensions
+            canvas.width = roiWidth;
+            canvas.height = roiHeight;
 
-            // Use Tesseract.js for OCR
+            // Crop the specific ROI from the video frame
+            context.drawImage(videoElement, roiX, roiY, roiWidth, roiHeight, 0, 0, roiWidth, roiHeight);
+
+            const croppedDataURL = canvas.toDataURL("image/png");
+
+            // Use Tesseract.js for OCR on the cropped region
             const ocrResultElement = document.getElementById("ocr-result");
             ocrResultElement.textContent = "Processing...";
             Tesseract.recognize(
-                frameDataURL, // Frame data as a base64 image
+                croppedDataURL, // Cropped frame as a base64 image
                 'eng', // Language set to English
                 { logger: info => console.log(info) } // Logging progress
             ).then(({ data: { text } }) => {
