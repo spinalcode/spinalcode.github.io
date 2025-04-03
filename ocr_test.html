@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Barcode and OCR</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js"></script>
+    <style>
+        #results {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Barcode and OCR Scanner</h1>
+    <div id="reader" style="width:500px; height:300px;"></div>
+    <button id="capture">Capture Frame for OCR</button>
+    <div id="results">
+        <h3>Results:</h3>
+        <p>Barcode/QR Code: <span id="barcode-result"></span></p>
+        <p>OCR Text: <span id="ocr-result"></span></p>
+    </div>
+
+    <script>
+        const html5QrCode = new Html5Qrcode("reader");
+
+        // Start QR Code/Barcode scanning
+        html5QrCode.start(
+            { facingMode: "environment" }, // Camera settings
+            { fps: 10, qrbox: 250 },
+            (decodedText, decodedResult) => {
+                // Barcode/QrCode detected
+                document.getElementById("barcode-result").textContent = decodedText;
+            },
+            (errorMessage) => {
+                // Ignore errors for continuous scanning
+                console.log(errorMessage);
+            }
+        ).catch(err => {
+            console.error("QR Code scanning failed.", err);
+        });
+
+        // OCR functionality
+        document.getElementById("capture").addEventListener("click", async () => {
+            const videoElement = document.querySelector("#reader video");
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+
+            // Capture current video frame
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+            const frameDataURL = canvas.toDataURL("image/png");
+
+            // Use Tesseract.js for OCR
+            const ocrResultElement = document.getElementById("ocr-result");
+            ocrResultElement.textContent = "Processing...";
+            Tesseract.recognize(
+                frameDataURL, // Frame data as a base64 image
+                'eng', // Language set to English
+                { logger: info => console.log(info) } // Logging progress
+            ).then(({ data: { text } }) => {
+                ocrResultElement.textContent = text;
+            }).catch(err => {
+                console.error("OCR failed.", err);
+                ocrResultElement.textContent = "Error during OCR.";
+            });
+        });
+    </script>
+</body>
+</html>
