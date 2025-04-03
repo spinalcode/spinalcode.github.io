@@ -1,19 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Barcode and OCR with ROI</title>
+    <title>Barcode and OCR with ROI Display</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js"></script>
     <style>
-        #results {
-            margin-top: 20px;
+        #container {
+            display: flex;
+            gap: 20px;
+        }
+        #reader, #roi-canvas {
+            border: 1px solid #ccc;
         }
     </style>
 </head>
 <body>
-    <h1>Barcode and OCR with ROI</h1>
-    <div id="reader" style="width:500px; height:800px;"></div>
-    <button id="capture">Capture ROI for OCR</button>
+    <h1>Barcode and OCR with ROI Display</h1>
+    <div id="container">
+        <div id="reader" style="width:500px; height:800px;"></div>
+        <canvas id="roi-canvas" width="300" height="100"></canvas>
+    </div>
+    <button id="capture">Perform OCR on ROI</button>
     <div id="results">
         <h3>Results:</h3>
         <p>Barcode/QR Code: <span id="barcode-result"></span></p>
@@ -22,43 +29,41 @@
 
     <script>
         const html5QrCode = new Html5Qrcode("reader");
+        const roiCanvas = document.getElementById("roi-canvas");
+        const roiContext = roiCanvas.getContext("2d");
 
         // Start QR Code/Barcode scanning
         html5QrCode.start(
-            { facingMode: "environment" }, // Camera settings
+            { facingMode: "environment" },
             { fps: 10, qrbox: 250 },
             (decodedText, decodedResult) => {
-                // Barcode/QR Code detected
                 document.getElementById("barcode-result").textContent = decodedText;
             },
             (errorMessage) => {
-                // Ignore errors for continuous scanning
                 console.log(errorMessage);
             }
         ).catch(err => {
             console.error("QR Code scanning failed.", err);
         });
 
-        // OCR functionality with ROI
-        document.getElementById("capture").addEventListener("click", async () => {
+        // Real-time ROI display
+        const updateROI = () => {
             const videoElement = document.querySelector("#reader video");
-            const canvas = document.createElement("canvas");
-            const context = canvas.getContext("2d");
+            if (videoElement) {
+                const roiX = 100; // X coordinate of the top-left corner
+                const roiY = 50;  // Y coordinate of the top-left corner
+                const roiWidth = 300; // Width of the ROI
+                const roiHeight = 100; // Height of the ROI
 
-            // Define the region of interest (ROI)
-            const roiX = 100; // X coordinate of the top-left corner
-            const roiY = 50;  // Y coordinate of the top-left corner
-            const roiWidth = 300; // Width of the ROI
-            const roiHeight = 100; // Height of the ROI
+                roiContext.drawImage(videoElement, roiX, roiY, roiWidth, roiHeight, 0, 0, roiWidth, roiHeight);
+                requestAnimationFrame(updateROI); // Keep updating ROI
+            }
+        };
+        updateROI(); // Start updating ROI
 
-            // Set canvas size to match ROI dimensions
-            canvas.width = roiWidth;
-            canvas.height = roiHeight;
-
-            // Crop the specific ROI from the video frame
-            context.drawImage(videoElement, roiX, roiY, roiWidth, roiHeight, 0, 0, roiWidth, roiHeight);
-
-            const croppedDataURL = canvas.toDataURL("image/png");
+        // OCR functionality for ROI
+        document.getElementById("capture").addEventListener("click", async () => {
+            const croppedDataURL = roiCanvas.toDataURL("image/png");
 
             // Use Tesseract.js for OCR on the cropped region
             const ocrResultElement = document.getElementById("ocr-result");
@@ -66,7 +71,7 @@
             Tesseract.recognize(
                 croppedDataURL, // Cropped frame as a base64 image
                 'eng', // Language set to English
-                { logger: info => console.log(info) } // Logging progress
+                { logger: info => console.log(info) }
             ).then(({ data: { text } }) => {
                 ocrResultElement.textContent = text;
             }).catch(err => {
