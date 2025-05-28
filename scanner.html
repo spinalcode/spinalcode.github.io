@@ -18,7 +18,7 @@
 </head>
 <body>
 
-	ver 1.3
+	ver 1.4
 	
     <div id="scanner-container"></div>
     <div id="output">Scan a barcode...</div>
@@ -33,10 +33,8 @@
 
 		toggleButton.addEventListener("click", () => {
 			if (!isScanning) {
-				// Start scanning
 				scannerContainer.innerHTML = "";
-				/* scannerContainer.style.height = "509px"; */
-				toggleButton.textContent = "Stop Scanner"; // Change button text
+				toggleButton.textContent = "Stop Scanner";
 				scannerContainer.style.border = '2px solid #4C12A1';
 
 				html5QrCode = new Html5Qrcode("scanner-container");
@@ -44,11 +42,15 @@
 					{ facingMode: "environment" },
 					{ fps: 30, qrbox: 250 },
 					(decodedText) => {
-						html5QrCode.stop();
-						/* scannerContainer.style.height = "0"; */
+						console.log("Decoded Barcode:", decodedText);
+
+						// Stop scanner after a brief delay
+						setTimeout(() => { html5QrCode.stop(); }, 500);
+
 						const foundEntry = EANList.find(item => item.startsWith(decodedText));
-						document.getElementById("output").value = foundEntry ? foundEntry.split(", ").pop() : "Unknown";
-						toggleButton.textContent = "Start Scanner"; // Reset button text
+						document.getElementById("output").textContent = foundEntry ? foundEntry.split(", ").pop() : "Unknown";
+
+						toggleButton.textContent = "Start Scanner";
 						scannerContainer.style.border = '0px solid #4C12A1';
 						isScanning = false;
 					},
@@ -57,16 +59,15 @@
 					}
 				).catch((err) => console.error(`Unable to start scanning: ${err}`));
 
-				isScanning = true; // Update flag to indicate scanning
+				isScanning = true;
 			} else {
-				// Stop scanning
 				html5QrCode.stop();
-				/* scannerContainer.style.height = "0"; */
-				toggleButton.textContent = "Start Scanner"; // Reset button text
+				toggleButton.textContent = "Start Scanner";
 				scannerContainer.style.border = '0px solid #4C12A1';
-				isScanning = false; // Update flag to indicate not scanning
+				isScanning = false;
 			}
 		});
+
 		</script>
 
 </body>
