@@ -42,12 +42,15 @@
 
                 html5QrCode = new Html5Qrcode("scanner-container");
                 html5QrCode.start(
-                    { facingMode: "environment" },
-                    { fps: 30, qrbox: 250 },
-                    (decodedText) => {
-                        console.log("Decoded Barcode:", decodedText);
-                        document.getElementById("output").textContent = `Barcode: ${decodedText}`;
-                        
+					{ facingMode: "environment" },
+					{ fps: 30, qrbox: 250 },
+					(decodedText) => {
+						console.log("Decoded Barcode:", decodedText);
+
+						// Stop scanner after a brief delay
+						setTimeout(() => { html5QrCode.stop(); }, 500);
+
+						document.getElementById("output").textContent = `Barcode: ${decodedText}`;
                         // Generate barcode from the detected text
 						JsBarcode("#barcode1", decodedText, {
 							fontSize: 40,
@@ -57,11 +60,10 @@
 							marginLeft: 80
 						});
 
-                        setTimeout(() => { html5QrCode.stop(); }, 500);
-                        toggleButton.textContent = "Start Scanner";
-                        scannerContainer.style.border = '0px solid #4C12A1';
-                        isScanning = false;
-                    },
+						toggleButton.textContent = "Start Scanner";
+						scannerContainer.style.border = '0px solid #4C12A1';
+						isScanning = false;
+					},
                     (errorMessage) => {
                         console.warn(`Error: ${errorMessage}`);
                     }
