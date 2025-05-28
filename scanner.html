@@ -1,11 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barcode Scanner & Generator</title>
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@latest"></script>
-
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
         #scanner-container {
@@ -19,71 +14,68 @@
             margin-top: 20px;
             text-align: center;
         }
-		#barcode {
-			border: 1px solid black;
-			display: block;
-		}
     </style>
+  <script type="text/javascript" src="barcode.js"></script>
 
 </head>
 <body>
 
-	Ver 1.2
-
+	ver 1.7
+	
     <div id="scanner-container"></div>
     <div id="output">Scan a barcode...</div>
-    <img id="barcode"/>
-    <button id="toggle-button">Start Scanning</button>
+	<button id="toggle-button">Start Scanning</button>
+
+	<h2>Code128</h2>
+	<p id="c128"></p>
 
     <script>
-        const toggleButton = document.getElementById("toggle-button");
-        const scannerContainer = document.getElementById("scanner-container");
-        let isScanning = false;
-        let html5QrCode;
+		const toggleButton = document.getElementById("toggle-button");
+		const scannerContainer = document.getElementById("scanner-container");
 
-        toggleButton.addEventListener("click", () => {
-            if (!isScanning) {
-                scannerContainer.innerHTML = "";
-                toggleButton.textContent = "Stop Scanner";
-                scannerContainer.style.border = '2px solid #4C12A1';
+		let isScanning = false; // Flag to keep track of the scanning state
+		let html5QrCode; // Declare html5QrCode outside the event listener
 
-                html5QrCode = new Html5Qrcode("scanner-container");
-                html5QrCode.start(
-                    { facingMode: "environment" },
-                    { fps: 30, qrbox: 250 },
-                    (decodedText) => {
-                        console.log("Decoded Barcode:", decodedText);
+		toggleButton.addEventListener("click", () => {
+			if (!isScanning) {
+				scannerContainer.innerHTML = "";
+				toggleButton.textContent = "Stop Scanner";
+				scannerContainer.style.border = '2px solid #4C12A1';
 
-                        // Stop scanner after a brief delay
-                        setTimeout(() => { html5QrCode.stop(); }, 500);
+				html5QrCode = new Html5Qrcode("scanner-container");
+				html5QrCode.start(
+					{ facingMode: "environment" },
+					{ fps: 30, qrbox: 250 },
+					(decodedText) => {
+						console.log("Decoded Barcode:", decodedText);
 
-                        document.getElementById("output").textContent = `Barcode: ${decodedText}`;
-                        toggleButton.textContent = "Start Scanner";
-                        scannerContainer.style.border = '0px solid #4C12A1';
-                        isScanning = false;
+						// Stop scanner after a brief delay
+						setTimeout(() => { html5QrCode.stop(); }, 500);
 
-                        // Generate the barcode image from scanned data
-                        JsBarcode("#barcode", decodedText, {
-                            format: "CODE128",
-                            lineColor: "#000",
-                            displayValue: true
-                        });
+						document.getElementById("output").textContent = `Barcode: ${decodedText}`;
+			
+						// Code128 in HTML/CSS
+						c128.innerHTML = toHtml([code128(decodedText)],[3,60]); // array to matrix for toHtml
 
-                    },
-                    (errorMessage) => {
-                        console.warn(`Error: ${errorMessage}`);
-                    }
-                ).catch((err) => console.error(`Unable to start scanning: ${err}`));
+						toggleButton.textContent = "Start Scanner";
+						scannerContainer.style.border = '0px solid #4C12A1';
+						isScanning = false;
+					},
+					(errorMessage) => {
+						console.warn(`Error: ${errorMessage}`);
+					}
+				).catch((err) => console.error(`Unable to start scanning: ${err}`));
 
-                isScanning = true;
-            } else {
-                html5QrCode.stop();
-                toggleButton.textContent = "Start Scanner";
-                scannerContainer.style.border = '0px solid #4C12A1';
-                isScanning = false;
-            }
-        });
-    </script>
+				isScanning = true;
+			} else {
+				html5QrCode.stop();
+				toggleButton.textContent = "Start Scanner";
+				scannerContainer.style.border = '0px solid #4C12A1';
+				isScanning = false;
+			}
+		});
+
+		</script>
 
 </body>
 </html>
