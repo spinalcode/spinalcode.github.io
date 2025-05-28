@@ -19,16 +19,20 @@
             margin-top: 20px;
             text-align: center;
         }
+		#barcode {
+			border: 1px solid black;
+			display: block;
+		}
     </style>
 
 </head>
 <body>
 
-	Ver 1.1
+	Ver 1.2
 
     <div id="scanner-container"></div>
     <div id="output">Scan a barcode...</div>
-    <svg id="barcode"></svg>
+    <img id="barcode"/>
     <button id="toggle-button">Start Scanning</button>
 
     <script>
