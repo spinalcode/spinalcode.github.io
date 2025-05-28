@@ -36,7 +36,7 @@
 
             html5QrCode.start(
                 { facingMode: "environment" },
-                { fps: 10, qrbox: 250 },
+                { fps: 60, qrbox: 350 },
                 (decodedText) => {
                     output.textContent = `Barcode: ${decodedText}`;
                 },
