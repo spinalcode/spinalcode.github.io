@@ -2,6 +2,7 @@
 <html>
 <head>
     <script src="https://unpkg.com/html5-qrcode"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jsbarcode"></script>
     <style>
         #scanner-container {
             width: 300px;
@@ -18,7 +19,7 @@
     </style>
 </head>
 <body>
-	var 1.1
+	var 1.2
 
     <div id="scanner-container"></div>
     <div id="output">Scan a barcode...</div>
@@ -51,6 +52,7 @@
 						setTimeout(() => { html5QrCode.stop(); }, 500);
 
 						document.getElementById("output").textContent = `Barcode: ${decodedText}`;
+						
                         // Generate barcode from the detected text
 						JsBarcode("#barcode1", decodedText, {
 							fontSize: 40,
