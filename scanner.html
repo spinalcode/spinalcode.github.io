@@ -18,7 +18,7 @@
 </head>
 <body>
 
-	ver 1.5
+	ver 1.6
 	
     <div id="scanner-container"></div>
     <div id="output">Scan a barcode...</div>
@@ -47,8 +47,7 @@
 						// Stop scanner after a brief delay
 						setTimeout(() => { html5QrCode.stop(); }, 500);
 
-						const foundEntry = EANList.find(item => item.startsWith(decodedText));
-						document.getElementById("output").textContent = foundEntry;
+						document.getElementById("output").textContent = `Barcode: ${decodedText}`;
 
 						toggleButton.textContent = "Start Scanner";
 						scannerContainer.style.border = '0px solid #4C12A1';
