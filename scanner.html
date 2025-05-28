@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        #scanner-container {
+            width: 300px;
+            height: 300px;
+            border: 2px solid #4C12A1;
+            margin: 20px auto;
+        }
+        #output {
+            font-size: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="scanner-container"></div>
+    <div id="output">Scan a barcode...</div>
+    <button id="start-scanner">Start Scanner</button>
+    <button id="stop-scanner" style="display: none;">Stop Scanner</button>
+
+    <script>
+        const scannerContainer = document.getElementById("scanner-container");
+        const output = document.getElementById("output");
+        const startScannerBtn = document.getElementById("start-scanner");
+        const stopScannerBtn = document.getElementById("stop-scanner");
+
+        let html5QrCode;
+
+        startScannerBtn.addEventListener("click", () => {
+            html5QrCode = new Html5Qrcode("scanner-container");
+
+            html5QrCode.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: 250 },
+                (decodedText) => {
+                    output.textContent = `Barcode: ${decodedText}`;
+                },
+                (errorMessage) => {
+                    console.warn(`Error: ${errorMessage}`);
+                }
+            );
+
+            startScannerBtn.style.display = "none";
+            stopScannerBtn.style.display = "inline-block";
+        });
+
+        stopScannerBtn.addEventListener("click", () => {
+            html5QrCode.stop();
+            scannerContainer.innerHTML = "";
+            startScannerBtn.style.display = "inline-block";
+            stopScannerBtn.style.display = "none";
+            output.textContent = "Scan a barcode...";
+        });
+    </script>
+
+</body>
+</html>
