@@ -18,7 +18,7 @@
 </head>
 <body>
 
-	ver 1.2
+	ver 1.3
 	
     <div id="scanner-container"></div>
     <div id="output">Scan a barcode...</div>
@@ -42,16 +42,15 @@
 				html5QrCode = new Html5Qrcode("scanner-container");
 				html5QrCode.start(
 					{ facingMode: "environment" },
-					{ fps: 5, qrbox: 300 },
+					{ fps: 30, qrbox: 250 },
 					(decodedText) => {
 						html5QrCode.stop();
 						/* scannerContainer.style.height = "0"; */
 						const foundEntry = EANList.find(item => item.startsWith(decodedText));
-						inputText.value = foundEntry ? foundEntry.split(", ").pop() : "Unknown";
+						document.getElementById("output").value = foundEntry ? foundEntry.split(", ").pop() : "Unknown";
 						toggleButton.textContent = "Start Scanner"; // Reset button text
 						scannerContainer.style.border = '0px solid #4C12A1';
 						isScanning = false;
-						compareAndFind();
 					},
 					(errorMessage) => {
 						console.warn(`Error: ${errorMessage}`);
