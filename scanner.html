@@ -18,6 +18,8 @@
 </head>
 <body>
 
+	Ver 1.0
+
     <div id="scanner-container"></div>
     <div id="output">Scan a barcode...</div>
     <button id="start-scanner">Start Scanner</button>
@@ -31,23 +33,20 @@
 
         let html5QrCode;
 
-        startScannerBtn.addEventListener("click", () => {
-            html5QrCode = new Html5Qrcode("scanner-container");
+		html5QrCode.start(
+			{ facingMode: "environment" },
+			{ fps: 10, qrbox: 350 },
+			(decodedText) => {
+				console.log("Decoded Barcode:", decodedText);
+				output.textContent = `Barcode: ${decodedText}`;
 
-            html5QrCode.start(
-                { facingMode: "environment" },
-                { fps: 60, qrbox: 350 },
-                (decodedText) => {
-                    output.textContent = `Barcode: ${decodedText}`;
-                },
-                (errorMessage) => {
-                    console.warn(`Error: ${errorMessage}`);
-                }
-            );
-
-            startScannerBtn.style.display = "none";
-            stopScannerBtn.style.display = "inline-block";
-        });
+				// Stop scanning after successful detection
+				html5QrCode.stop();
+			},
+			(errorMessage) => {
+				console.warn(`Error: ${errorMessage}`);
+			}
+		);
 
         stopScannerBtn.addEventListener("click", () => {
             html5QrCode.stop();
