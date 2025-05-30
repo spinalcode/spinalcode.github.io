@@ -4,8 +4,8 @@
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
         #scanner-container {
-            width: 300px;
-            height: 300px;
+            width: 600px;
+            height: 600px;
             border: 2px solid #4C12A1;
             margin: 20px auto;
         }
@@ -25,8 +25,8 @@
 		}
 		
 		#toggle-button {
-			font-size: 20px;
-			padding: 10px 20px;
+			font-size: 40px;
+			padding: 40px 60px;
 			background-color: #4C12A1;
 			color: white;
 			border: none;
@@ -44,7 +44,7 @@
     <div id="output">Scan a barcode...</div>
 	<button id="toggle-button">Start Scanning</button>
 
-	<h2>Code128</h2>
+	<h2>Barcode</h2>
 	<p id="c128"></p>
 
     <script>
@@ -73,7 +73,7 @@
 						document.getElementById("output").textContent = `Barcode: ${decodedText}`;
 			
 						// Code128 in HTML/CSS
-						c128.innerHTML = toHtml([code128(decodedText)],[3,60]); // array to matrix for toHtml
+						c128.innerHTML = toHtml([code128(decodedText)],[4,300]); // array to matrix for toHtml
 
 						toggleButton.textContent = "Start Scanner";
 						scannerContainer.style.border = '0px solid #4C12A1';
