@@ -1,53 +1,109 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
-        #scanner-container {
-            width: 500px;
-            height: 500px;
-            border: 2px solid #4C12A1;
-            margin: 20px auto;
-        }
-        #output {
-            font-size: 20px;
-            margin-top: 20px;
-            text-align: center;
+	
+		@font-face {
+			font-family: 'CurrysSans'; /*a name to be used later*/
+			src: url('Currys Sans.ttf'); /*URL to font*/
+		}
+
+        body {
+            align-items: center;
+            justify-content: center;
+            background-color: #CAE7E6;
+            /*background-color: #F9D2E5;*/
+            position: relative;
+			display: flex;
+			align-items: center;
+			margin: 0;
+			font-family: 'CurrysSans';
         }
 		
-		body {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			height: 100vh;
+		.container1 {
+			position: relative;
+			border: 2px solid #4C12A1;
 			text-align: center;
+            /*background-color: #CFC8F7;*/
+			background-color: rgba(165, 190, 255, 0.5);
+			/* midpoint * 2 - start point
+			*/
+			border-radius: 20px; /* Adjust the value as needed */
+			padding: 20px;
+			margin-top: 50px;
+            z-index: 2; /* Ensure circles stay in the background */
 		}
 		
+		.h1-container {margin-top:-70px;}
+		
+		.container1 h1 {
+			display:inline-block;
+			border: 2px solid #4C12A1;
+			border-radius: 10px; /* Adjust the value as needed */
+			padding: 5px 20px;
+			text-align: center;
+			background-color: #FFFFFF;
+			color: #4C12A1;
+		}
+		
+		button {
+			border: 1px solid #E5006D;
+			border-radius: 5px; /* Adjust the value as needed */
+			padding: 5px;
+			width: 100px;
+			text-align: center;
+			background-color: #E5006D;
+			color: #E8F0FE;
+		}
+		#display-box {
+			border: 2px solid #4C12A1;
+			border-radius: 5px; /* Adjust the value as needed */
+			padding: 5px;
+			text-align: center;
+			background-color: #FFFFFF;
+			color: #4C12A1;
+			width: 500px;
+			height: 20px;
+		}
+
+		#scanner-container {
+			display: block;
+			border-radius: 10px;
+		}
+
+		#scanner-container.open {
+			border: 2px solid #4C12A1;
+			border-radius: 10px;
+		}
 		#toggle-button {
-			font-size: 40px;
-			padding: 40px 60px;
-			background-color: #4C12A1;
-			color: white;
-			border: none;
-			cursor: pointer;
+			width: 300px;
+			height: 100px;
+			font-size: 30px;
+			margin-top: 20px;
 		}
     </style>
-  <script type="text/javascript" src="barcode.js"></script>
+
+    <title>Barcode Display</title>
+	<script src="https://unpkg.com/html5-qrcode"></script>
+	<script type="text/javascript" src="barcode.js"></script>
 
 </head>
 <body>
+	<div class="container1">
+		<div class="h1-container"><h1>Barcode Display</h1></div>
+		<div id="display-box">
+			<p id="c128"></p>
+		</div>
+		<br/><br/>
 
-	ver 1.8
+		<div id="scanner-container"></div>
+		<button id="toggle-button">Start Scanning</button>
+
+	</div>
 	
-    <div id="scanner-container"></div>
-    <div id="output">Scan a barcode...</div>
-	<button id="toggle-button">Start Scanning</button>
-
-	<h2>Barcode</h2>
-	<p id="c128"></p>
-
     <script>
+	
+
 		const toggleButton = document.getElementById("toggle-button");
 		const scannerContainer = document.getElementById("scanner-container");
 
@@ -56,25 +112,21 @@
 
 		toggleButton.addEventListener("click", () => {
 			if (!isScanning) {
+				// Start scanning
 				scannerContainer.innerHTML = "";
-				toggleButton.textContent = "Stop Scanner";
+				/* scannerContainer.style.height = "509px"; */
+				toggleButton.textContent = "Stop Scanner"; // Change button text
 				scannerContainer.style.border = '2px solid #4C12A1';
 
 				html5QrCode = new Html5Qrcode("scanner-container");
 				html5QrCode.start(
 					{ facingMode: "environment" },
-					{ fps: 30, qrbox: 500 },
+					{ fps: 5, qrbox: 300 },
 					(decodedText) => {
-						console.log("Decoded Barcode:", decodedText);
-
-						// Stop scanner after a brief delay
-						setTimeout(() => { html5QrCode.stop(); }, 500);
-
+						html5QrCode.stop();
 						document.getElementById("output").textContent = `Barcode: ${decodedText}`;
-			
 						// Code128 in HTML/CSS
 						c128.innerHTML = toHtml([code128(decodedText)],[4,300]); // array to matrix for toHtml
-
 						toggleButton.textContent = "Start Scanner";
 						scannerContainer.style.border = '0px solid #4C12A1';
 						isScanning = false;
@@ -84,16 +136,19 @@
 					}
 				).catch((err) => console.error(`Unable to start scanning: ${err}`));
 
-				isScanning = true;
+				isScanning = true; // Update flag to indicate scanning
 			} else {
+				// Stop scanning
 				html5QrCode.stop();
-				toggleButton.textContent = "Start Scanner";
+				/* scannerContainer.style.height = "0"; */
+				toggleButton.textContent = "Start Scanner"; // Reset button text
 				scannerContainer.style.border = '0px solid #4C12A1';
-				isScanning = false;
+				isScanning = false; // Update flag to indicate not scanning
 			}
 		});
 
-		</script>
+    </script>
 
+	
 </body>
 </html>
