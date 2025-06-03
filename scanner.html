@@ -104,16 +104,16 @@
 		const toggleButton = document.getElementById("toggle-button");
 		const scannerContainer = document.getElementById("scanner-container");
 
-		let isScanning = false; // Flag to keep track of the scanning state
-		let html5QrCode; // Declare html5QrCode outside the event listener
+		let isScanning = false;
+		let html5QrCode;
 
 		toggleButton.addEventListener("click", () => {
 			if (!isScanning) {
 				// Start scanning
 				scannerContainer.innerHTML = "";
-				/* scannerContainer.style.height = "509px"; */
-				toggleButton.textContent = "Stop Scanner"; // Change button text
+				toggleButton.textContent = "Stop Scanner";
 				scannerContainer.style.border = '2px solid #4C12A1';
+				c128.innerHTML = '';
 
 				html5QrCode = new Html5Qrcode("scanner-container");
 				html5QrCode.start(
@@ -123,7 +123,7 @@
 						html5QrCode.stop();
 						document.getElementById("display-box").textContent = `Barcode: ${decodedText}`;
 						// Code128 in HTML/CSS
-						c128.innerHTML = toHtml([code128(decodedText)],[4,300]); // array to matrix for toHtml
+						c128.innerHTML = toHtml([code128(decodedText)],[4,300]);
 						toggleButton.textContent = "Start Scanner";
 						scannerContainer.style.border = '0px solid #4C12A1';
 						isScanning = false;
