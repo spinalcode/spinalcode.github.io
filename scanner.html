@@ -4,15 +4,15 @@
     <style>
 	
 		@font-face {
-			font-family: 'CurrysSans'; /*a name to be used later*/
-			src: url('Currys Sans.ttf'); /*URL to font*/
+			font-family: 'CurrysSans';
+			src: url('Currys Sans.ttf');
 		}
 
         body {
             align-items: center;
             justify-content: center;
-            /*background-color: #CAE7E6;*/
-            background-color: #F9D2E5;
+            background-color: #CAE7E6;
+            /*background-color: #F9D2E5;*/
             position: relative;
 			display: flex;
 			align-items: center;
@@ -134,7 +134,7 @@
 						html5QrCode.stop();
 						document.getElementById("display-box").textContent = `Barcode: ${decodedText}`;
 						// Code128 in HTML/CSS
-						c128.innerHTML = toHtml([code128(decodedText)],[4,300]);
+						c128.innerHTML = toHtml([code128(decodedText)],[3,300]);
 						toggleButton.textContent = "Start Scanner";
 						scannerContainer.style.border = '0px solid #4C12A1';
 						isScanning = false;
