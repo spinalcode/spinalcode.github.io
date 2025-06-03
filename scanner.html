@@ -11,8 +11,8 @@
         body {
             align-items: center;
             justify-content: center;
-            background-color: #CAE7E6;
-            /*background-color: #F9D2E5;*/
+            /*background-color: #CAE7E6;*/
+            background-color: #F9D2E5;
             position: relative;
 			display: flex;
 			align-items: center;
@@ -26,8 +26,6 @@
 			text-align: center;
             /*background-color: #CFC8F7;*/
 			background-color: rgba(165, 190, 255, 0.5);
-			/* midpoint * 2 - start point
-			*/
 			border-radius: 20px; /* Adjust the value as needed */
 			padding: 20px;
 			margin-top: 50px;
@@ -124,7 +122,7 @@
 					{ fps: 5, qrbox: 300 },
 					(decodedText) => {
 						html5QrCode.stop();
-						document.getElementById("output").textContent = `Barcode: ${decodedText}`;
+						document.getElementById("display-box").textContent = `Barcode: ${decodedText}`;
 						// Code128 in HTML/CSS
 						c128.innerHTML = toHtml([code128(decodedText)],[4,300]); // array to matrix for toHtml
 						toggleButton.textContent = "Start Scanner";
