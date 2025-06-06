@@ -11,8 +11,8 @@
         body {
             align-items: center;
             justify-content: center;
-            /*background-color: #CAE7E6;*/
-            background-color: #F9D2E5;
+            background-color: #CAE7E6;
+            /*background-color: #F9D2E5;*/
             position: relative;
 			display: flex;
 			align-items: center;
@@ -128,7 +128,16 @@
 				html5QrCode = new Html5Qrcode("scanner-container");
 				html5QrCode.start(
 					{ facingMode: "environment" },
-					{ fps: 15, qrbox: {width: 500, height: 50}, rememberLastUsedCamera: true, disableFlip: true, aspectRatio: 1, facingMode: {exact: "environment"}, focusMode: "continuous", supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA,Html5QrcodeScanType.SCAN_TYPE_FILE] , formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE], showTorchButtonIfSupported: true, useBarCodeDetectorIfSupported: true, showZoomSliderIfSupported: true, defaultZoomValueIfSupported: 2},
+					{ fps: 15, qrbox: {width: 500, height: 50}, 
+					rememberLastUsedCamera: true,
+					disableFlip: true,
+					aspectRatio: 1,
+					showTorchButtonIfSupported: true,
+					useBarCodeDetectorIfSupported: true,
+					showZoomSliderIfSupported: true,
+					defaultZoomValueIfSupported: 2
+					},
+					
 					(decodedText) => {
 						html5QrCode.stop();
 						document.getElementById("display-box").textContent = `Barcode: ${decodedText}`;
