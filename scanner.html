@@ -13,7 +13,6 @@
             justify-content: center;
             background-color: #CAE7E6;
             /*background-color: #F9D2E5;*/
-            background-color: #AF5;
             position: relative;
 			display: flex;
 			align-items: center;
@@ -129,7 +128,7 @@
 				html5QrCode = new Html5Qrcode("scanner-container");
 				html5QrCode.start(
 					{ facingMode: "environment" },
-					{ fps: 15, qrbox: 450 },
+					{ fps: 60, qrbox: 400 },
 					(decodedText) => {
 						html5QrCode.stop();
 						document.getElementById("display-box").textContent = `Barcode: ${decodedText}`;
@@ -142,25 +141,22 @@
 					(errorMessage) => {
 						console.warn(`Error: ${errorMessage}`);
 					}
-				).then(() => {
-					// Apply video constraints after the scanner starts
-					const constraints = {
-						width: { ideal: 1280 },
-						height: { ideal: 720 },
+				).catch((err) => console.error(`Unable to start scanning: ${err}`));
+
+				// wait 2 seconds to guarantee the camera has already started to apply the focus mode and zoom...
+				setTimeout(function () {
+					html5QrCode.applyVideoConstraints({
 						focusMode: "continuous",
-						advanced: [{ contrast: 300 }] // Adjust contrast level
-
-					};
-
-					html5QrCode.applyVideoConstraints(constraints)
-						.then(() => console.log("Video constraints applied successfully"))
-						.catch(err => console.error("Failed to apply constraints:", err));
-				}).catch((err) => console.error(`Unable to start scanning: ${err}`));
+						advanced: [{ zoom: 2.0 }],
+					});
+				}, 2000);
+	  
 
 				isScanning = true; // Update flag to indicate scanning
 			} else {
 				// Stop scanning
 				html5QrCode.stop();
+				html5QrCode.clear();
 				/* scannerContainer.style.height = "0"; */
 				toggleButton.textContent = "Start Scanner"; // Reset button text
 				scannerContainer.style.border = '0px solid #4C12A1';
