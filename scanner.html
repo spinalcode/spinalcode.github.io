@@ -13,6 +13,7 @@
             justify-content: center;
             background-color: #CAE7E6;
             /*background-color: #F9D2E5;*/
+            background-color: #FFAA55;
             position: relative;
 			display: flex;
 			align-items: center;
@@ -128,7 +129,7 @@
 				html5QrCode = new Html5Qrcode("scanner-container");
 				html5QrCode.start(
 					{ facingMode: "environment" },
-					{ fps: 60, qrbox: 600 },
+					{ fps: 60, qrbox: 400 },
 					(decodedText) => {
 						html5QrCode.stop();
 						document.getElementById("display-box").textContent = `Barcode: ${decodedText}`;
@@ -141,7 +142,18 @@
 					(errorMessage) => {
 						console.warn(`Error: ${errorMessage}`);
 					}
-				).catch((err) => console.error(`Unable to start scanning: ${err}`));
+				).then(() => {
+					// Apply video constraints after the scanner starts
+					const constraints = {
+						width: { ideal: 1280 },
+						height: { ideal: 720 },
+						focusMode: "continuous"
+					};
+
+					html5QrCode.applyVideoConstraints(constraints)
+						.then(() => console.log("Video constraints applied successfully"))
+						.catch(err => console.error("Failed to apply constraints:", err));
+				}).catch((err) => console.error(`Unable to start scanning: ${err}`));
 
 				isScanning = true; // Update flag to indicate scanning
 			} else {
