@@ -11,8 +11,8 @@
         body {
             align-items: center;
             justify-content: center;
-            background-color: #CAE7E6;
-            /*background-color: #F9D2E5;*/
+            /*background-color: #CAE7E6;*/
+            background-color: #F9D2E5;
             position: relative;
 			display: flex;
 			align-items: center;
@@ -147,9 +147,9 @@
 				setTimeout(function () {
 					html5QrCode.applyVideoConstraints({
 						focusMode: "continuous",
-						advanced: [{ zoom: 2.0 }],
+						advanced: [{ zoom: 1.5 }],
 					});
-				}, 2000);
+				}, 1000);
 	  
 
 				isScanning = true; // Update flag to indicate scanning
