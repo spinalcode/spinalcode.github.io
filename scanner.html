@@ -11,8 +11,8 @@
         body {
             align-items: center;
             justify-content: center;
-            /*background-color: #CAE7E6;*/
-            background-color: #F9D2E5;
+            background-color: #CAE7E6;
+            /*background-color: #F9D2E5;*/
             position: relative;
 			display: flex;
 			align-items: center;
@@ -128,7 +128,7 @@
 				html5QrCode = new Html5Qrcode("scanner-container");
 				html5QrCode.start(
 					{ facingMode: "environment" },
-					{ fps: 60, qrbox: 400 },
+					{ fps: 5, qrbox: 600 },
 					(decodedText) => {
 						html5QrCode.stop();
 						document.getElementById("display-box").textContent = `Barcode: ${decodedText}`;
