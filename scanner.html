@@ -13,7 +13,7 @@
             justify-content: center;
             background-color: #CAE7E6;
             /*background-color: #F9D2E5;*/
-            background-color: #FFAA55;
+            background-color: #FF55AA;
             position: relative;
 			display: flex;
 			align-items: center;
@@ -129,7 +129,7 @@
 				html5QrCode = new Html5Qrcode("scanner-container");
 				html5QrCode.start(
 					{ facingMode: "environment" },
-					{ fps: 60, qrbox: 400 },
+					{ fps: 15, qrbox: 450 },
 					(decodedText) => {
 						html5QrCode.stop();
 						document.getElementById("display-box").textContent = `Barcode: ${decodedText}`;
@@ -147,7 +147,7 @@
 					const constraints = {
 						width: { ideal: 1280 },
 						height: { ideal: 720 },
-						focusMode: "continuous"
+						focusMode: "manual"
 					};
 
 					html5QrCode.applyVideoConstraints(constraints)
