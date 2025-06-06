@@ -13,7 +13,7 @@
             justify-content: center;
             background-color: #CAE7E6;
             /*background-color: #F9D2E5;*/
-            background-color: #FF55AA;
+            background-color: #AA55FF;
             position: relative;
 			display: flex;
 			align-items: center;
@@ -147,7 +147,9 @@
 					const constraints = {
 						width: { ideal: 1280 },
 						height: { ideal: 720 },
-						focusMode: "manual"
+						focusMode: "continuous",
+						advanced: [{ contrast: 150 }] // Adjust contrast level
+
 					};
 
 					html5QrCode.applyVideoConstraints(constraints)
