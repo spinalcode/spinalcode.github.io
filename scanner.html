@@ -147,10 +147,10 @@
 						var containerWidth = c128.offsetWidth;
 						var barcodeDiv = document.querySelector(".barcode2300");
 						var width = barcodeDiv.offsetWidth; // Get the width in pixels
+
+						document.getElementById("display-box").textContent = width;
 						
-						toggleButton.textContent = "Barcode Width: " + width + "px";
-						
-						//toggleButton.textContent = "Start Scanner";
+						toggleButton.textContent = "Start Scanner";
 						scannerContainer.style.border = '0px solid #000000';
 						isScanning = false;
 					},
