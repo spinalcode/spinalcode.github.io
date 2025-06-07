@@ -11,8 +11,8 @@
         body {
             align-items: center;
             justify-content: center;
-            background-color: #CAE7E6;
-            /*background-color: #F9D2E5;*/
+            /*background-color: #CAE7E6;*/
+            background-color: #F9D2E5;
             position: relative;
 			display: flex;
 			align-items: center;
@@ -146,14 +146,21 @@
 						c128.innerHTML = toHtml([code128(decodedText)], [1, 300]);
 
 						setTimeout(() => {
-							var barcodeDiv = document.querySelector(".barcode1300"); // Select barcode div
-							if (barcodeDiv) {
-								var width = barcodeDiv.offsetWidth; // Get computed width
-								document.getElementById("display-box").textContent = "Barcode Width: " + width + "px";
+							var container = document.getElementById("c128"); // Barcode container
+							var barcodeDiv = document.querySelector(".barcode1300"); // Barcode div
+							
+							if (container && barcodeDiv) {
+								var containerWidth = container.offsetWidth;
+								var barcodeWidth = barcodeDiv.offsetWidth;
+
+								var numMultiples = Math.floor(containerWidth / barcodeWidth); // Integer multiples
+								document.getElementById("display-box").textContent = "Fits: " + numMultiples + " times";
+								c128.innerHTML = toHtml([code128(decodedText)], [numMultiples, 300]);
 							} else {
-								console.warn("Barcode element not found!");
+								console.warn("Barcode or container element not found!");
 							}
-						}, 100); // Small delay to allow rendering
+						}, 100);
+
 
 						toggleButton.textContent = "Start Scanner";
 						scannerContainer.style.border = '0px solid #000000';
