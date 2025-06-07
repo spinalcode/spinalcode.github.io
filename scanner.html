@@ -11,8 +11,8 @@
         body {
             align-items: center;
             justify-content: center;
-            /*background-color: #CAE7E6;*/
-            background-color: #F9D2E5;
+            background-color: #CAE7E6;
+            /*background-color: #F9D2E5;*/
             position: relative;
 			display: flex;
 			align-items: center;
@@ -145,16 +145,15 @@
 						// Generate barcode
 						c128.innerHTML = toHtml([code128(decodedText)], [1, 300]);
 
-						// Delay width calculation to ensure barcode is rendered
 						setTimeout(() => {
-							var barcodeDiv = document.querySelector(".barcode2300");
+							var barcodeDiv = document.querySelector(".barcode1300"); // Select barcode div
 							if (barcodeDiv) {
-								var width = barcodeDiv.offsetWidth; // Get the width in pixels
+								var width = barcodeDiv.offsetWidth; // Get computed width
 								document.getElementById("display-box").textContent = "Barcode Width: " + width + "px";
 							} else {
 								console.warn("Barcode element not found!");
 							}
-						}, 100); // Delay for 100ms to allow rendering
+						}, 100); // Small delay to allow rendering
 
 						toggleButton.textContent = "Start Scanner";
 						scannerContainer.style.border = '0px solid #000000';
