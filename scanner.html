@@ -142,9 +142,9 @@
 						html5QrCode.stop();
 						document.getElementById("display-box").textContent = `Barcode: ${decodedText}`;
 						// Code128 in HTML/CSS
-						c128.innerHTML = toHtml([code128(decodedText)],[3,300]);
+						c128.innerHTML = toHtml([code128(decodedText)],[2,300]);
 						toggleButton.textContent = "Start Scanner";
-						scannerContainer.style.border = '0px solid #4C12A1';
+						scannerContainer.style.border = '0px solid #000000';
 						isScanning = false;
 					},
 					(errorMessage) => {
