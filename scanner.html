@@ -11,8 +11,8 @@
         body {
             align-items: center;
             justify-content: center;
-            /*background-color: #CAE7E6;/*
-            background-color: #F9D2E5;
+            background-color: #CAE7E6;
+            /*background-color: #F9D2E5;*/
             position: relative;
 			display: flex;
 			align-items: center;
@@ -148,9 +148,9 @@
 						var barcodeDiv = document.querySelector(".barcode2300");
 						var width = barcodeDiv.offsetWidth; // Get the width in pixels
 						
+						toggleButton.textContent = "Barcode Width: " + width + "px";
 						
-						
-						toggleButton.textContent = width;
+						//toggleButton.textContent = "Start Scanner";
 						scannerContainer.style.border = '0px solid #000000';
 						isScanning = false;
 					},
