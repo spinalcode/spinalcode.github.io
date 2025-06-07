@@ -11,8 +11,8 @@
         body {
             align-items: center;
             justify-content: center;
-            background-color: #CAE7E6;
-            /*background-color: #F9D2E5;*/
+            /*background-color: #CAE7E6;*/
+            background-color: #F9D2E5;
             position: relative;
 			display: flex;
 			align-items: center;
@@ -128,28 +128,34 @@
 				html5QrCode = new Html5Qrcode("scanner-container");
 				html5QrCode.start(
 					{ facingMode: "environment" },
-					{ fps: 15, qrbox: {width: 800, height: 100}, 
-					rememberLastUsedCamera: true,
-					disableFlip: true,
-					aspectRatio: 1,
-					showTorchButtonIfSupported: true,
-					useBarCodeDetectorIfSupported: true,
-					showZoomSliderIfSupported: true,
-					defaultZoomValueIfSupported: 2
+					{ fps: 15, qrbox: { width: 800, height: 100 },
+					  rememberLastUsedCamera: true,
+					  disableFlip: true,
+					  aspectRatio: 1,
+					  showTorchButtonIfSupported: true,
+					  useBarCodeDetectorIfSupported: true,
+					  showZoomSliderIfSupported: true,
+					  defaultZoomValueIfSupported: 2
 					},
-					
+
 					(decodedText) => {
 						html5QrCode.stop();
 						document.getElementById("display-box").textContent = `Barcode: ${decodedText}`;
-						// Code128 in HTML/CSS
-						c128.innerHTML = toHtml([code128(decodedText)],[1,300]);
 						
-						var containerWidth = c128.offsetWidth;
-						var barcodeDiv = document.querySelector(".barcode2300");
-						var width = barcodeDiv.offsetWidth; // Get the width in pixels
+						// Generate barcode
+						c128.innerHTML = toHtml([code128(decodedText)], [1, 300]);
 
-						document.getElementById("display-box").textContent = width;
-						
+						// Delay width calculation to ensure barcode is rendered
+						setTimeout(() => {
+							var barcodeDiv = document.querySelector(".barcode2300");
+							if (barcodeDiv) {
+								var width = barcodeDiv.offsetWidth; // Get the width in pixels
+								document.getElementById("display-box").textContent = "Barcode Width: " + width + "px";
+							} else {
+								console.warn("Barcode element not found!");
+							}
+						}, 100); // Delay for 100ms to allow rendering
+
 						toggleButton.textContent = "Start Scanner";
 						scannerContainer.style.border = '0px solid #000000';
 						isScanning = false;
