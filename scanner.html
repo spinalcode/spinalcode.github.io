@@ -183,7 +183,7 @@
 						console.warn(`Error: ${errorMessage}`);
 					}
 				).catch((err) => console.error(`Unable to start scanning: ${err}`));
-
+/*
 				// wait 2 seconds to guarantee the camera has already started to apply the focus mode and zoom...
 				setTimeout(function () {
 					html5QrCode.applyVideoConstraints({
@@ -191,14 +191,13 @@
 						advanced: [{ zoom: 1.5 }],
 					});
 				}, 1000);
-	  
+*/	  
 
 				isScanning = true; // Update flag to indicate scanning
 			} else {
 				// Stop scanning
 				html5QrCode.stop();
-				html5QrCode.clear();
-				/* scannerContainer.style.height = "0"; */
+				//html5QrCode.clear();
 				toggleButton.textContent = "Start Scanner"; // Reset button text
 				scannerContainer.style.border = '0px solid #4C12A1';
 				isScanning = false; // Update flag to indicate not scanning
