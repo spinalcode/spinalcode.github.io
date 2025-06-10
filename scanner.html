@@ -73,6 +73,9 @@
 			width: 800px;
 		}
 
+		#c128, #display-box {
+			display: none;
+		}
 
 		#scanner-container {
 			display: block;
@@ -126,6 +129,10 @@
 				c128.innerHTML = '';
 				document.getElementById("display-box").textContent = '';
 
+				c128.style.display = "none";  
+				document.getElementById("display-box").style.display = "none";  
+
+
 				html5QrCode = new Html5Qrcode("scanner-container");
 				html5QrCode.start(
 					{ facingMode: "environment" },
@@ -140,6 +147,7 @@
 
 					(decodedText) => {
 						html5QrCode.stop();
+						
 						document.getElementById("display-box").textContent = `Barcode: ${decodedText}`;
 						
 						// Generate barcode
@@ -148,6 +156,10 @@
 						setTimeout(() => {
 							var container = document.getElementById("c128"); // Barcode container
 							var barcodeDiv = document.querySelector(".barcode1300"); // Barcode div
+							
+							c128.style.display = "block";  
+							document.getElementById("display-box").style.display = "block";  
+
 							
 							if (container && barcodeDiv) {
 								var containerWidth = container.offsetWidth;
