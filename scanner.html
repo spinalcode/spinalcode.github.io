@@ -24,11 +24,10 @@
 			position: relative;
 			border: 2px solid #4C12A1;
 			text-align: center;
-			background-color: rgba(165, 190, 255, 0.5);
+			background-color: #B8D2F3;
 			border-radius: 20px;
 			padding: 20px;
 			margin-top: 50px;
-			width: 800px;
 		}
 		
 		.h1-container {margin-top:-70px;}
@@ -74,10 +73,6 @@
 			width: 800px;
 		}
 
-		#c128, #display-box {
-			display: none;
-		}
-
 		#scanner-container {
 			display: block;
 			border-radius: 10px;
@@ -93,6 +88,13 @@
 			font-size: 30px;
 			margin-top: 20px;
 		}
+
+		.invisible {
+			color: #B8D2F3 !important;
+			background-color: #B8D2F3 !important;
+			border-color: #B8D2F3 !important;
+		}
+
     </style>
 
     <title>Barcode Display</title>
@@ -103,8 +105,8 @@
 <body>
 	<div class="container1">
 		<div class="h1-container"><h1>Barcode Display</h1></div>
-		<p id="c128"></p>
-		<div id="display-box">BARCODE</div>
+		<p id="c128" class="invisible"></p>
+		<div id="display-box" class="invisible">BARCODE</div>
 		<br/><br/>
 
 		<div id="scanner-container"></div>
@@ -115,95 +117,84 @@
     <script>
 	
 
-		const toggleButton = document.getElementById("toggle-button");
-		const scannerContainer = document.getElementById("scanner-container");
+const toggleButton = document.getElementById("toggle-button");
+const scannerContainer = document.getElementById("scanner-container");
+const c128 = document.getElementById("c128");
+const displayBox = document.getElementById("display-box");
 
-		let isScanning = false;
-		let html5QrCode;
+let isScanning = false;
+let html5QrCode;
 
-		toggleButton.addEventListener("click", () => {
-			if (!isScanning) {
-				// Start scanning
-				scannerContainer.innerHTML = "";
-				toggleButton.textContent = "Stop Scanner";
-				scannerContainer.style.border = '2px solid #4C12A1';
-				c128.innerHTML = '';
-				document.getElementById("display-box").textContent = '';
+toggleButton.addEventListener("click", () => {
+    if (!isScanning) {
+        // Start scanning
+        scannerContainer.innerHTML = "";
+        toggleButton.textContent = "Stop Scanner";
+        scannerContainer.style.border = '2px solid #4C12A1';
+        c128.innerHTML = '';
+        displayBox.textContent = '';
 
-				c128.style.display = "none";  
-				document.getElementById("display-box").style.display = "none";  
+        // Apply "invisible" class instead of hiding elements
+        c128.classList.add("invisible");
+        displayBox.classList.add("invisible");
 
+        html5QrCode = new Html5Qrcode("scanner-container");
+        html5QrCode.start(
+            { facingMode: "environment" },
+            { fps: 15, qrbox: { width: 800, height: 100 },
+              rememberLastUsedCamera: true,
+              disableFlip: true,
+              aspectRatio: 1,
+              showTorchButtonIfSupported: true,
+              useBarCodeDetectorIfSupported: true,
+              showZoomSliderIfSupported: true,
+              defaultZoomValueIfSupported: 2
+            },
+            (decodedText) => {
+                html5QrCode.stop();
+                displayBox.textContent = `Barcode: ${decodedText}`;
+                
+                // Generate barcode
+                c128.innerHTML = toHtml([code128(decodedText)], [1, 300]);
 
-				html5QrCode = new Html5Qrcode("scanner-container");
-				html5QrCode.start(
-					{ facingMode: "environment" },
-					{ fps: 15, qrbox: { width: 800, height: 100 },
-					  rememberLastUsedCamera: true,
-					  disableFlip: true,
-					  showTorchButtonIfSupported: true,
-					  useBarCodeDetectorIfSupported: true,
-					  showZoomSliderIfSupported: true,
-					  defaultZoomValueIfSupported: 2
-					},
+                setTimeout(() => {
+                    var containerWidth = c128.offsetWidth;
+                    var barcodeDiv = document.querySelector(".barcode1300");
 
-					(decodedText) => {
-						html5QrCode.stop();
-						
-						document.getElementById("display-box").textContent = `Barcode: ${decodedText}`;
-						
-						// Generate barcode
-						c128.innerHTML = toHtml([code128(decodedText)], [1, 300]);
+                    if (barcodeDiv) {
+                        var barcodeWidth = barcodeDiv.offsetWidth;
+                        var numMultiples = Math.floor(containerWidth / barcodeWidth);
+                        c128.innerHTML = toHtml([code128(decodedText)], [numMultiples - 1, 300]);
+                    } else {
+                        console.warn("Barcode element not found!");
+                    }
 
-						setTimeout(() => {
-							var container = document.getElementById("c128"); // Barcode container
-							var barcodeDiv = document.querySelector(".barcode1300"); // Barcode div
-							
-							c128.style.display = "block";  
-							document.getElementById("display-box").style.display = "block";  
+                    // Remove "invisible" class to make elements visible
+                    c128.classList.remove("invisible");
+                    displayBox.classList.remove("invisible");
 
-							
-							if (container && barcodeDiv) {
-								var containerWidth = container.offsetWidth;
-								var barcodeWidth = barcodeDiv.offsetWidth;
+                }, 100);
 
-								var numMultiples = Math.floor(containerWidth / barcodeWidth); // Integer multiples
-								//document.getElementById("display-box").textContent = "Fits: " + numMultiples + " times";
-								c128.innerHTML = toHtml([code128(decodedText)], [numMultiples-1, 300]);
-							} else {
-								console.warn("Barcode or container element not found!");
-							}
-						}, 100);
+                toggleButton.textContent = "Start Scanner";
+                scannerContainer.style.border = '0px solid #000000';
+                isScanning = false;
+            },
+            (errorMessage) => {
+                console.warn(`Error: ${errorMessage}`);
+            }
+        ).catch((err) => console.error(`Unable to start scanning: ${err}`));
 
-
-						toggleButton.textContent = "Start Scanner";
-						scannerContainer.style.border = '0px solid #000000';
-						isScanning = false;
-					},
-					(errorMessage) => {
-						console.warn(`Error: ${errorMessage}`);
-					}
-				).catch((err) => console.error(`Unable to start scanning: ${err}`));
-/*
-				// wait 2 seconds to guarantee the camera has already started to apply the focus mode and zoom...
-				setTimeout(function () {
-					html5QrCode.applyVideoConstraints({
-						focusMode: "continuous",
-						advanced: [{ zoom: 1.5 }],
-					});
-				}, 1000);
-*/	  
-
-				isScanning = true; // Update flag to indicate scanning
-			} else {
-				// Stop scanning
-				html5QrCode.stop();
-				//html5QrCode.clear();
-				toggleButton.textContent = "Start Scanner"; // Reset button text
-				scannerContainer.style.border = '0px solid #4C12A1';
-				isScanning = false; // Update flag to indicate not scanning
-			}
-		});
-
+        isScanning = true;
+    } else {
+        // Stop scanning
+        html5QrCode.stop();
+        toggleButton.textContent = "Start Scanner";
+        scannerContainer.style.border = '0px solid #CAE7E6';
+        isScanning = false;
+        c128.classList.add("invisible");
+        displayBox.classList.add("invisible");
+    }
+});
     </script>
 
 	
