@@ -70,16 +70,16 @@
 		}
 		
 		table {
-			border-collapse: separate; /* Use separate instead of collapse */
-			margin: 10px; /* Remove margins between tables */
+			border-collapse: separate;
+			margin: 10px;
 		}
 
 		th, td {
 			border: 1px solid #4C12A1;
 			padding: 5px;
 			text-align: center;
-			width: 20px; /* Set a fixed width */
-			height: 20px; /* Set a fixed height */
+			width: 20px;
+			height: 20px;
 		}
 
 		th {
@@ -88,18 +88,18 @@
 		}
 
 		.highlight {
-			background-color: #E5006E; /* Change this to your desired highlight color */
+			background-color: #E5006E;
 			color: #E8F0FE;
 		}
 		.round-top-left {
-			border-top-left-radius: 10px; /* Adjust the value as needed */
+			border-top-left-radius: 10px;
 		}
 		.round-top-right {
-			border-top-right-radius: 10px; /* Adjust the value as needed */
+			border-top-right-radius: 10px;
 		}
 		button {
-			border: 1px solid #E5006D;
-			border-radius: 5px; /* Adjust the value as needed */
+			border: 2px solid #E5006D;
+			border-radius: 5px;
 			padding: 5px;
 			width: 100px;
 			text-align: center;
@@ -108,13 +108,24 @@
 		}
 		input, #display-box {
 			border: 2px solid #4C12A1;
-			border-radius: 5px; /* Adjust the value as needed */
+			border-radius: 5px;
 			padding: 5px;
 			width: 400px;
 			text-align: center;
 			background-color: #FFFFFF;
 			color: #4C12A1;
 		}
+
+		textarea {
+			border: 2px solid #4C12A1;
+			border-radius: 5px;
+			padding: 5px;
+			width: 400px;
+			text-align: center;
+			background-color: #FFFFFF;
+			color: #4C12A1;
+		}
+
 
 		#display-box {
 			width: 500px;
@@ -322,7 +333,29 @@
 			compareText();
 		}
 		
-		
+		function addToList() {
+			const skuList = document.getElementById('skuList');
+			const input = document.getElementById('inputText').value.trim().toUpperCase();
+
+			skuList.value += input + '\n';
+
+			// Auto-resize logic
+			skuList.style.height = 'auto'; // reset height
+			skuList.style.height = skuList.scrollHeight + 'px'; // adjust to new content
+		}
+
+		function copyToClipboard(){
+		const inputValue = document.getElementById('inputText').value.trim().toUpperCase();
+
+		navigator.clipboard.writeText(inputValue)
+		  .then(() => {
+			console.log('Text copied to clipboard!');
+		  })
+		  .catch(err => {
+			console.error('Failed to copy text: ', err);
+		  });
+		}
+
     </script>
 </head>
 <body>
@@ -331,9 +364,13 @@
 		<p>Enter accessory to find:</p>
 		<input type="text" id="inputText"/>
 		<button onclick="compareAndFind()">Find</button>
+		<!--<button onclick="addToList()">Add to list</button>-->
 		<br/><br/>
 		<input type="value" id="display-box"></input>
 		<br/><br/>
+		<button onclick="copyToClipboard()">Copy</button>
+		<button onclick="window.open('https://dcg.itgcanopy.com/content/site/home.jsp#!/2/mobile/daily/list', '_blank')">Sphere</button>
+		<button onclick="window.open('https://m3-studio-cur.vestcom.com/m3_login/perform_login', '_blank')">M3 Ticket</button>
 
 		<div id="scanner-container"></div>
 		<button id="toggle-button">Start Scanning</button>
@@ -351,6 +388,11 @@
 			<div class="container" id="SIDE_D">
 			</div>
 		</div>
+
+		<!--<textarea id="skuList" rows="1" style="overflow:hidden; resize:none;"></textarea>-->
+		<br/>
+
+
 	</div>
 	
     <div id="popup">
