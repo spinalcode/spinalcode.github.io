@@ -11,8 +11,8 @@
         body {
             align-items: center;
             justify-content: center;
-            /* background-color: #CAE7E6; */
-            background-color: #F9D2E5;
+            background-color: #CAE7E6;
+            /* background-color: #F9D2E5; */
             position: relative;
 			display: flex;
 			align-items: center;
@@ -49,8 +49,8 @@
         .circle {
             border-radius: 50%;
             position: absolute;
-        /*    background: linear-gradient(to bottom, #E2EFF2, #CAE7E6, #8CCABC); */
-            background: linear-gradient(to bottom, #FFFFFF, #F9D2E5, #E9A6B8);
+            background: linear-gradient(to bottom, #E2EFF2, #CAE7E6, #8CCABC);
+        /*    background: linear-gradient(to bottom, #FFFFFF, #F9D2E5, #E9A6B8); */
             z-index: 1; /* Ensure circles stay in the background */
         }		
 
@@ -177,12 +177,23 @@
 			margin-top: 20px;
 		}
 
-
+		#c128 {
+			border: 2px solid #4C12A1;
+			border-radius: 5px;
+			padding: 5px;
+			text-align: center;
+			background-color: #FFFFFF;
+			color: #000000;
+			width: 800px;
+		}
+		
     </style>
 
     <title>Accessory Finder</title>
     <script src="data.js"></script>
 	<script src="https://unpkg.com/html5-qrcode"></script>
+	<script type="text/javascript" src="scanner/barcode.js"></script>
+
 
 	<script type="text/javascript">
 	
@@ -364,7 +375,7 @@
 		<p>Enter accessory to find:</p>
 		<input type="text" id="inputText"/>
 		<button onclick="compareAndFind()">Find</button>
-		<button onclick="addToList()">Add to list</button>
+		<!--<button onclick="addToList()">Add to list</button>-->
 		<br/><br/>
 		<input type="value" id="display-box"></input>
 		<br/><br/>
@@ -389,7 +400,10 @@
 			</div>
 		</div>
 
-		<textarea id="skuList" rows="1" style="overflow:hidden; resize:none;"></textarea>
+		<!--<textarea id="skuList" rows="1" style="overflow:hidden; resize:none;"></textarea>-->
+		<p id="c128" class="invisible"></p>
+		<div id="code-box"></div>
+
 		<br/>
 
 
@@ -481,6 +495,34 @@
 
 			const endText = data.split(',')[2].trim();
 			document.getElementById('display-box').value = endText;
+			
+			// Generate barcode
+
+			const foundEAN = EANList.find(item => {
+			  const [ean, name] = item.split(', ');
+			  return name.includes(middleText);
+			})?.split(', ')[0];
+
+			document.getElementById('code-box').innerHTML = foundEAN ?? 'EAN not found';			
+			c128.innerHTML = toHtml([code128(foundEAN)], [1, 300]);
+
+                setTimeout(() => {
+                    var containerWidth = c128.offsetWidth;
+                    var barcodeDiv = document.querySelector(".barcode1300");
+
+                    if (barcodeDiv) {
+                        var barcodeWidth = barcodeDiv.offsetWidth;
+                        var numMultiples = Math.floor(containerWidth / barcodeWidth);
+                        c128.innerHTML = toHtml([code128(foundEAN)], [numMultiples - 1, 300]);
+                    } else {
+                        console.warn("Barcode element not found!");
+                    }
+
+                    // Remove "invisible" class to make elements visible
+                    c128.classList.remove("invisible");
+
+                }, 100);
+
 			
 			compareText();
 		}
