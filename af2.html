@@ -513,7 +513,7 @@
                     if (barcodeDiv) {
                         var barcodeWidth = barcodeDiv.offsetWidth;
                         var numMultiples = Math.floor(containerWidth / barcodeWidth);
-                        c128.innerHTML = toHtml([code128(foundEAN)], [numMultiples - 1, 300]);
+                        /*c128.innerHTML = toHtml([code128(foundEAN)], [numMultiples - 1, 300]);*/
                     } else {
                         console.warn("Barcode element not found!");
                     }
