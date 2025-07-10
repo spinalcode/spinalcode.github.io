@@ -106,7 +106,7 @@
 	<div class="container1">
 		<div class="h1-container"><h1>Barcode Display</h1></div>
 		<p id="c128" class="invisible"></p>
-		<div id="display-box" class="invisible">BARCODE</div>
+		<div id="display-box" class="invisible" onclick="copyToClipboard()">BARCODE</div>
 		<br/><br/>
 
 		<div id="scanner-container"></div>
@@ -195,6 +195,21 @@ toggleButton.addEventListener("click", () => {
         displayBox.classList.add("invisible");
     }
 });
+
+
+function copyToClipboard(){
+		const inputValue = document.getElementById('display-box').value.trim().toUpperCase();
+
+		navigator.clipboard.writeText(inputValue)
+		  .then(() => {
+			console.log('Text copied to clipboard!');
+		  })
+		  .catch(err => {
+			console.error('Failed to copy text: ', err);
+		  });
+		}
+
+	    
     </script>
 
 	
