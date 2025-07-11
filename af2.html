@@ -102,6 +102,7 @@
 			border-radius: 5px;
 			padding: 5px;
 			width: 100px;
+			height: 40px;
 			text-align: center;
 			background-color: #E5006D;
 			color: #E8F0FE;
@@ -111,6 +112,7 @@
 			border-radius: 5px;
 			padding: 5px;
 			width: 400px;
+			height:30px;
 			text-align: center;
 			background-color: #FFFFFF;
 			color: #4C12A1;
@@ -184,7 +186,7 @@
 			text-align: center;
 			background-color: #FFFFFF;
 			color: #000000;
-			width: 800px;
+			width: 100%;
 		}
 		
     </style>
@@ -356,7 +358,7 @@
 		}
 
 		function copyToClipboard(){
-		const inputValue = document.getElementById('inputText').value.trim().toUpperCase();
+		const inputValue = document.getElementById('code-box').value.trim().toUpperCase();
 
 		navigator.clipboard.writeText(inputValue)
 		  .then(() => {
@@ -379,7 +381,9 @@
 		<br/><br/>
 		<input type="value" id="display-box"></input>
 		<br/><br/>
-		<button onclick="copyToClipboard()">Copy</button>
+		<input type="value" id="code-box"></input><button onclick="copyToClipboard()">Copy</button>
+		<br/><br/>
+		
 		<button onclick="window.open('https://dcg.itgcanopy.com/content/site/home.jsp#!/2/mobile/daily/list', '_blank')">Sphere</button>
 		<button onclick="window.open('https://m3-studio-cur.vestcom.com/m3_login/perform_login', '_blank')">M3 Ticket</button>
 
@@ -402,7 +406,7 @@
 
 		<!--<textarea id="skuList" rows="1" style="overflow:hidden; resize:none;"></textarea>-->
 		<p id="c128" class="invisible"></p>
-		<div id="code-box"></div>
+		
 
 		<br/>
 
@@ -503,7 +507,7 @@
 			  return name.includes(middleText);
 			})?.split(', ')[0];
 
-			document.getElementById('code-box').innerHTML = foundEAN ?? 'EAN not found';			
+			document.getElementById('code-box').value = foundEAN ?? 'EAN not found';			
 			c128.innerHTML = toHtml([code128(foundEAN)], [1, 300]);
 
                 setTimeout(() => {
@@ -513,7 +517,7 @@
                     if (barcodeDiv) {
                         var barcodeWidth = barcodeDiv.offsetWidth;
                         var numMultiples = Math.floor(containerWidth / barcodeWidth);
-                        c128.innerHTML = toHtml([code128(foundEAN)], [numMultiples - 1, 100]);
+                        c128.innerHTML = toHtml([code128(foundEAN)], [numMultiples - 1, 300]);
                     } else {
                         console.warn("Barcode element not found!");
                     }
