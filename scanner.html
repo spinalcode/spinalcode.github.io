@@ -89,6 +89,14 @@
 			margin-top: 20px;
 		}
 
+		.button {
+			width: 300px;
+			height: 100px;
+			font-size: 30px;
+			margin-top: 20px;
+		}
+
+
 		.invisible {
 			color: #B8D2F3 !important;
 			background-color: #B8D2F3 !important;
@@ -106,11 +114,13 @@
 	<div class="container1">
 		<div class="h1-container"><h1>Barcode Display</h1></div>
 		<p id="c128" class="invisible"></p>
-		<div id="display-box" class="invisible" onclick="copyToClipboard()">BARCODE</div>
+		<input type="value" id="display-box" value="000000000000"></input>
+		
 		<br/><br/>
 
 		<div id="scanner-container"></div>
 		<button id="toggle-button">Start Scanning</button>
+		<button class="button" onclick="copyToClipboard()">Copy</button>
 
 	</div>
 	
@@ -124,6 +134,20 @@ const displayBox = document.getElementById("display-box");
 
 let isScanning = false;
 let html5QrCode;
+
+
+		function copyToClipboard(){
+		const inputValue = document.getElementById('display-box').value.trim().toUpperCase();
+
+		navigator.clipboard.writeText(inputValue)
+		  .then(() => {
+			console.log('Text copied to clipboard!');
+		  })
+		  .catch(err => {
+			console.error('Failed to copy text: ', err);
+		  });
+		}
+
 
 toggleButton.addEventListener("click", () => {
     if (!isScanning) {
@@ -141,7 +165,7 @@ toggleButton.addEventListener("click", () => {
         html5QrCode = new Html5Qrcode("scanner-container");
         html5QrCode.start(
             { facingMode: "environment" },
-            { fps: 15, qrbox: { width: 800, height: 400 },
+            { fps: 15, qrbox: { width: 800, height: 100 },
               rememberLastUsedCamera: true,
               disableFlip: true,
               aspectRatio: 1,
@@ -195,21 +219,6 @@ toggleButton.addEventListener("click", () => {
         displayBox.classList.add("invisible");
     }
 });
-
-
-function copyToClipboard(){
-		const inputValue = document.getElementById('display-box').value.trim().toUpperCase();
-
-		navigator.clipboard.writeText(inputValue)
-		  .then(() => {
-			console.log('Text copied to clipboard!');
-		  })
-		  .catch(err => {
-			console.error('Failed to copy text: ', err);
-		  });
-		}
-
-	    
     </script>
 
 	
