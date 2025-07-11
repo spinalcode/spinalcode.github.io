@@ -176,7 +176,7 @@ toggleButton.addEventListener("click", () => {
             },
             (decodedText) => {
                 html5QrCode.stop();
-                displayBox.textContent = `Barcode: ${decodedText}`;
+                displayBox.value = `Barcode: ${decodedText}`;
                 
                 // Generate barcode
                 c128.innerHTML = toHtml([code128(decodedText)], [1, 300]);
