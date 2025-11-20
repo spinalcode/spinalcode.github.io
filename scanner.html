@@ -137,7 +137,7 @@ let html5QrCode;
 
 
 		function copyToClipboard(){
-		const inputValue = document.getElementById('display-box').value.trim().toUpperCase();
+		const inputValue = document.getElementById('display-box').value.trim().toUpperCase()+ '\n';
 
 		navigator.clipboard.writeText(inputValue)
 		  .then(() => {
