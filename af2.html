@@ -363,15 +363,21 @@
 		}
 
 		function copyToClipboard(){
-		const inputValue = document.getElementById('code-box').value.trim().toUpperCase();
+		var inputValue = document.getElementById('code-box').value.trim().toUpperCase();
 
-		navigator.clipboard.writeText(inputValue)
-		  .then(() => {
-			console.log('Text copied to clipboard!');
-		  })
-		  .catch(err => {
-			console.error('Failed to copy text: ', err);
-		  });
+		if (navigator.clipboard && window.isSecureContext) {
+			navigator.clipboard.writeText(inputValue)
+			  .then(() => { console.log('Text copied to clipboard!'); })
+			  .catch(err => { console.error('Failed to copy text: ', err); });
+		} else {
+			// Fallback for file:// or non-secure contexts
+			var tempInput = document.createElement('input');
+			tempInput.value = inputValue;
+			document.body.appendChild(tempInput);
+			tempInput.select();
+			document.execCommand('copy');
+			document.body.removeChild(tempInput);
+		}
 		}
 
     </script>
@@ -507,15 +513,18 @@
 			
 			// Generate barcode
 
-			const foundEAN = EANList.find(item => {
-			  const [ean, name] = item.split(', ');
-			  return name.includes(middleText);
-			})?.split(', ')[0];
+			var foundEANEntry = EANList.find(function(item) {
+			  var parts = item.split(', ');
+			  return parts[1] && parts[1].includes(middleText);
+			});
+			var foundEAN = foundEANEntry ? foundEANEntry.split(', ')[0] : null;
 
-			document.getElementById('code-box').value = foundEAN ?? 'EAN not found';			
-			c128.innerHTML = toHtml([code128(foundEAN)], [1, 300]);
+			document.getElementById('code-box').value = foundEAN ? foundEAN : 'EAN not found';
 
-                setTimeout(() => {
+			if (foundEAN) {
+				c128.innerHTML = toHtml([code128(foundEAN)], [1, 300]);
+
+				setTimeout(function() {
                     var containerWidth = c128.offsetWidth;
                     var barcodeDiv = document.querySelector(".barcode1300");
 
@@ -527,10 +536,12 @@
                         console.warn("Barcode element not found!");
                     }
 
-                    // Remove "invisible" class to make elements visible
                     c128.classList.remove("invisible");
-
                 }, 100);
+			} else {
+				c128.innerHTML = '';
+				c128.classList.add("invisible");
+			}
 
 			
 			compareText();
