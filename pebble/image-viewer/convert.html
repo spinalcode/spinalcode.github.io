@@ -3,15 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Image to Base64</title>
+  <title>Image to Base64 (Pebble)</title>
   <style>
     * { box-sizing: border-box; }
     body { font-family: sans-serif; padding: 16px; background: #1a1a1a; color: #eee; margin: 0; }
     h2 { margin-top: 0; }
     p { font-size: 14px; color: #aaa; }
     input[type=file] { width: 100%; margin: 8px 0; }
-    canvas { display: none; }
-    img#preview { display: none; max-width: 144px; max-height: 168px; margin-top: 8px; border: 1px solid #555; image-rendering: pixelated; }
+    canvas { border: 1px solid #555; image-rendering: pixelated; display: block; margin-top: 8px; }
     textarea {
       width: 100%; padding: 10px; background: #333; color: #eee;
       border: 1px solid #555; border-radius: 4px; font-size: 11px;
@@ -22,89 +21,76 @@
       border-radius: 4px; font-size: 15px; cursor: pointer; width: 100%;
       background: #5b8bf5;
     }
-    button:disabled { background: #444; cursor: default; }
     .section { background: #222; border-radius: 6px; padding: 12px; margin-bottom: 16px; }
     #status { margin-top: 10px; font-size: 13px; color: #5b8bf5; }
-    .preview-wrap { display: flex; gap: 12px; align-items: flex-start; margin-top: 8px; }
-    .preview-wrap div { flex: 1; font-size: 12px; color: #aaa; }
+    #info { font-size: 12px; color: #aaa; margin-top: 6px; }
   </style>
 </head>
 <body>
   <h2>Image → Base64</h2>
-  <p>Pick an image, preview it scaled to watch size (144×168), then copy the Base64 and paste it into the Pebble Image Viewer config.</p>
+  <p>Pick an image. It will be scaled to fit the Pebble Time 2 screen (200×224) and converted to Pebble's 64-colour palette.</p>
 
   <div class="section">
     <input type="file" id="fileInput" accept="image/*" onchange="loadFile()">
-    <div class="preview-wrap">
-      <div>
-        <div>Preview (watch size):</div>
-        <img id="preview">
-      </div>
-      <div id="info"></div>
-    </div>
+    <div id="info"></div>
+    <canvas id="preview"></canvas>
   </div>
 
   <div class="section" id="outputSection" style="display:none">
-    <p style="margin:0 0 4px">Base64 output — select all and copy:</p>
+    <p style="margin:0 0 4px">Base64 — tap to select all, then copy:</p>
     <textarea id="output" readonly onclick="this.select()"></textarea>
     <button onclick="copyToClipboard()">Copy to Clipboard</button>
   </div>
 
   <div id="status"></div>
-  <canvas id="canvas"></canvas>
 
   <script>
-    function status(m) { document.getElementById('status').textContent = m; }
+    function rgbToGColor8(r, g, b) {
+      // Quantise to 2 bits per channel to preview Pebble palette
+      var r2 = (r >> 6) & 0x3;
+      var g2 = (g >> 6) & 0x3;
+      var b2 = (b >> 6) & 0x3;
+      return { r: r2 * 85, g: g2 * 85, b: b2 * 85 };
+    }
 
     function loadFile() {
       var file = document.getElementById('fileInput').files[0];
       if (!file) return;
-      status('Processing...');
+      document.getElementById('status').textContent = 'Processing...';
 
       var reader = new FileReader();
       reader.onload = function(e) {
         var img = new Image();
         img.onload = function() {
-          var W = Math.min(img.width,  144);
-          var H = Math.min(img.height, 168);
+          var W = Math.min(img.width,  200);
+          var H = Math.min(img.height, 224);
 
-          // Draw scaled to watch size
-          var canvas = document.getElementById('canvas');
+          // Draw to canvas
+          var canvas = document.getElementById('preview');
           canvas.width  = W;
           canvas.height = H;
           var ctx = canvas.getContext('2d');
-
-          // White background then draw image
-          ctx.fillStyle = '#ffffff';
-          ctx.fillRect(0, 0, W, H);
           ctx.drawImage(img, 0, 0, W, H);
 
-          // Convert to greyscale preview
+          // Quantise to Pebble 64-colour palette for preview
           var imageData = ctx.getImageData(0, 0, W, H);
           var pixels = imageData.data;
           for (var i = 0; i < pixels.length; i += 4) {
-            var lum = Math.round(0.299*pixels[i] + 0.587*pixels[i+1] + 0.114*pixels[i+2]);
-            var bw  = lum > 127 ? 255 : 0;
-            pixels[i] = pixels[i+1] = pixels[i+2] = bw;
+            var c = rgbToGColor8(pixels[i], pixels[i+1], pixels[i+2]);
+            pixels[i]   = c.r;
+            pixels[i+1] = c.g;
+            pixels[i+2] = c.b;
           }
           ctx.putImageData(imageData, 0, 0);
 
-          // Show preview
-          var preview = document.getElementById('preview');
-          preview.src   = canvas.toDataURL('image/png');
-          preview.style.display = 'block';
+          document.getElementById('info').textContent =
+            'Original: ' + img.width + '×' + img.height + ' → Watch: ' + W + '×' + H + ' (64 colours)';
 
-          // Info
-          document.getElementById('info').innerHTML =
-            'Original: ' + img.width + '×' + img.height + '<br>' +
-            'Watch size: ' + W + '×' + H + '<br>' +
-            'B&amp;W dithered';
-
-          // Output base64
+          // Output as PNG data URL
           var dataUrl = canvas.toDataURL('image/png');
           document.getElementById('output').value = dataUrl;
           document.getElementById('outputSection').style.display = 'block';
-          status('Done! Copy the Base64 above and paste it into the Pebble config.');
+          document.getElementById('status').textContent = 'Done! Copy the Base64 and paste it into the Pebble config.';
         };
         img.src = e.target.result;
       };
@@ -115,7 +101,7 @@
       var ta = document.getElementById('output');
       ta.select();
       document.execCommand('copy');
-      status('Copied to clipboard!');
+      document.getElementById('status').textContent = 'Copied!';
     }
   </script>
 </body>
