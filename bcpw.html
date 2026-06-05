@@ -12,11 +12,14 @@
   label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #aaa; margin-bottom: 2px; display: block; }
   input { width: 100%; padding: 10px 14px; font-family: 'Courier New', monospace; font-size: 16px; border: 1.5px solid #ddd; border-radius: 3px; outline: none; letter-spacing: 0.08em; }
   input:focus { border-color: #111; }
-  #barcode-wrap { position: relative; display: inline-flex; align-items: center; justify-content: center; }
-  #size-box { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 224px; height: 200px; border: 1px solid #f00; pointer-events: none; z-index: 1; }
-  #barcode-container { display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .barcode-section { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .section-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #aaa; }
+  .barcode-wrap { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+  .size-box { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 224px; border: 1px solid #f00; pointer-events: none; z-index: 1; }
+  .barcode-container { display: flex; align-items: center; justify-content: center; padding: 20px; }
   #error { color: #c00; font-size: 13px; display: none; }
-  #dlbtn { display:none; padding:8px 20px; font-family:'Courier New',monospace; font-size:12px; letter-spacing:0.1em; text-transform:uppercase; border:1.5px solid #111; background:#111; color:#fff; border-radius:3px; cursor:pointer; }
+  .dlbtn { display:none; padding:8px 20px; font-family:'Courier New',monospace; font-size:12px; letter-spacing:0.1em; text-transform:uppercase; border:1.5px solid #111; background:#111; color:#fff; border-radius:3px; cursor:pointer; }
+  hr { width: 100%; border: none; border-top: 1px solid #eee; }
 </style>
 </head>
 <body>
@@ -27,8 +30,20 @@
     <div><label>Field 2</label><input type="text" id="f2" placeholder="Second value&hellip;" /></div>
   </div>
   <div id="error">Cannot encode these characters</div>
-  <div id="barcode-wrap"><div id="size-box"></div><div id="barcode-container"><svg id="bc"></svg></div></div>
-  <button id="dlbtn" onclick="saveImage()">Save as PNG</button>
+
+  <div class="barcode-section">
+    <div class="section-label">Combined (with Enter)</div>
+    <div class="barcode-wrap"><div class="size-box" id="box1"></div><div class="barcode-container"><svg id="bc1"></svg></div></div>
+    <button class="dlbtn" id="dl1" onclick="saveImage('bc1','barcode-combined.png')">Save as PNG</button>
+  </div>
+
+  <hr>
+
+  <div class="barcode-section">
+    <div class="section-label">Separated (stacked)</div>
+    <div class="barcode-wrap"><div class="size-box" id="box2"></div><div class="barcode-container"><canvas id="stacked"></canvas></div></div>
+    <button class="dlbtn" id="dl2" onclick="saveStacked()">Save as PNG</button>
+  </div>
 </div>
 <script>
 /*! JsBarcode v3.12.3 | (c) Johan Lindell | MIT license */
@@ -37,69 +52,139 @@
 <script>
   const ukRemap = { "@": "\"", "#": "\\" };
   function remap(str) { return str.split("").map(c => ukRemap[c] ?? c).join(""); }
+  const GAP = 10;
+  const BAR_H = 90;
+
+  // Render a barcode to an offscreen canvas using a temporary SVG element
+  function barcodeToCanvas(text, height) {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.style.position = "absolute";
+    svg.style.left = "-9999px";
+    document.body.appendChild(svg);
+    let result = null;
+    try {
+      JsBarcode(svg, text, {
+        format: "CODE128", lineColor: "#111", width: 1,
+        height: height, displayValue: false, margin: 0
+      });
+      const w = parseInt(svg.getAttribute("width"));
+      const h = parseInt(svg.getAttribute("height"));
+      if (w && h) {
+        const c = document.createElement("canvas");
+        c.width = w; c.height = h;
+        const ctx = c.getContext("2d");
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, w, h);
+        svg.querySelectorAll("rect").forEach(r => {
+          const isWhite = (r.getAttribute("style")||"").includes("ffffff") || (r.getAttribute("fill")||"").includes("ffffff");
+          ctx.fillStyle = isWhite ? "#ffffff" : "#000000";
+          ctx.fillRect(parseFloat(r.getAttribute("x")||0), parseFloat(r.getAttribute("y")||0), parseFloat(r.getAttribute("width")), parseFloat(r.getAttribute("height")));
+        });
+        // Crop to black pixels
+        const px = ctx.getImageData(0, 0, w, h).data;
+        let x0=w, x1=0;
+        for (let y=0; y<h; y++) for (let x=0; x<w; x++) {
+          if (px[(y*w+x)*4] < 128) { if(x<x0)x0=x; if(x>x1)x1=x; }
+        }
+        const cw = x1-x0+1;
+        const out = document.createElement("canvas");
+        out.width = cw; out.height = h;
+        const octx = out.getContext("2d");
+        octx.fillStyle = "#ffffff";
+        octx.fillRect(0, 0, cw, h);
+        octx.drawImage(c, x0, 0, cw, h, 0, 0, cw, h);
+        result = out;
+      }
+    } catch(e) {}
+    document.body.removeChild(svg);
+    return result;
+  }
 
   function generate() {
     const err = document.getElementById("error");
+    err.style.display = "none";
+    document.getElementById("dl1").style.display = "none";
+    document.getElementById("dl2").style.display = "none";
+
     const v1 = remap(document.getElementById("f1").value);
     const v2 = remap(document.getElementById("f2").value);
-    err.style.display = "none";
-    document.getElementById("dlbtn").style.display = "none";
-    if (!v1 && !v2) { document.getElementById("bc").innerHTML = ""; return; }
-    try {
-      JsBarcode("#bc", (v1 && v2) ? v1 + "\r" + v2 : (v1 || v2), {
-        format: "CODE128",
-        lineColor: "#111",
-        width: 1,
-        height: 100,
-        displayValue: false,
-        margin: 0,
+
+    // Combined
+    const combined = (v1 && v2) ? v1 + "\r" + v2 : (v1 || v2);
+    if (combined) {
+      JsBarcode("#bc1", combined, {
+        format: "CODE128", lineColor: "#111", width: 1, height: 100,
+        displayValue: false, margin: 0,
         valid: function(v) {
           err.style.display = v ? "none" : "block";
-          document.getElementById("dlbtn").style.display = v ? "block" : "none";
-          if (v) {
-            const svgH = parseInt(document.getElementById("bc").getAttribute("height"));
-            document.getElementById("size-box").style.height = svgH + "px";
-          }
+          document.getElementById("dl1").style.display = v ? "block" : "none";
+          if (v) document.getElementById("box1").style.height = parseInt(document.getElementById("bc1").getAttribute("height")) + "px";
         }
       });
-    } catch(e) {
-      document.getElementById("bc").innerHTML = "";
-      err.style.display = "block";
+    } else {
+      document.getElementById("bc1").innerHTML = "";
+    }
+
+    // Stacked
+    const stacked = document.getElementById("stacked");
+    if (v1 && v2) {
+      const c1 = barcodeToCanvas(v1, BAR_H);
+      const c2 = barcodeToCanvas(v2, BAR_H);
+      if (c1 && c2) {
+        const w = Math.max(c1.width, c2.width);
+        const totalH = BAR_H + GAP + BAR_H;
+        stacked.width = w; stacked.height = totalH;
+        const ctx = stacked.getContext("2d");
+        ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, w, totalH);
+        ctx.drawImage(c1, 0, 0);
+        ctx.drawImage(c2, 0, BAR_H + GAP);
+        document.getElementById("box2").style.height = totalH + "px";
+        document.getElementById("dl2").style.display = "block";
+      }
+    } else {
+      stacked.width = 0; stacked.height = 0;
     }
   }
 
-  function saveImage() {
-    const svg = document.getElementById("bc");
+  function saveStacked() {
+    const canvas = document.getElementById("stacked");
+    const out = document.createElement("canvas");
+    out.width = canvas.width+2; out.height = canvas.height+2;
+    const ctx = out.getContext("2d");
+    ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, out.width, out.height);
+    ctx.drawImage(canvas, 1, 1);
+    const a = document.createElement("a");
+    a.download = "barcode-stacked.png";
+    a.href = out.toDataURL("image/png");
+    a.click();
+  }
+
+  function saveImage(svgId, filename) {
+    const svg = document.getElementById(svgId);
     const svgW = parseInt(svg.getAttribute("width"));
     const svgH = parseInt(svg.getAttribute("height"));
-
     const c = document.createElement("canvas");
     c.width = svgW; c.height = svgH;
     const ctx = c.getContext("2d");
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, svgW, svgH);
+    ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, svgW, svgH);
     svg.querySelectorAll("rect").forEach(r => {
       const isWhite = (r.getAttribute("style")||"").includes("ffffff") || (r.getAttribute("fill")||"").includes("ffffff");
       ctx.fillStyle = isWhite ? "#ffffff" : "#000000";
       ctx.fillRect(parseFloat(r.getAttribute("x")||0), parseFloat(r.getAttribute("y")||0), parseFloat(r.getAttribute("width")), parseFloat(r.getAttribute("height")));
     });
-
     const px = ctx.getImageData(0, 0, svgW, svgH).data;
     let x0=svgW, x1=0, y0=svgH, y1=0;
     for (let y=0; y<svgH; y++) for (let x=0; x<svgW; x++) {
       if (px[(y*svgW+x)*4] < 128) { if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y; }
     }
-
     const cw=x1-x0+1, ch=y1-y0+1;
     const out = document.createElement("canvas");
     out.width=cw+2; out.height=ch+2;
     const octx = out.getContext("2d");
-    octx.fillStyle = "#ffffff";
-    octx.fillRect(0, 0, cw+2, ch+2);
+    octx.fillStyle = "#ffffff"; octx.fillRect(0, 0, cw+2, ch+2);
     octx.drawImage(c, x0, y0, cw, ch, 1, 1, cw, ch);
-
     const a = document.createElement("a");
-    a.download = "barcode.png";
+    a.download = filename;
     a.href = out.toDataURL("image/png");
     a.click();
   }
