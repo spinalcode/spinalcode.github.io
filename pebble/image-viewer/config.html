@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Image Viewer Config</title>
+  <style>
+    body { font-family: sans-serif; padding: 16px; background: #1a1a1a; color: #eee; }
+    h2   { margin-top: 0; }
+    input[type=text] {
+      width: 100%; padding: 8px; box-sizing: border-box;
+      background: #333; color: #eee; border: 1px solid #555; border-radius: 4px;
+    }
+    button {
+      margin-top: 12px; padding: 10px 20px; background: #5b8bf5;
+      color: #fff; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;
+    }
+    button.danger { background: #c0392b; }
+    .section { margin-bottom: 24px; }
+    label { display: block; margin-bottom: 6px; font-size: 14px; }
+    #status { margin-top: 8px; font-size: 13px; color: #aaa; }
+  </style>
+</head>
+<body>
+  <h2>Image Viewer</h2>
+
+  <div class="section">
+    <label>Image URL (JPEG or PNG, max 144×168):</label>
+    <input type="text" id="imageUrl" placeholder="https://example.com/image.png">
+    <button onclick="sendUrl()">Send to Watch</button>
+  </div>
+
+  <div class="section">
+    <label>Or pick a local file:</label>
+    <input type="file" id="fileInput" accept="image/*" onchange="previewFile()">
+    <canvas id="preview" style="display:none;margin-top:8px;border:1px solid #555;"></canvas>
+    <button id="sendFileBtn" style="display:none" onclick="sendFile()">Send File to Watch</button>
+  </div>
+
+  <div class="section">
+    <button class="danger" onclick="clearImage()">Clear Image (use default)</button>
+  </div>
+
+  <div id="status"></div>
+
+  <script>
+    var cfg = {};
+
+    function sendUrl() {
+      var url = document.getElementById('imageUrl').value.trim();
+      if (!url) return;
+      cfg = { imageUrl: url };
+      returnConfig();
+    }
+
+    function clearImage() {
+      cfg = { clear: true };
+      returnConfig();
+    }
+
+    var fileDataUrl = null;
+
+    function previewFile() {
+      var file = document.getElementById('fileInput').files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        fileDataUrl = e.target.result;
+        var img = new Image();
+        img.onload = function() {
+          var W = Math.min(img.width,  200);
+          var H = Math.min(img.height, 224);
+          var canvas = document.getElementById('preview');
+          canvas.width  = W;
+          canvas.height = H;
+          canvas.style.display = 'block';
+          canvas.getContext('2d').drawImage(img, 0, 0, W, H);
+          document.getElementById('sendFileBtn').style.display = 'inline-block';
+        };
+        img.src = fileDataUrl;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function sendFile() {
+      if (!fileDataUrl) return;
+      // We pass a data URL — the JS companion will handle it
+      cfg = { imageUrl: fileDataUrl };
+      returnConfig();
+    }
+
+    function returnConfig() {
+      document.getElementById('status').textContent = 'Sending config to watch app...';
+      var encoded = encodeURIComponent(JSON.stringify(cfg));
+      if (window.location.hash === '#dev') {
+        // Development: log only
+        console.log('Config:', encoded);
+        document.getElementById('status').textContent = 'Config ready (dev mode).';
+        return;
+      }
+      window.location = 'pebblejs://close#' + encoded;
+    }
+  </script>
+</body>
+</html>
