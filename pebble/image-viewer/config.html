@@ -21,12 +21,26 @@
 </head>
 <body>
   <h2>Image Viewer</h2>
-  <p>Paste a Base64-encoded image below (with or without the data:image/... prefix) and tap Send.</p>
+  <p>First, convert your image using the tool below, then paste the Base64 here.</p>
+  <div style="display:flex;align-items:center;gap:8px;background:#222;border-radius:4px;padding:8px;margin-bottom:12px">
+    <span style="font-size:12px;color:#aaa;flex:1;word-break:break-all">spinalcode.github.io/pebble/image-viewer/convert.html</span>
+    <button onclick="copyLink()" style="margin:0;padding:8px 12px;width:auto;font-size:13px">Copy</button>
+  </div>
+  <p>Paste the Base64 output here:</p>
   <textarea id="b64" placeholder="data:image/png;base64,iVBORw0KGgo..."></textarea>
   <button class="send" onclick="send()">Send to Watch</button>
   <button class="danger" onclick="clear()">Clear (restore default)</button>
   <div id="status"></div>
   <script>
+    function copyLink() {
+      var ta = document.createElement('textarea');
+      ta.value = 'https://spinalcode.github.io/pebble/image-viewer/convert.html';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      status('Link copied!');
+    }
     function status(m) { document.getElementById('status').textContent = m; }
     function send() {
       var val = document.getElementById('b64').value.trim();
