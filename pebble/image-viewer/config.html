@@ -3,82 +3,40 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Image Viewer Config</title>
+  <title>Image Viewer</title>
   <style>
     body { font-family: sans-serif; padding: 16px; background: #1a1a1a; color: #eee; margin: 0; }
     h2 { margin-top: 0; }
-    p { font-size: 14px; color: #aaa; margin: 4px 0 12px; }
-    input[type=text], textarea {
+    p { font-size: 14px; color: #aaa; }
+    textarea {
       width: 100%; padding: 10px; box-sizing: border-box;
       background: #333; color: #eee; border: 1px solid #555;
-      border-radius: 4px; margin-top: 6px; font-size: 14px;
+      border-radius: 4px; font-size: 13px; height: 120px; resize: vertical;
     }
-    textarea { height: 80px; resize: vertical; }
-    button {
-      margin-top: 10px; padding: 12px; background: #5b8bf5;
-      color: #fff; border: none; border-radius: 4px;
-      font-size: 15px; cursor: pointer; width: 100%;
-    }
-    button.secondary { background: #444; }
+    button { margin-top: 10px; padding: 12px; color: #fff; border: none; border-radius: 4px; font-size: 15px; cursor: pointer; width: 100%; }
+    button.send { background: #5b8bf5; }
     button.danger { background: #c0392b; margin-top: 24px; }
-    .step { background: #222; border-radius: 6px; padding: 12px; margin-bottom: 16px; }
-    .step-num { font-size: 12px; color: #5b8bf5; font-weight: bold; margin-bottom: 4px; }
-    #status { margin-top: 12px; font-size: 13px; color: #aaa; }
+    #status { margin-top: 10px; font-size: 13px; color: #aaa; }
   </style>
 </head>
 <body>
   <h2>Image Viewer</h2>
-
-  <div class="step">
-    <div class="step-num">STEP 1</div>
-    <p>Convert your image to Base64 using the tool below, then copy the result.</p>
-    <button class="secondary" onclick="window.open('https://codebeautify.org/image-to-base64-converter','_blank')">Open Image → Base64 Converter</button>
-  </div>
-
-  <div class="step">
-    <div class="step-num">STEP 2</div>
-    <p>Paste the Base64 string here (with or without the data:image/... prefix):</p>
-    <textarea id="b64input" placeholder="data:image/png;base64,iVBORw0KGgo..."></textarea>
-    <button onclick="sendBase64()">Send to Watch</button>
-  </div>
-
-  <div class="step">
-    <div class="step-num">OR</div>
-    <p>Paste a direct image URL (imgur, etc.):</p>
-    <input type="text" id="urlInput" placeholder="https://i.imgur.com/abc123.png">
-    <button onclick="sendUrl()">Send URL to Watch</button>
-  </div>
-
-  <button class="danger" onclick="clearImage()">Clear (restore default)</button>
+  <p>Paste a Base64-encoded image below (with or without the data:image/... prefix) and tap Send.</p>
+  <textarea id="b64" placeholder="data:image/png;base64,iVBORw0KGgo..."></textarea>
+  <button class="send" onclick="send()">Send to Watch</button>
+  <button class="danger" onclick="clear()">Clear (restore default)</button>
   <div id="status"></div>
-
   <script>
-    function status(msg) {
-      document.getElementById('status').textContent = msg;
-    }
-
-    function sendBase64() {
-      var val = document.getElementById('b64input').value.trim();
+    function status(m) { document.getElementById('status').textContent = m; }
+    function send() {
+      var val = document.getElementById('b64').value.trim();
       if (!val) { status('Please paste a Base64 string.'); return; }
-      // Ensure it has the data URL prefix
       if (val.indexOf('data:') !== 0) val = 'data:image/png;base64,' + val;
       status('Sending...');
-      returnConfig({ imageUrl: val });
+      window.location = 'pebblejs://close#' + encodeURIComponent(JSON.stringify({ imageUrl: val }));
     }
-
-    function sendUrl() {
-      var url = document.getElementById('urlInput').value.trim();
-      if (!url) { status('Please enter a URL.'); return; }
-      status('Sending...');
-      returnConfig({ imageUrl: url });
-    }
-
-    function clearImage() {
-      returnConfig({ clear: true });
-    }
-
-    function returnConfig(cfg) {
-      window.location = 'pebblejs://close#' + encodeURIComponent(JSON.stringify(cfg));
+    function clear() {
+      window.location = 'pebblejs://close#' + encodeURIComponent(JSON.stringify({ clear: true }));
     }
   </script>
 </body>
