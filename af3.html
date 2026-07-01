@@ -679,46 +679,74 @@
 
 		let isScanning = false; // Flag to keep track of the scanning state
 		let html5QrCode; // Declare html5QrCode outside the event listener
-		let cameraList = []; // Populated on first scan attempt
+		let cameraList = []; // Populated AFTER camera permission is granted
 		let currentCameraIndex = 0;
 		let torchOn = false;
 
-		// Enumerate cameras once and rank them so we avoid defaulting to an
-		// ultra-wide / macro lens, which tends to focus poorly on barcodes.
-		async function getRankedCameras() {
-			if (cameraList.length > 0) return cameraList;
+		// IMPORTANT: html5-qrcode's `videoConstraints` config option, when present,
+		// completely REPLACES the cameraIdOrConfig argument rather than merging with
+		// it. That means facingMode/deviceId must live *inside* videoConstraints
+		// itself, or the browser falls back to its own default camera (commonly the
+		// front/selfie camera on phones). This helper builds a constraints object
+		// that always carries the camera selection plus the continuous-focus hint.
+		function buildConstraints(cameraSelector) {
+			return Object.assign({ advanced: [{ focusMode: "continuous" }] }, cameraSelector);
+		}
+
+		// Enumerate cameras and rank them so a later "switch camera" tap avoids
+		// ultra-wide / macro lenses, which focus poorly on barcodes up close.
+		// Device labels are only populated by the browser AFTER camera permission
+		// has been granted, so this must be called after a successful start().
+		async function refreshCameraList() {
 			try {
 				const devices = await Html5Qrcode.getCameras();
 				let backCameras = devices.filter(d => /back|rear/i.test(d.label));
 				if (backCameras.length === 0) backCameras = devices;
-				// Prefer the standard wide lens over ultra-wide/telephoto variants
 				const standard = backCameras.filter(d => !/ultra|wide angle|tele/i.test(d.label));
 				cameraList = standard.length > 0 ? standard : backCameras;
 			} catch (err) {
 				console.warn("Could not enumerate cameras:", err);
 				cameraList = [];
 			}
-			return cameraList;
+			switchCameraButton.disabled = cameraList.length <= 1;
+		}
+
+		// Decide whether to show the torch control as available. Some browsers
+		// don't reliably report track capabilities even when torch does work, so
+		// this stays optimistic (enabled) unless it can positively confirm torch
+		// is unsupported. A failed applyVideoConstraints() call on click will
+		// still disable it as a fallback (see the click handler below).
+		function updateTorchAvailability() {
+			torchOn = false;
+			torchButton.classList.remove("active");
+			try {
+				const capabilities = html5QrCode.getRunningTrackCapabilities();
+				if (capabilities && Object.prototype.hasOwnProperty.call(capabilities, "torch")) {
+					torchButton.disabled = !capabilities.torch;
+					return;
+				}
+			} catch (err) {
+				// Capability probing isn't supported here — stay optimistic below.
+			}
+			torchButton.disabled = false;
 		}
 
 		function resetControlButtons() {
 			torchOn = false;
 			torchButton.disabled = true;
 			torchButton.classList.remove("active");
+			torchButton.title = "Toggle flashlight";
 			switchCameraButton.disabled = true;
 		}
 
-		async function startScanning(cameraIdOrConfig) {
+		async function startScanning(cameraSelector) {
 			scannerContainer.innerHTML = "";
 			html5QrCode = new Html5Qrcode("scanner-container");
+			const constraints = buildConstraints(cameraSelector);
 
 			await html5QrCode.start(
-				cameraIdOrConfig,
-				{
-					fps: 5,
-					qrbox: 300,
-					videoConstraints: { advanced: [{ focusMode: "continuous" }] }
-				},
+				cameraSelector,
+				{ fps: 5, qrbox: 300, videoConstraints: constraints },
 				(decodedText) => {
 					html5QrCode.stop();
 					const foundEntry = EANList.find(item => item.startsWith(decodedText));
@@ -734,16 +762,7 @@
 				}
 			);
 
-			// Enable the switch-camera control if more than one suitable lens was found
-			switchCameraButton.disabled = cameraList.length <= 1;
-
-			// Enable the torch control only if the running track actually supports it
-			try {
-				const capabilities = html5QrCode.getRunningTrackCapabilities();
-				torchButton.disabled = !(capabilities && capabilities.torch);
-			} catch (err) {
-				torchButton.disabled = true;
-			}
+			updateTorchAvailability();
 		}
 
 		toggleButton.addEventListener("click", async () => {
@@ -752,15 +771,14 @@
 				toggleButton.textContent = "Stop Scanner"; // Change button text
 				scannerContainer.style.border = '2px solid #4C12A1';
 
-				const ranked = await getRankedCameras();
-				currentCameraIndex = 0;
-				const cameraIdOrConfig = ranked.length > 0
-					? { deviceId: { exact: ranked[currentCameraIndex].id } }
-					: { facingMode: "environment" };
-
 				try {
-					await startScanning(cameraIdOrConfig);
+					// Always request the rear camera explicitly on first launch — device
+					// labels (needed to pick a specific lens) aren't available until
+					// after permission is granted, so facingMode is the reliable choice here.
+					await startScanning({ facingMode: "environment" });
 					isScanning = true; // Update flag to indicate scanning
+					currentCameraIndex = 0;
+					await refreshCameraList(); // Now that permission is granted, labels are populated
 				} catch (err) {
 					console.error(`Unable to start scanning: ${err}`);
 					toggleButton.textContent = "Start Scanning";
@@ -785,6 +803,7 @@
 			} catch (err) {
 				console.warn("Torch not supported on this device:", err);
 				torchButton.disabled = true;
+				torchButton.title = "Flashlight not supported on this device";
 			}
 		});
 
@@ -794,6 +813,7 @@
 				await html5QrCode.stop();
 				currentCameraIndex = (currentCameraIndex + 1) % cameraList.length;
 				await startScanning({ deviceId: { exact: cameraList[currentCameraIndex].id } });
+				isScanning = true;
 			} catch (err) {
 				console.error("Unable to switch camera:", err);
 			}
