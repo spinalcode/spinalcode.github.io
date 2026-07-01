@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+
+        @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap');
+
+        @font-face {
+            font-family: 'CurrysSans'; /*a name to be used later*/
+            src: url('Currys Sans.ttf'); /*URL to font*/
+        }
+
+        :root {
+            --navy: #16233A;
+            --purple: #4C12A1;
+            --purple-dark: #39007A;
+            --purple-light: #EFE7FF;
+            --lavender: #D9CEFB;
+            --pink: #E5006D;
+            --pink-dark: #C40060;
+            --white: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            align-items: flex-start;
+            justify-content: center;
+            background: linear-gradient(160deg, #E9E1FC 0%, #D3C3F7 45%, #E9E1FC 100%);
+            position: relative;
+            display: flex;
+            margin: 0;
+            min-height: 100vh;
+            padding: 40px 16px;
+            font-family: 'CurrysSans', 'Nunito', 'Baloo 2', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .container1 {
+            position: relative;
+            border: 3px solid var(--navy);
+            text-align: center;
+            background-color: var(--white);
+            border-radius: 24px;
+            padding: 36px 32px 40px;
+            margin-top: 30px;
+            max-width: 780px;
+            width: 100%;
+            z-index: 2;
+            box-shadow: 0 24px 50px rgba(22, 35, 58, 0.22);
+        }
+
+        .h1-container {
+            margin-top: 0;
+            margin-bottom: 22px;
+        }
+
+        .container1 h1 {
+            display: inline-block;
+            border: none;
+            padding: 0 0 14px 0;
+            text-align: center;
+            background-color: transparent;
+            color: var(--purple);
+            font-family: 'Baloo 2', 'Nunito', sans-serif;
+            font-weight: 700;
+            font-size: 34px;
+            position: relative;
+            margin: 0;
+        }
+
+        .container1 h1::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 4px;
+            border-radius: 4px;
+            background-color: var(--pink);
+        }
+
+        .container1 p {
+            color: #2c2c3a;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .circle {
+            border-radius: 50%;
+            position: absolute;
+            background: linear-gradient(to bottom, #F5F0FF, #D9CEFB, #B79EF0);
+            opacity: 0.55;
+            z-index: 1; /* Ensure circles stay in the background */
+        }
+
+        .purple {
+            background: linear-gradient(to bottom, #CA9BFF, #5400A7, #39007A);
+            opacity: 0.5;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .side-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .side-container .container {
+            flex: 1;
+        }
+
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 14px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 16px rgba(76, 18, 161, 0.12);
+        }
+
+        caption {
+            caption-side: top;
+            color: var(--navy);
+            font-weight: 700;
+            font-size: 13px;
+            padding-bottom: 6px;
+        }
+
+        th, td {
+            border: 1px solid var(--lavender);
+            padding: 6px;
+            text-align: center;
+            width: 26px;
+            height: 26px;
+            font-weight: 600;
+        }
+
+        th {
+            background-color: var(--purple);
+            color: var(--white);
+            border: none;
+        }
+
+        td {
+            background-color: var(--white);
+            color: var(--purple);
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        td:hover {
+            background-color: var(--purple-light);
+        }
+
+        .highlight {
+            background-color: var(--pink) !important;
+            color: var(--white) !important;
+        }
+        .round-top-left {
+            border-top-left-radius: 12px;
+        }
+        .round-top-right {
+            border-top-right-radius: 12px;
+        }
+
+        button {
+            border: none;
+            border-radius: 12px;
+            padding: 10px 22px;
+            min-width: 110px;
+            height: auto;
+            text-align: center;
+            background-color: var(--pink);
+            color: var(--white);
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 6px 14px rgba(229, 0, 109, 0.3);
+            transition: transform 0.15s ease, background-color 0.15s ease;
+            margin: 4px;
+        }
+
+        button:hover {
+            background-color: var(--pink-dark);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        input, #display-box {
+            border: 2px solid var(--purple);
+            border-radius: 12px;
+            padding: 10px 14px;
+            width: 360px;
+            max-width: 90%;
+            height: auto;
+            text-align: center;
+            background-color: var(--purple-light);
+            color: var(--purple);
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        input:focus, #display-box:focus, textarea:focus {
+            outline: none;
+            border-color: var(--pink);
+        }
+
+        textarea {
+            border: 2px solid var(--purple);
+            border-radius: 12px;
+            padding: 10px 14px;
+            width: 360px;
+            max-width: 90%;
+            text-align: center;
+            background-color: var(--purple-light);
+            color: var(--purple);
+            font-family: inherit;
+        }
+
+
+        #display-box {
+            width: 460px;
+        }
+
+        #SIDE_D {
+            float: right;
+            margin-left: auto;
+        }
+
+        #popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(160deg, rgba(57, 0, 122, 0.92), rgba(76, 18, 161, 0.92));
+            z-index: 3;
+        }
+
+        #popup {
+            display: none;
+            position: fixed;
+            box-sizing: border-box;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 30px;
+            background: var(--white);
+            border: none;
+            border-radius: 20px;
+            height: 300px;
+            width: 600px;
+            max-width: 90%;
+            text-align: left;
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c2c3a;
+            z-index: 4;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+        }
+
+        #popup h2 {
+            color: var(--purple);
+            font-family: 'Baloo 2', 'Nunito', sans-serif;
+        }
+
+        #popup button {
+            position: absolute;
+            left: 30px;
+            bottom: 30px;
+            width: 160px;
+            height: auto;
+            min-width: unset;
+            font-size: 16px;
+            padding: 14px 20px;
+        }
+
+        .scanner-card {
+            display: flex;
+            align-items: stretch;
+            gap: 18px;
+            background-color: var(--lavender);
+            border-radius: 24px;
+            padding: 18px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .scanner-icon {
+            flex: 0 0 90px;
+            background-color: var(--purple);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 12px 0;
+        }
+
+        .scanner-control-btn {
+            width: 44px;
+            height: 44px;
+            min-width: unset;
+            border-radius: 50%;
+            border: none;
+            background-color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+            transition: transform 0.15s ease, background-color 0.15s ease;
+        }
+
+        .scanner-control-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: var(--purple);
+        }
+
+        .scanner-control-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .scanner-control-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .scanner-control-btn.active {
+            background-color: var(--pink);
+        }
+
+        .scanner-control-btn.active svg {
+            fill: var(--white);
+        }
+
+        .scanner-content {
+            flex: 1;
+            background-color: #F2F1F5;
+            border-radius: 16px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 120px;
+            overflow: hidden;
+        }
+
+        #scanner-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 100px;
+            border-radius: 12px;
+            color: #6b6b76;
+            font-weight: 600;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        #scanner-container.open {
+            min-height: 320px;
+        }
+
+        #scanner-container video, #scanner-container canvas, #scanner-container img {
+            border-radius: 12px;
+            max-width: 100%;
+        }
+
+        #toggle-button {
+            width: auto;
+            min-width: 220px;
+            height: auto;
+            font-size: 16px;
+            padding: 12px 26px;
+            margin-top: 16px;
+            background-color: var(--purple);
+            box-shadow: 0 6px 14px rgba(76, 18, 161, 0.3);
+        }
+
+        #toggle-button:hover {
+            background-color: var(--purple-dark);
+        }
+
+        #c128 {
+            border: 2px solid var(--purple);
+            border-radius: 12px;
+            padding: 8px;
+            text-align: center;
+            background-color: var(--white);
+            color: #000000;
+            width: 100%;
+        }
+
+    </style>
+
+
+    <title>Accessory Finder</title>
+    <script src="data.js"></script>
+	<script src="https://unpkg.com/html5-qrcode"></script>
+	<script type="text/javascript" src="scanner/barcode.js"></script>
+
+
+	<script type="text/javascript">
+	
+        var side = "A"; // Side of the bay
+		var itemNumber = 0;
+
+		var side = "";
+		var itemNumber = "";
+
+		function compareText() {
+			var inputText = document.getElementById('inputText').value.trim().toUpperCase();
+
+			function searchArray(dataArray, sideIdentifier) {
+				var matches = [];
+				for (var i = 0; i < dataArray.length; i++) {
+					var line = dataArray[i].split(", ");
+					// check full match
+					if (line[2].toUpperCase() == inputText || line[1].toUpperCase() == inputText) {
+						matches.push({
+							side: sideIdentifier,
+							itemNumber: line[0],
+							dataArray: dataArray
+						});
+					} else { // check partial match
+						if (line[2].toUpperCase().includes(inputText) || line[1].toUpperCase().includes(inputText)) {
+							matches.push({
+								side: sideIdentifier,
+								itemNumber: line[0],
+								dataArray: dataArray
+							});
+						}
+					}
+				}
+				return matches;
+			}
+
+			removeHighlights(); // Clear highlights only once before the search
+
+			// Collect matches from all arrays
+			let allMatches = [];
+			allMatches = allMatches.concat(searchArray(dataArray1, "A"));
+			allMatches = allMatches.concat(searchArray(dataArray2, "B"));
+			allMatches = allMatches.concat(searchArray(dataArray3, "C"));
+			allMatches = allMatches.concat(searchArray(dataArray4, "D"));
+
+			let displayBoxUpdated = false;
+
+			if (allMatches.length > 0) {
+				for (let match of allMatches) {
+					searchValue(match.side, match.itemNumber); // Highlight each match
+
+					if (!displayBoxUpdated) {
+						const endText = lookupNumber(match.itemNumber, match.dataArray);
+						document.getElementById('display-box').value = endText;
+						displayBoxUpdated = true;
+					}
+				}
+			} else {
+				removeHighlights();
+				showPopup();
+			}
+		}
+
+		function lookupNumber(itemNumber, dataArray) {
+			for (var i = 0; i < dataArray.length; i++) {
+				var line = dataArray[i].split(", ");
+				if (line[0] === itemNumber) {
+					return line.join(", ");
+				}
+			}
+			return '';
+		}
+
+		function searchValue(side, value) {
+			let bays = {
+				'A': {
+					'Bay 1': document.getElementById('bay1_A').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_A').getElementsByTagName('td'),
+					'Bay 3': document.getElementById('bay3_A').getElementsByTagName('td')
+				},
+				'B': {
+					'Bay 1': document.getElementById('bay1_B').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_B').getElementsByTagName('td'),
+					'Bay 3': document.getElementById('bay3_B').getElementsByTagName('td')
+				},
+				'C': {
+					'Bay 1': document.getElementById('bay1_C').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_C').getElementsByTagName('td')
+				},
+				'D': {
+					'Bay 1': document.getElementById('bay1_D').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_D').getElementsByTagName('td')
+				}
+			};
+
+			// Highlight the matching value
+			for (var bay in bays[side]) {
+				if (bays[side].hasOwnProperty(bay)) {
+					for (var k = 0; k < bays[side][bay].length; k++) {
+						var cell = bays[side][bay][k];
+						if (cell.textContent == value) {
+							cell.classList.add('highlight'); // Add highlight class
+						}
+					}
+				}
+			}
+		}
+
+		function removeHighlights() {
+			let bays = {
+				'A': {
+					'Bay 1': document.getElementById('bay1_A').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_A').getElementsByTagName('td'),
+					'Bay 3': document.getElementById('bay3_A').getElementsByTagName('td')
+				},
+				'B': {
+					'Bay 1': document.getElementById('bay1_B').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_B').getElementsByTagName('td'),
+					'Bay 3': document.getElementById('bay3_B').getElementsByTagName('td')
+				},
+				'C': {
+					'Bay 1': document.getElementById('bay1_C').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_C').getElementsByTagName('td')
+				},
+				'D': {
+					'Bay 1': document.getElementById('bay1_D').getElementsByTagName('td'),
+					'Bay 2': document.getElementById('bay2_D').getElementsByTagName('td')
+				}
+			};
+
+			// Remove highlight from all bays
+			var baysArray = ['A', 'B', 'C', 'D'];
+			for (var i = 0; i < baysArray.length; i++) {
+				var s = baysArray[i];
+				for (var bay in bays[s]) {
+					if (bays[s].hasOwnProperty(bay)) {
+						for (var j = 0; j < bays[s][bay].length; j++) {
+							var cell = bays[s][bay][j];
+							cell.classList.remove('highlight');
+						}
+					}
+				}
+			}
+		}
+
+		
+		function compareAndFind() {
+			compareText();
+		}
+		
+		function addToList() {
+			const skuList = document.getElementById('skuList');
+			const input = document.getElementById('inputText').value.trim().toUpperCase();
+
+			skuList.value += input + '\n';
+
+			// Auto-resize logic
+			skuList.style.height = 'auto'; // reset height
+			skuList.style.height = skuList.scrollHeight + 'px'; // adjust to new content
+		}
+
+		function copyToClipboard(){
+		var inputValue = document.getElementById('code-box').value.trim().toUpperCase();
+
+		if (navigator.clipboard && window.isSecureContext) {
+			navigator.clipboard.writeText(inputValue)
+			  .then(() => { console.log('Text copied to clipboard!'); })
+			  .catch(err => { console.error('Failed to copy text: ', err); });
+		} else {
+			// Fallback for file:// or non-secure contexts
+			var tempInput = document.createElement('input');
+			tempInput.value = inputValue;
+			document.body.appendChild(tempInput);
+			tempInput.select();
+			document.execCommand('copy');
+			document.body.removeChild(tempInput);
+		}
+		}
+
+    </script>
+</head>
+<body>
+	<div class="container1">
+		<div class="h1-container"><h1>Accessory Finder</h1></div>
+		<p>Enter accessory to find:</p>
+		<input type="text" id="inputText"/>
+		<button onclick="compareAndFind()">Find</button>
+		<!--<button onclick="addToList()">Add to list</button>-->
+		<br/><br/>
+		<input type="value" id="display-box"></input>
+		<br/><br/>
+		<input type="value" id="code-box"></input><button onclick="copyToClipboard()">Copy</button>
+		<br/><br/>
+		
+		<button onclick="window.open('https://dcg.itgcanopy.com/content/site/home.jsp#!/2/mobile/daily/list', '_blank')">Sphere</button>
+		<button onclick="window.open('https://m3-studio-cur.vestcom.com/m3_login/perform_login', '_blank')">M3 Ticket</button>
+
+		<div class="scanner-card">
+			<div class="scanner-icon">
+				<button id="torch-button" class="scanner-control-btn" title="Toggle flashlight" disabled>
+					<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+						<path d="M11 21h2v-6h-2v6zM7 2v11h3v9l7-12h-4l4-8H7z"/>
+					</svg>
+				</button>
+				<button id="switch-camera-button" class="scanner-control-btn" title="Switch camera" disabled>
+					<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+						<path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+					</svg>
+				</button>
+			</div>
+			<div class="scanner-content">
+				<div id="scanner-container">Camera preview will appear here</div>
+			</div>
+		</div>
+		<button id="toggle-button">Start Scanning</button>
+
+		<div class="container" id="SIDE_A">
+		</div>
+
+		<div class="container" id="SIDE_B">
+		</div>
+		
+		<div class="side-container">
+			<div class="container" id="SIDE_C">
+			</div>
+
+			<div class="container" id="SIDE_D">
+			</div>
+		</div>
+
+		<!--<textarea id="skuList" rows="1" style="overflow:hidden; resize:none;"></textarea>-->
+		<p id="c128" class="invisible"></p>
+		
+
+		<br/>
+
+
+	</div>
+	
+    <div id="popup-overlay"></div>
+    <div id="popup">
+		<h2>Oh No!</h2>
+	
+        That PLU code is not found on the display, <br>
+		Please check that it is correct. It may be a new item.<br>
+        <br/><br/><br/><br/>
+        <button onclick="closePopup()">OK</button>
+    </div>
+
+    <script>
+	
+
+		const toggleButton = document.getElementById("toggle-button");
+		const scannerContainer = document.getElementById("scanner-container");
+		const torchButton = document.getElementById("torch-button");
+		const switchCameraButton = document.getElementById("switch-camera-button");
+
+		let isScanning = false; // Flag to keep track of the scanning state
+		let html5QrCode; // Declare html5QrCode outside the event listener
+		let cameraList = []; // Populated on first scan attempt
+		let currentCameraIndex = 0;
+		let torchOn = false;
+
+		// Enumerate cameras once and rank them so we avoid defaulting to an
+		// ultra-wide / macro lens, which tends to focus poorly on barcodes.
+		async function getRankedCameras() {
+			if (cameraList.length > 0) return cameraList;
+			try {
+				const devices = await Html5Qrcode.getCameras();
+				let backCameras = devices.filter(d => /back|rear/i.test(d.label));
+				if (backCameras.length === 0) backCameras = devices;
+				// Prefer the standard wide lens over ultra-wide/telephoto variants
+				const standard = backCameras.filter(d => !/ultra|wide angle|tele/i.test(d.label));
+				cameraList = standard.length > 0 ? standard : backCameras;
+			} catch (err) {
+				console.warn("Could not enumerate cameras:", err);
+				cameraList = [];
+			}
+			return cameraList;
+		}
+
+		function resetControlButtons() {
+			torchOn = false;
+			torchButton.disabled = true;
+			torchButton.classList.remove("active");
+			switchCameraButton.disabled = true;
+		}
+
+		async function startScanning(cameraIdOrConfig) {
+			scannerContainer.innerHTML = "";
+			html5QrCode = new Html5Qrcode("scanner-container");
+
+			await html5QrCode.start(
+				cameraIdOrConfig,
+				{
+					fps: 5,
+					qrbox: 300,
+					videoConstraints: { advanced: [{ focusMode: "continuous" }] }
+				},
+				(decodedText) => {
+					html5QrCode.stop();
+					const foundEntry = EANList.find(item => item.startsWith(decodedText));
+					inputText.value = foundEntry ? foundEntry.split(", ").pop() : "Unknown";
+					toggleButton.textContent = "Start Scanner"; // Reset button text
+					scannerContainer.style.border = '0px solid #4C12A1';
+					isScanning = false;
+					resetControlButtons();
+					compareAndFind();
+				},
+				(errorMessage) => {
+					console.warn(`Error: ${errorMessage}`);
+				}
+			);
+
+			// Enable the switch-camera control if more than one suitable lens was found
+			switchCameraButton.disabled = cameraList.length <= 1;
+
+			// Enable the torch control only if the running track actually supports it
+			try {
+				const capabilities = html5QrCode.getRunningTrackCapabilities();
+				torchButton.disabled = !(capabilities && capabilities.torch);
+			} catch (err) {
+				torchButton.disabled = true;
+			}
+		}
+
+		toggleButton.addEventListener("click", async () => {
+			if (!isScanning) {
+				// Start scanning
+				toggleButton.textContent = "Stop Scanner"; // Change button text
+				scannerContainer.style.border = '2px solid #4C12A1';
+
+				const ranked = await getRankedCameras();
+				currentCameraIndex = 0;
+				const cameraIdOrConfig = ranked.length > 0
+					? { deviceId: { exact: ranked[currentCameraIndex].id } }
+					: { facingMode: "environment" };
+
+				try {
+					await startScanning(cameraIdOrConfig);
+					isScanning = true; // Update flag to indicate scanning
+				} catch (err) {
+					console.error(`Unable to start scanning: ${err}`);
+					toggleButton.textContent = "Start Scanning";
+					scannerContainer.style.border = '0px solid #4C12A1';
+				}
+			} else {
+				// Stop scanning
+				html5QrCode.stop();
+				toggleButton.textContent = "Start Scanner"; // Reset button text
+				scannerContainer.style.border = '0px solid #4C12A1';
+				isScanning = false; // Update flag to indicate not scanning
+				resetControlButtons();
+			}
+		});
+
+		torchButton.addEventListener("click", async () => {
+			if (!html5QrCode || !isScanning) return;
+			try {
+				await html5QrCode.applyVideoConstraints({ advanced: [{ torch: !torchOn }] });
+				torchOn = !torchOn;
+				torchButton.classList.toggle("active", torchOn);
+			} catch (err) {
+				console.warn("Torch not supported on this device:", err);
+				torchButton.disabled = true;
+			}
+		});
+
+		switchCameraButton.addEventListener("click", async () => {
+			if (!html5QrCode || !isScanning || cameraList.length <= 1) return;
+			try {
+				await html5QrCode.stop();
+				currentCameraIndex = (currentCameraIndex + 1) % cameraList.length;
+				await startScanning({ deviceId: { exact: cameraList[currentCameraIndex].id } });
+			} catch (err) {
+				console.error("Unable to switch camera:", err);
+			}
+		});
+
+
+        // Function to look up the number and return the corresponding string
+        function lookupNumber(number, dataArray) {
+            for (let i = 0; i < dataArray.length; i++) {
+                let parts = dataArray[i].split(', ');
+                if (parts[0] == number) {
+                    return parts[2]; // Return the string from the end of the line
+                }
+            }
+            return "Not found"; // Return 'Not found' if the number is not in the array
+        }
+
+		function cellClick(cellId, data) {
+			const cells = document.getElementsByTagName('td');
+			const cellsArray = Array.prototype.slice.call(cells);
+
+			// Use a for loop to remove the 'highlight' class
+			for (let i = 0; i < cellsArray.length; i++) {
+				cellsArray[i].classList.remove('highlight');
+			}
+
+			// Highlight the clicked cell
+			document.getElementById(cellId).classList.add('highlight');
+
+			// Update the input field with the middle text
+			const middleText = data.split(',')[1].trim();
+			document.getElementById('inputText').value = middleText;
+
+			const endText = data.split(',')[2].trim();
+			document.getElementById('display-box').value = endText;
+			
+			// Generate barcode
+
+			var foundEANEntry = EANList.find(function(item) {
+			  var parts = item.split(', ');
+			  return parts[1] && parts[1].includes(middleText);
+			});
+			var foundEAN = foundEANEntry ? foundEANEntry.split(', ')[0] : null;
+
+			document.getElementById('code-box').value = foundEAN ? foundEAN : 'EAN not found';
+
+			if (foundEAN) {
+				c128.innerHTML = toHtml([code128(foundEAN)], [1, 300]);
+
+				setTimeout(function() {
+                    var containerWidth = c128.offsetWidth;
+                    var barcodeDiv = document.querySelector(".barcode1300");
+
+                    if (barcodeDiv) {
+                        var barcodeWidth = barcodeDiv.offsetWidth;
+                        var numMultiples = Math.floor(containerWidth / barcodeWidth);
+                        c128.innerHTML = toHtml([code128(foundEAN)], [numMultiples - 1, 300]);
+                    } else {
+                        console.warn("Barcode element not found!");
+                    }
+
+                    c128.classList.remove("invisible");
+                }, 100);
+			} else {
+				c128.innerHTML = '';
+				c128.classList.add("invisible");
+			}
+
+			
+			compareText();
+		}
+	
+
+
+function placeAllCircles() {
+    const numberOfCircles = 4; // Number of circles to create
+    const circles = []; // Array to store circle data
+    const speedModifier = 0.1; // Configurable multiplier for all speeds (adjust for faster/slower motion)
+
+    function createCircle(id) {
+        const circle = document.createElement('div');
+        const size = Math.random() * (400 - 100) + 100; // Random size between 100px and 600px
+        let top = Math.random() * (window.innerHeight - size);
+        let left = Math.random() * (window.innerWidth - size);
+
+        // Velocity (random direction and speed)
+        const dx = (Math.random() - 0.5) * speedModifier * 10; // Horizontal speed
+        const dy = (Math.random() - 0.5) * speedModifier * 10; // Vertical speed
+
+        circles.push({ circle, size, top, left, dx, dy }); // Store circle data
+
+		// Use position: fixed to prevent layout shift
+		circle.style.width = `${size}px`;
+		circle.style.height = `${size}px`;
+		circle.style.position = 'fixed';
+		circle.style.borderRadius = '50%'; // Make the element look like a circle
+		circle.style.top = `${top}px`;
+		circle.style.left = `${left}px`;
+		circle.classList.add('circle');
+		document.body.appendChild(circle);
+
+
+        return true;
+    }
+
+    function detectAndHandleCollisions() {
+        for (let i = 0; i < circles.length; i++) {
+            const circleA = circles[i];
+            for (let j = i + 1; j < circles.length; j++) {
+                const circleB = circles[j];
+
+                // Calculate distance between two circles
+                const dx = circleB.left + circleB.size / 2 - (circleA.left + circleA.size / 2);
+                const dy = circleB.top + circleB.size / 2 - (circleA.top + circleA.size / 2);
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                // Check if circles overlap
+                /*
+				if (distance < (circleA.size / 2 + circleB.size / 2)) {
+                    // Elastic collision response
+                    const angle = Math.atan2(dy, dx);
+                    const speedA = Math.sqrt(circleA.dx * circleA.dx + circleA.dy * circleA.dy);
+                    const speedB = Math.sqrt(circleB.dx * circleB.dx + circleB.dy * circleB.dy);
+
+                    const directionA = Math.atan2(circleA.dy, circleA.dx);
+                    const directionB = Math.atan2(circleB.dy, circleB.dx);
+
+                    circleA.dx = speedB * Math.cos(angle);
+                    circleA.dy = speedB * Math.sin(angle);
+                    circleB.dx = speedA * Math.cos(angle + Math.PI);
+                    circleB.dy = speedA * Math.sin(angle + Math.PI);
+                }
+				*/
+            }
+        }
+    }
+
+    function updatePositions() {
+        for (const data of circles) {
+            const { circle, size, top, left, dx, dy } = data;
+
+            // Update position based on velocity
+            data.left += dx;
+            data.top += dy;
+
+            // Check for boundaries and bounce
+            if (data.left <= 0 || data.left + size >= window.innerWidth) {
+                data.dx = -data.dx; // Reverse horizontal direction
+            }
+            if (data.top <= 0 || data.top + size >= window.innerHeight) {
+                data.dy = -data.dy; // Reverse vertical direction
+            }
+
+            // Apply updated positions
+            circle.style.top = `${data.top}px`;
+            circle.style.left = `${data.left}px`;
+        }
+
+        // Handle collisions
+        detectAndHandleCollisions();
+    }
+
+    // Create all circles
+    for (let i = 0; i < numberOfCircles; i++) {
+        createCircle(i + 1);
+    }
+
+    // Update positions every 16 milliseconds (~60 frames per second)
+    setInterval(updatePositions, 16);
+}
+
+// Run the placement process on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    placeAllCircles();
+});
+
+
+
+
+		
+		function showPopup() {
+            document.getElementById('popup-overlay').style.display = 'block';
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup-overlay').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+        }
+
+function createTable(array, containerId, tableIdPrefix) {
+    let container = document.getElementById(containerId);
+    let cellMap = [];
+
+    var tabWidth = 0;
+    var tabHeight = 0;
+    var sectionCount = 0;
+    var tableCaption = "Test 123...";
+
+    tableCaption = array[0].split(',')[0]; //.substring(0, 6) + '...';
+    sectionCount = array[0].split(',')[1];
+    tabWidth = array[0].split(',')[2];
+    tabHeight = array[0].split(',')[3];
+
+    for (let section = 0; section < sectionCount; section++) {
+        let caption = section === 0 ? tableCaption : '&nbsp';
+        let table = '<table id="bay' + (section + 1) + '_' + tableIdPrefix + '"><caption>' + caption + '</caption><tbody>';
+        table += '<tr><th colspan="6" class="' + (section === 0 ? 'round-top-left' : (section === sectionCount - 1 ? 'round-top-right' : '')) + '">Bay ' + (section + 1) + '</th></tr>';
+        let index = 1 + section * (tabWidth * tabHeight);
+
+        for (let row = 0; row < tabHeight; row++) {
+            table += '<tr>';
+            for (let cell = 0; cell < tabWidth; cell++) {
+                if (index < array.length) {
+                    let cellId = tableIdPrefix + 'cell' + index;
+                    let middleText = array[index].split(',')[1].trim();
+                    table += '<td onclick="cellClick(\'' + cellId + '\', \'' + array[index] + '\')" id="' + cellId + '" title="' + array[index].split(',')[2].trim() + '">' + array[index].split(',')[0] + '</td>';
+                    cellMap.push({ id: cellId, middleText: middleText });
+                    index++;
+                } else {
+                    table += '<td></td>';
+                }
+            }
+            table += '</tr>';
+        }
+
+        table += '</tbody></table>';
+        container.innerHTML += table;
+    }
+    return cellMap;
+}
+
+
+        const cellMap1 = createTable(dataArray1, 'SIDE_A', 'A'); // dataArray1 loaded from external file
+        const cellMap2 = createTable(dataArray2, 'SIDE_B', 'B'); // dataArray2 loaded from external file
+        const cellMap3 = createTable(dataArray3, 'SIDE_C', 'C'); // dataArray3 loaded from external file
+        const cellMap4 = createTable(dataArray4, 'SIDE_D', 'D'); // dataArray3 loaded from external file
+    </script>
+
+	
+</body>
+</html>
