@@ -402,23 +402,12 @@
             background-color: var(--purple-dark);
         }
 
-        #c128 {
-            border: 2px solid var(--purple);
-            border-radius: 12px;
-            padding: 8px;
-            text-align: center;
-            background-color: var(--white);
-            color: #000000;
-            width: 100%;
-        }
-
     </style>
 
 
     <title>Accessory Finder</title>
     <script src="data.js"></script>
 	<script src="https://unpkg.com/html5-qrcode"></script>
-	<script type="text/javascript" src="scanner/barcode.js"></script>
 
 
 	<script type="text/javascript">
@@ -650,10 +639,6 @@
 			</div>
 		</div>
 
-		<!--<textarea id="skuList" rows="1" style="overflow:hidden; resize:none;"></textarea>-->
-		<p id="c128" class="invisible"></p>
-		
-
 		<br/>
 
 
@@ -849,8 +834,6 @@
 
 			const endText = data.split(',')[2].trim();
 			document.getElementById('display-box').value = endText;
-			
-			// Generate barcode
 
 			var foundEANEntry = EANList.find(function(item) {
 			  var parts = item.split(', ');
@@ -860,32 +843,8 @@
 
 			document.getElementById('code-box').value = foundEAN ? foundEAN : 'EAN not found';
 
-			if (foundEAN) {
-				c128.innerHTML = toHtml([code128(foundEAN)], [1, 300]);
-
-				setTimeout(function() {
-                    var containerWidth = c128.offsetWidth;
-                    var barcodeDiv = document.querySelector(".barcode1300");
-
-                    if (barcodeDiv) {
-                        var barcodeWidth = barcodeDiv.offsetWidth;
-                        var numMultiples = Math.floor(containerWidth / barcodeWidth);
-                        c128.innerHTML = toHtml([code128(foundEAN)], [numMultiples - 1, 300]);
-                    } else {
-                        console.warn("Barcode element not found!");
-                    }
-
-                    c128.classList.remove("invisible");
-                }, 100);
-			} else {
-				c128.innerHTML = '';
-				c128.classList.add("invisible");
-			}
-
-			
 			compareText();
 		}
-	
 
 
 function placeAllCircles() {
