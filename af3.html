@@ -402,6 +402,14 @@
             background-color: var(--purple-dark);
         }
 
+        #bay-tables {
+            transition: opacity 0.2s ease;
+        }
+
+        #bay-tables.hidden {
+            display: none;
+        }
+
     </style>
 
 
@@ -625,17 +633,19 @@
 		</div>
 		<button id="toggle-button">Start Scanning</button>
 
-		<div class="container" id="SIDE_A">
-		</div>
-
-		<div class="container" id="SIDE_B">
-		</div>
-		
-		<div class="side-container">
-			<div class="container" id="SIDE_C">
+		<div id="bay-tables">
+			<div class="container" id="SIDE_A">
 			</div>
 
-			<div class="container" id="SIDE_D">
+			<div class="container" id="SIDE_B">
+			</div>
+			
+			<div class="side-container">
+				<div class="container" id="SIDE_C">
+				</div>
+
+				<div class="container" id="SIDE_D">
+				</div>
 			</div>
 		</div>
 
@@ -661,6 +671,7 @@
 		const scannerContainer = document.getElementById("scanner-container");
 		const torchButton = document.getElementById("torch-button");
 		const switchCameraButton = document.getElementById("switch-camera-button");
+		const bayTables = document.getElementById("bay-tables");
 
 		let isScanning = false; // Flag to keep track of the scanning state
 		let html5QrCode; // Declare html5QrCode outside the event listener
@@ -724,6 +735,14 @@
 			switchCameraButton.disabled = true;
 		}
 
+		function hideBayTables() {
+			bayTables.classList.add("hidden");
+		}
+
+		function showBayTables() {
+			bayTables.classList.remove("hidden");
+		}
+
 		async function startScanning(cameraSelector) {
 			scannerContainer.innerHTML = "";
 			html5QrCode = new Html5Qrcode("scanner-container");
@@ -740,6 +759,7 @@
 					scannerContainer.style.border = '0px solid #4C12A1';
 					isScanning = false;
 					resetControlButtons();
+					showBayTables();
 					compareAndFind();
 				},
 				(errorMessage) => {
@@ -755,6 +775,7 @@
 				// Start scanning
 				toggleButton.textContent = "Stop Scanner"; // Change button text
 				scannerContainer.style.border = '2px solid #4C12A1';
+				hideBayTables();
 
 				try {
 					// Always request the rear camera explicitly on first launch — device
@@ -768,6 +789,7 @@
 					console.error(`Unable to start scanning: ${err}`);
 					toggleButton.textContent = "Start Scanning";
 					scannerContainer.style.border = '0px solid #4C12A1';
+					showBayTables();
 				}
 			} else {
 				// Stop scanning
@@ -776,6 +798,7 @@
 				scannerContainer.style.border = '0px solid #4C12A1';
 				isScanning = false; // Update flag to indicate not scanning
 				resetControlButtons();
+				showBayTables();
 			}
 		});
 
