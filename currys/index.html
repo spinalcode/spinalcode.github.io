@@ -1,0 +1,976 @@
+
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Currys 2402 Contract Calculator</title>
+<link rel="icon" type="image/x-icon" href="Currys_Logo.ico"/>
+    <style>
+        @font-face {
+            font-family: 'CurrysSans';
+            src: url('CurrysSans-Regular.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'CurrysSans';
+            src: url('CurrysSans-Headline.otf') format('opentype');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+        .bg-circle {
+            position: fixed;
+            border-radius: 50%;
+            z-index: -1;
+        }
+        .icon {
+            display: inline-block;
+            vertical-align: -0.2em;
+            flex-shrink: 0;
+        }
+    </style>
+<style>
+/* ===== Reset / base (replaces Tailwind preflight for the bits we use) ===== */
+*, *::before, *::after { box-sizing: border-box; }
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+input, textarea { font: inherit; color: inherit; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+/* ===== Layout ===== */
+.flex { display: flex; }
+.grid { display: grid; }
+.block { display: block; }
+.hidden { display: none; }
+.relative { position: relative; }
+.absolute { position: absolute; }
+.fixed { position: fixed; }
+.overflow-hidden { overflow: hidden; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+.top-1\/2 { top: 50%; }
+.left-4 { left: 1rem; }
+.-bottom-10 { bottom: -2.5rem; }
+.-right-10 { right: -2.5rem; }
+.z-10 { z-index: 10; }
+.z-50 { z-index: 50; }
+
+.flex-col { flex-direction: column; }
+.flex-1 { flex: 1 1 0%; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+
+.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; }
+.gap-6 { gap: 1.5rem; }
+.gap-8 { gap: 2rem; }
+
+.space-y-2 > * + * { margin-top: 0.5rem; }
+.space-y-3 > * + * { margin-top: 0.75rem; }
+.space-y-4 > * + * { margin-top: 1rem; }
+.space-y-6 > * + * { margin-top: 1.5rem; }
+
+.mx-auto { margin-left: auto; margin-right: auto; }
+.mx-1 { margin-left: 0.25rem; margin-right: 0.25rem; }
+.ml-auto { margin-left: auto; }
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-1\.5 { margin-bottom: 0.375rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.mb-10 { margin-bottom: 2.5rem; }
+.mt-1 { margin-top: 0.25rem; }
+.mt-4 { margin-top: 1rem; }
+.mt-6 { margin-top: 1.5rem; }
+
+.p-0 { padding: 0; }
+.p-2 { padding: 0.5rem; }
+.p-3 { padding: 0.75rem; }
+.p-4 { padding: 1rem; }
+.p-6 { padding: 1.5rem; }
+.p-8 { padding: 2rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+.py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+.py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.pl-8 { padding-left: 2rem; }
+.pr-4 { padding-right: 1rem; }
+.pt-6 { padding-top: 1.5rem; }
+
+.w-5 { width: 1.25rem; }
+.w-11 { width: 2.75rem; }
+.w-16 { width: 4rem; }
+.w-20 { width: 5rem; }
+.w-full { width: 100%; }
+.h-5 { height: 1.25rem; }
+.h-16 { height: 4rem; }
+.h-20 { height: 5rem; }
+.min-h-screen { min-height: 100vh; }
+.max-w-6xl { max-width: 72rem; }
+.max-w-md { max-width: 28rem; }
+
+/* ===== Typography ===== */
+.text-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+.text-base { font-size: 1rem; line-height: 1.5rem; }
+.text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+.text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+.text-2xl { font-size: 1.5rem; line-height: 2rem; }
+.text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+.text-\[18px\] { font-size: 18px; }
+.text-\[200px\] { font-size: 200px; }
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+.font-black { font-weight: 900; }
+.uppercase { text-transform: uppercase; }
+.tracking-tight { letter-spacing: -0.025em; }
+.tracking-wider { letter-spacing: 0.05em; }
+.leading-tight { line-height: 1.25; }
+.whitespace-pre-wrap { white-space: pre-wrap; }
+.list-none { list-style: none; }
+
+/* ===== Colors ===== */
+.text-primary { color: #5112A8; }
+.text-secondary { color: #E61571; }
+.text-white { color: #FFFFFF; }
+.text-white\/70 { color: rgba(255, 255, 255, 0.7); }
+.text-white\/90 { color: rgba(255, 255, 255, 0.9); }
+.text-gray-700 { color: #374151; }
+.text-slate-400 { color: #94A3B8; }
+.text-slate-500 { color: #64748B; }
+.text-slate-600 { color: #475569; }
+.text-slate-700 { color: #334155; }
+.text-slate-900 { color: #0F172A; }
+.dark .dark\:text-white { color: #FFFFFF; }
+.dark .dark\:text-slate-100 { color: #F1F5F9; }
+.dark .dark\:text-slate-300 { color: #CBD5E1; }
+.dark .dark\:text-slate-400 { color: #94A3B8; }
+
+.bg-white { background-color: #FFFFFF; }
+.bg-white\/10 { background-color: rgba(255, 255, 255, 0.1); }
+.bg-white\/20 { background-color: rgba(255, 255, 255, 0.2); }
+.bg-white\/50 { background-color: rgba(255, 255, 255, 0.5); }
+.bg-black\/10 { background-color: rgba(0, 0, 0, 0.1); }
+.bg-black\/50 { background-color: rgba(0, 0, 0, 0.5); }
+.bg-primary { background-color: #5112A8; }
+.bg-secondary { background-color: #E61571; }
+.bg-slate-50 { background-color: #F8FAFC; }
+.bg-slate-50\/50 { background-color: rgba(248, 250, 252, 0.5); }
+.bg-transparent { background-color: transparent; }
+.bg-background-light { background-color: #FFF5D4; }
+.bg-card-light { background-color: #FFFFFF; }
+.bg-card-light\/50 { background-color: rgba(255, 255, 255, 0.5); }
+.dark .dark\:bg-background-dark { background-color: #121212; }
+.dark .dark\:bg-card-dark { background-color: #1E1E1E; }
+.dark .dark\:bg-card-dark\/50 { background-color: rgba(30, 30, 30, 0.5); }
+.dark .dark\:bg-slate-900 { background-color: #0F172A; }
+.dark .dark\:bg-slate-900\/50 { background-color: rgba(15, 23, 42, 0.5); }
+
+.border { border-width: 1px; border-style: solid; }
+.border-0 { border-width: 0; }
+.border-t { border-top-width: 1px; border-top-style: solid; }
+.border-b-2 { border-bottom-width: 2px; border-bottom-style: solid; }
+.border-dashed { border-style: dashed; }
+.border-transparent { border-color: transparent; }
+.border-white\/5 { border-color: rgba(255, 255, 255, 0.05); }
+.border-white\/20 { border-color: rgba(255, 255, 255, 0.2); }
+.border-slate-100 { border-color: #F1F5F9; }
+.border-slate-200 { border-color: #E2E8F0; }
+.border-slate-200\/50 { border-color: rgba(226, 232, 240, 0.5); }
+.border-slate-400 { border-color: #94A3B8; }
+.dark .dark\:border-slate-700 { border-color: #334155; }
+.dark .dark\:border-slate-700\/50 { border-color: rgba(51, 65, 85, 0.5); }
+.dark .dark\:border-slate-800 { border-color: #1E293B; }
+
+.rounded-lg { border-radius: 0.5rem; }
+.rounded-xl { border-radius: 0.75rem; }
+.rounded-2xl { border-radius: 1rem; }
+.rounded-full { border-radius: 9999px; }
+
+.shadow-sm { box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1); }
+.shadow-lg { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); }
+.shadow-xl { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1); }
+.shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+.shadow-primary\/20 { box-shadow: 0 10px 15px -3px rgba(81, 18, 168, 0.2); }
+.shadow-secondary\/20 { box-shadow: 0 10px 15px -3px rgba(230, 21, 113, 0.2); }
+
+.bg-gradient-to-br { background-image: linear-gradient(to bottom right, var(--tw-gradient-from), var(--tw-gradient-to)); }
+.from-primary { --tw-gradient-from: #5112A8; }
+.to-primary\/90 { --tw-gradient-to: rgba(81, 18, 168, 0.9); }
+
+.backdrop-blur-sm { backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.backdrop-blur-md { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+
+.opacity-0 { opacity: 0; }
+.opacity-10 { opacity: 0.1; }
+.opacity-80 { opacity: 0.8; }
+
+.transform { transform: translate(var(--tw-translate-x, 0), var(--tw-translate-y, 0)) scale(var(--tw-scale-x, 1), var(--tw-scale-y, 1)); }
+.-translate-y-1\/2 { --tw-translate-y: -50%; transform: translateY(-50%); }
+.scale-95 { --tw-scale-x: .95; --tw-scale-y: .95; transform: scale(.95); }
+
+.transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4,0,0.2,1); }
+.transition-colors { transition-property: color, background-color, border-color; transition-timing-function: cubic-bezier(0.4,0,0.2,1); }
+.transition-opacity { transition-property: opacity; transition-timing-function: cubic-bezier(0.4,0,0.2,1); }
+.transition-transform { transition-property: transform; transition-timing-function: cubic-bezier(0.4,0,0.2,1); }
+.duration-200 { transition-duration: 200ms; }
+.duration-300 { transition-duration: 300ms; }
+
+.cursor-pointer { cursor: pointer; }
+.pointer-events-none { pointer-events: none; }
+.resize-none { resize: none; }
+.object-contain { object-fit: contain; }
+
+/* details/summary marker + group-open rotation */
+.list-none::-webkit-details-marker,
+.\[\&\:\:-webkit-details-marker\]\:hidden::-webkit-details-marker { display: none; }
+.group[open] .group-open\:-scale-y-100 { transform: scaleY(-1); }
+
+/* ===== Focus / hover states ===== */
+.focus\:ring-0:focus { box-shadow: none; }
+.focus\:ring-2:focus { box-shadow: 0 0 0 2px var(--tw-ring-color, #94A3B8); }
+.focus\:ring-primary:focus { --tw-ring-color: #5112A8; }
+.focus\:ring-secondary:focus { --tw-ring-color: #E61571; }
+.focus\:ring-slate-400:focus { --tw-ring-color: #94A3B8; }
+.focus\:border-transparent:focus { border-color: transparent; }
+.focus\:border-secondary:focus { border-color: #E61571; }
+.focus\:text-secondary:focus { color: #E61571; }
+
+.hover\:bg-primary\/90:hover { background-color: rgba(81, 18, 168, 0.9); }
+.hover\:bg-secondary\/90:hover { background-color: rgba(230, 21, 113, 0.9); }
+.hover\:bg-slate-50:hover { background-color: #F8FAFC; }
+.hover\:bg-slate-100:hover { background-color: #F1F5F9; }
+.hover\:bg-slate-200:hover { background-color: #E2E8F0; }
+.hover\:bg-white\/30:hover { background-color: rgba(255, 255, 255, 0.3); }
+.hover\:opacity-100:hover { opacity: 1; }
+.hover\:shadow-primary\/20:hover { box-shadow: 0 10px 15px -3px rgba(81, 18, 168, 0.2); }
+.hover\:shadow-secondary\/20:hover { box-shadow: 0 10px 15px -3px rgba(230, 21, 113, 0.2); }
+.hover\:shadow-xl:hover { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1); }
+.hover\:text-secondary:hover { color: #E61571; }
+.dark .dark\:hover\:bg-slate-800:hover { background-color: #1E293B; }
+
+/* ===== Responsive (Tailwind default breakpoints) ===== */
+@media (min-width: 640px) {
+  .sm\:flex-row { flex-direction: row; }
+  .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 768px) {
+  .md\:col-span-2 { grid-column: span 2 / span 2; }
+  .md\:flex-row { flex-direction: row; }
+  .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .md\:items-center { align-items: center; }
+  .md\:text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+  .md\:text-base { font-size: 1rem; line-height: 1.5rem; }
+}
+@media (min-width: 1024px) {
+  .lg\:py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+}
+
+        body {
+            font-family: 'CurrysSans', 'Inter', sans-serif;
+            background-image: url('background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        /* Optional: Add a subtle overlay to ensure readability if the background is too busy */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.4);
+            z-index: -1;
+            transition: background 0.3s ease;
+        }
+        html.dark body::before {
+            background: rgba(18, 18, 18, 0.85); /* Stronger overlay for dark mode to maintain contrast */
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        @media print {
+            body::before, .max-w-6xl, #staff-modal {
+                display: none !important;
+            }
+            #print-layout {
+                display: block !important;
+            }
+            @page {
+                margin: 2cm;
+            }
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-200">
+<div class="max-w-6xl mx-auto px-4 py-4 lg:py-6">
+<header class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+<div class="flex items-center gap-6">
+                <img src="currys_logo.png" alt="Currys Logo" class="w-20 h-20 rounded-full shadow-lg shadow-primary/20 object-contain">
+<div>
+<h1 class="text-2xl md:text-3xl font-bold tracking-tight text-primary dark:text-white leading-tight">Contract Calculator</h1>
+<p class="text-slate-500 dark:text-white font-medium text-sm md:text-base">Compare SIM-only vs. Phone contracts easily</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors" onclick="toggleDarkMode()">
+<svg class="icon text-slate-600 dark:text-slate-300" id="theme-icon" data-icon="dark_mode" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+</button>
+</div>
+</header>
+<main class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<details class="group md:col-span-2 bg-card-light/50 dark:bg-card-dark/50 p-6 rounded-2xl shadow-sm border border-slate-200/50 dark:border-slate-700/50 transition-all opacity-80 hover:opacity-100">
+    <summary class="flex items-center gap-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+<svg class="icon text-slate-500 dark:text-white" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <h2 class="text-lg font-bold text-slate-700 dark:text-slate-300">Customer Details (Optional)</h2>
+        <svg class="icon ml-auto text-slate-500 transition-transform group-open:-scale-y-100" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </summary>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        <div>
+            <label class="block text-sm font-semibold mb-2 text-slate-500 dark:text-slate-400">Current Monthly Price (£)</label>
+            <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400 dark:text-white">£</span>
+                <input class="w-full pl-8 pr-4 py-3 bg-white/50 dark:bg-slate-900/50 border-transparent focus:ring-2 focus:ring-slate-400 rounded-xl font-medium transition-all text-slate-600 dark:text-slate-300" id="customer-current-price" step="0.01" type="number" placeholder="0.00" value=""/>
+            </div>
+        </div>
+        <div>
+            <label class="block text-sm font-semibold mb-2 text-slate-500 dark:text-slate-400">Additional Information</label>
+            <textarea class="w-full px-4 py-3 bg-white/50 dark:bg-slate-900/50 border-transparent focus:ring-2 focus:ring-slate-400 rounded-xl font-medium transition-all resize-none text-slate-600 dark:text-slate-300" id="customer-info" rows="1" placeholder="Any extra notes..."></textarea>
+        </div>
+    </div>
+</details>
+<section id="sim-section" class="bg-card-light dark:bg-card-dark p-8 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 transition-all">
+<div class="flex items-center gap-3 mb-6">
+<svg class="icon text-primary" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3H9L4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"></path><rect x="9" y="11" width="6" height="5"></rect></svg>
+<h2 class="text-xl font-bold">SIM Only & Device Outright</h2>
+</div>
+<div class="space-y-6">
+<div>
+<label class="block text-sm font-semibold mb-2 text-slate-600 dark:text-white">SIM Per Month (£)</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400 dark:text-white">£</span>
+<input class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-transparent focus:ring-2 focus:ring-primary focus:border-transparent rounded-xl font-medium transition-all" id="sim-monthly" oninput="calculate()" step="0.01" type="number" value="0.00"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold mb-2 text-slate-600 dark:text-white">Handset Outright Cost (£)</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400 dark:text-white">£</span>
+<input class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-transparent focus:ring-2 focus:ring-primary focus:border-transparent rounded-xl font-medium transition-all" id="sim-handset" oninput="calculate()" step="0.01" type="number" value="0.00"/>
+</div>
+</div>
+<div class="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-3">
+<div class="flex justify-between items-center text-slate-500 dark:text-white">
+<span>Total (24 Months)</span>
+<span class="font-bold text-slate-900 dark:text-white" id="sim-total-display">£0.00</span>
+</div>
+<div class="flex justify-between items-center text-slate-500 dark:text-white">
+<span>Effective Monthly Cost</span>
+<span class="font-bold text-slate-900 dark:text-white" id="sim-effective-display">£0.00</span>
+</div>
+</div>
+</div>
+</section>
+<section id="contract-section" class="bg-card-light dark:bg-card-dark p-8 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 transition-all">
+<div class="flex items-center gap-3 mb-6">
+<svg class="icon text-secondary" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2" ry="2"></rect><line x1="11" y1="18" x2="13" y2="18"></line></svg>
+<h2 class="text-xl font-bold">24 Month Contract</h2>
+</div>
+<div class="space-y-4">
+<div>
+<label class="block text-sm font-semibold mb-2 text-slate-600 dark:text-white">Provider</label>
+<div class="relative" id="provider-dropdown">
+<button type="button" id="provider-button" class="w-full flex items-center gap-2 px-4 py-3 bg-white/50 dark:bg-slate-900/50 border-transparent focus:ring-2 focus:ring-slate-400 rounded-xl font-medium transition-all text-slate-600 dark:text-slate-300 text-left" onclick="toggleProviderDropdown()">
+<img src="ID_Logo.png" id="provider-button-logo" class="w-5 h-5 object-contain" alt=""/>
+<span id="provider-button-text">ID Mobile</span>
+<svg class="icon ml-auto text-slate-400 text-base" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+</button>
+<input type="hidden" id="contract-provider" value="ID Mobile"/>
+<div id="provider-options" class="hidden absolute z-10 mt-1 w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg overflow-hidden">
+<div class="flex items-center gap-2 px-4 py-3 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800" onclick="selectProvider('ID Mobile', 'ID_Logo.png')">
+<img src="ID_Logo.png" class="w-5 h-5 object-contain" alt=""/>
+<span>ID Mobile</span>
+</div>
+<div class="flex items-center gap-2 px-4 py-3 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800" onclick="selectProvider('Vodafone', 'Vodafone_Logo.png')">
+<img src="Vodafone_Logo.png" class="w-5 h-5 object-contain" alt=""/>
+<span>Vodafone</span>
+</div>
+</div>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold mb-2 text-slate-600 dark:text-white">Initial Monthly Cost (£)</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400 dark:text-white">£</span>
+<input class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-transparent focus:ring-2 focus:ring-secondary focus:border-transparent rounded-xl font-medium transition-all" id="contract-monthly" oninput="calculate()" step="0.01" type="number" value="0.00"/>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<label class="flex items-center text-xs font-bold mb-1.5 uppercase tracking-wider text-slate-500 dark:text-white">
+Price from April <input type="number" id="label-year-1" class="w-11 bg-transparent border-0 border-b-2 border-dashed border-slate-400 p-0 mx-1 text-xs font-bold text-slate-500 dark:text-white focus:ring-0 focus:border-secondary focus:text-secondary hover:text-secondary transition-colors text-center" /> (£)
+</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400 dark:text-white text-sm">£</span>
+<input class="w-full pl-8 pr-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 border-transparent focus:ring-2 focus:ring-secondary focus:border-transparent rounded-xl font-medium transition-all text-sm" id="contract-2026" oninput="calculate()" step="0.01" type="number" value="0.00"/>
+</div>
+</div>
+<div>
+<label class="flex items-center text-xs font-bold mb-1.5 uppercase tracking-wider text-slate-500 dark:text-white">
+Price from April <input type="number" id="label-year-2" class="w-11 bg-transparent border-0 border-b-2 border-dashed border-slate-400 p-0 mx-1 text-xs font-bold text-slate-500 dark:text-white focus:ring-0 focus:border-secondary focus:text-secondary hover:text-secondary transition-colors text-center" /> (£)
+</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400 dark:text-white text-sm">£</span>
+<input class="w-full pl-8 pr-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 border-transparent focus:ring-2 focus:ring-secondary focus:border-transparent rounded-xl font-medium transition-all text-sm" id="contract-2027" oninput="calculate()" step="0.01" type="number" value="0.00"/>
+</div>
+</div>
+</div>
+<div>
+<label class="block text-sm font-semibold mb-2 text-slate-600 dark:text-white">Upfront Cost (£)</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400 dark:text-white">£</span>
+<input class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-transparent focus:ring-2 focus:ring-secondary focus:border-transparent rounded-xl font-medium transition-all" id="contract-upfront" oninput="calculate()" step="0.01" type="number" value="0.00"/>
+</div>
+</div>
+<div class="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-3">
+<div class="flex justify-between items-center text-slate-500 dark:text-white">
+<span>Total (24 Months)</span>
+<span class="font-bold text-slate-900 dark:text-white" id="contract-total-display">£0.00</span>
+</div>
+<div class="flex justify-between items-center text-slate-500 dark:text-white">
+<span>Effective Monthly Cost</span>
+<span class="font-bold text-slate-900 dark:text-white" id="contract-effective-display">£0.00</span>
+</div>
+</div>
+<details class="group border border-slate-100 dark:border-slate-800 rounded-xl overflow-hidden mt-4">
+<summary class="flex items-center justify-between cursor-pointer p-3 bg-slate-50 dark:bg-slate-900/50 text-sm font-semibold text-slate-600 dark:text-white hover:text-secondary transition-colors list-none [&::-webkit-details-marker]:hidden">
+<span class="flex items-center gap-2"><svg class="icon text-[18px]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="8" y1="11" x2="8" y2="11"></line><line x1="12" y1="11" x2="12" y2="11"></line><line x1="16" y1="11" x2="16" y2="11"></line><line x1="8" y1="15" x2="8" y2="15"></line><line x1="12" y1="15" x2="12" y2="15"></line><line x1="16" y1="15" x2="16" y2="15"></line><line x1="8" y1="19" x2="8" y2="19"></line><line x1="12" y1="19" x2="12" y2="19"></line><line x1="16" y1="19" x2="16" y2="19"></line></svg> Advanced Breakdown</span>
+<svg class="icon transition-transform group-open:-scale-y-100" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+</summary>
+<div class="p-3 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 space-y-2 text-sm" id="contract-breakdown">
+<!-- Breakdown will be populated via JS -->
+</div>
+</details>
+</div>
+</section>
+<section class="md:col-span-2 bg-gradient-to-br from-primary to-primary/90 p-6 rounded-2xl shadow-2xl text-white overflow-hidden relative">
+<div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
+<svg class="icon text-[200px]" width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="8" ry="3"></ellipse><path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6"></path><path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"></path></svg>
+</div>
+<div class="relative z-10">
+<div class="flex items-center gap-3 mb-4">
+<svg class="icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"></polyline><polyline points="14 7 21 7 21 14"></polyline></svg>
+<h2 class="text-2xl font-bold">Comparison Results</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+<p class="text-white/70 text-sm font-semibold mb-1 uppercase tracking-wider">Total 24-Month Saving</p>
+<p class="text-4xl font-black" id="total-saving-display">£0.00</p>
+</div>
+<div class="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+<p class="text-white/70 text-sm font-semibold mb-1 uppercase tracking-wider">Average Monthly Saving</p>
+<p class="text-4xl font-black" id="monthly-saving-display">£0.00</p>
+</div>
+</div>
+<div class="mt-6 flex flex-col sm:flex-row gap-4">
+<button class="flex-1 bg-secondary hover:bg-secondary/90 text-white py-3 px-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-secondary/20 transition-all flex items-center justify-center gap-2" onclick="calculate()">
+<svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                        Calculate
+                    </button>
+<button class="flex-1 bg-white hover:bg-slate-50 text-primary py-3 px-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2" onclick="generateQuote()">
+<svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                        Generate Quote
+                    </button>
+<button class="flex-1 bg-white/20 hover:bg-white/30 text-white py-3 px-6 rounded-xl font-bold text-lg backdrop-blur-sm transition-all flex items-center justify-center gap-2" onclick="resetAll()">
+<svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                        Reset All
+                    </button>
+</div>
+<div class="mt-4 text-center text-white/90 font-medium py-2 px-4 rounded-lg bg-black/10 border border-white/5 hidden" id="verdict-box">
+<span id="verdict-text"></span>
+</div>
+</div>
+</section>
+</main>
+<footer class="mt-6 text-center text-slate-500 dark:text-white text-sm">
+<p>© Currys - Improved in the Team Valley (2402) • <a href="mailto:wardj02@currys.co.uk"></a>Jonathon Ward</a></p>
+</footer>
+</div>
+
+
+
+<div id="staff-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0 pointer-events-none">
+    <div class="bg-card-light dark:bg-card-dark p-8 rounded-2xl shadow-2xl max-w-md w-full transform scale-95 transition-transform duration-300 border border-slate-100 dark:border-slate-800">
+        <div class="flex justify-center mb-6">
+            <img src="currys_logo.png" alt="Currys Logo" class="w-16 h-16 rounded-full shadow-md object-contain">
+        </div>
+        <h2 class="text-2xl font-bold text-center mb-2 text-slate-900 dark:text-white">Welcome!</h2>
+        <p class="text-center text-slate-500 dark:text-slate-400 mb-6">Please enter your name to personalize quotes.</p>
+        <div class="mb-6">
+            <input type="text" id="staff-name-input" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-transparent focus:ring-2 focus:ring-primary focus:border-transparent rounded-xl font-medium transition-all text-center text-lg" placeholder="e.g. Jane Doe" onkeydown="if(event.key === 'Enter') saveStaffName()">
+        </div>
+        <button onclick="saveStaffName()" class="w-full bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-xl font-bold shadow-lg hover:shadow-primary/20 transition-all">
+            Start Quoting
+        </button>
+    </div>
+</div>
+
+<script>
+    function getViewportSize() {
+        var w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+        var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+        return { w: w, h: h };
+    }
+
+    function placeAllCircles() {
+        var numberOfCircles = 4;
+        var circles = [];
+        var speedModifier = 0.1;
+        var gradients = [
+            'linear-gradient(to bottom, #FFFAE3, #FFF5D4, #F1D6AD)',
+            'linear-gradient(to bottom, #FFFAE3, #FFF5D4, #F1D6AD)'
+        ];
+
+        function createCircle(index) {
+            var vp = getViewportSize();
+            var circle = document.createElement('div');
+            var size = Math.random() * (400 - 100) + 100;
+            var top = Math.random() * (vp.h - size);
+            var left = Math.random() * (vp.w - size);
+            var dx = (Math.random() - 0.5) * speedModifier * 10;
+            var dy = (Math.random() - 0.5) * speedModifier * 10;
+            var gradient = gradients[index % gradients.length];
+
+            circle.style.width = size + 'px';
+            circle.style.height = size + 'px';
+            circle.style.top = top + 'px';
+            circle.style.left = left + 'px';
+            circle.style.background = gradient;
+            addClass(circle, 'bg-circle');
+            document.body.appendChild(circle);
+
+            circles.push({ el: circle, size: size, top: top, left: left, dx: dx, dy: dy });
+        }
+
+        function updatePositions() {
+            var vp = getViewportSize();
+            for (var i = 0; i < circles.length; i++) {
+                var data = circles[i];
+                data.left += data.dx;
+                data.top += data.dy;
+
+                if (data.left <= 0 || data.left + data.size >= vp.w) {
+                    data.dx = -data.dx;
+                }
+                if (data.top <= 0 || data.top + data.size >= vp.h) {
+                    data.dy = -data.dy;
+                }
+
+                data.el.style.top = data.top + 'px';
+                data.el.style.left = data.left + 'px';
+            }
+        }
+
+        for (var i = 0; i < numberOfCircles; i++) {
+            createCircle(i);
+        }
+
+        setInterval(updatePositions, 16);
+    }
+
+    function toggleProviderDropdown() {
+        var options = document.getElementById('provider-options');
+        if ((' ' + options.className + ' ').indexOf(' hidden ') !== -1) {
+            removeClass(options, 'hidden');
+        } else {
+            addClass(options, 'hidden');
+        }
+    }
+
+    function selectProvider(name, logo) {
+        document.getElementById('contract-provider').value = name;
+        document.getElementById('provider-button-text').textContent = name;
+        document.getElementById('provider-button-logo').src = logo;
+        addClass(document.getElementById('provider-options'), 'hidden');
+    }
+
+    document.addEventListener('click', function(e) {
+        var dropdown = document.getElementById('provider-dropdown');
+        var target = e.target || e.srcElement;
+        if (dropdown && !dropdown.contains(target)) {
+            addClass(document.getElementById('provider-options'), 'hidden');
+        }
+    });
+
+    function addClass(el, cls) {
+        var arr = cls.split(' ');
+        for (var i = 0; i < arr.length; i++) {
+            if ((' ' + el.className + ' ').indexOf(' ' + arr[i] + ' ') === -1) {
+                el.className += (el.className ? ' ' : '') + arr[i];
+            }
+        }
+    }
+    function removeClass(el, cls) {
+        var arr = cls.split(' ');
+        for (var i = 0; i < arr.length; i++) {
+            var re = new RegExp('(^|\\s)' + arr[i] + '(\\s|$)', 'g');
+            el.className = el.className.replace(re, ' ').replace(/\s+/g, ' ').replace(/^\s+|\s+$/g, '');
+        }
+    }
+
+    function initStaffModal() {
+        var storedName = localStorage.getItem('currys_staff_name');
+        if (!storedName) {
+            var modal = document.getElementById('staff-modal');
+            removeClass(modal, 'opacity-0 pointer-events-none');
+            addClass(modal, 'opacity-100');
+            removeClass(modal.querySelector('div'), 'scale-95');
+            addClass(modal.querySelector('div'), 'scale-100');
+            setTimeout(function() { document.getElementById('staff-name-input').focus(); }, 100);
+        }
+    }
+
+    function saveStaffName() {
+        var nameInput = document.getElementById('staff-name-input').value.replace(/^\s+|\s+$/g, '');
+        if (nameInput) {
+            localStorage.setItem('currys_staff_name', nameInput);
+            var modal = document.getElementById('staff-modal');
+            removeClass(modal, 'opacity-100');
+            addClass(modal, 'opacity-0 pointer-events-none');
+            removeClass(modal.querySelector('div'), 'scale-100');
+            addClass(modal.querySelector('div'), 'scale-95');
+        } else {
+            addClass(document.getElementById('staff-name-input'), 'ring-2 ring-red-500');
+            setTimeout(function() {
+                removeClass(document.getElementById('staff-name-input'), 'ring-2 ring-red-500');
+            }, 1000);
+        }
+    }
+
+    function generateQuote() {
+        var staffName = localStorage.getItem('currys_staff_name') || 'Staff Member';
+        var dateStr = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+        var currentPrice = document.getElementById('customer-current-price').value;
+        var additionalInfo = document.getElementById('customer-info').value;
+
+        var contractProvider = document.getElementById('contract-provider').value || 'ID Mobile';
+        var logoUrl = new URL('currys_logo.png', document.baseURI).href;
+        var providerLogoFile = contractProvider === 'Vodafone' ? 'Vodafone_Logo.png' : 'ID_Logo.png';
+        var providerLogoUrl = new URL(providerLogoFile, document.baseURI).href;
+        var fontRegularUrl = new URL('CurrysSans-Regular.otf', document.baseURI).href;
+        var fontBoldUrl = new URL('CurrysSans-Headline.otf', document.baseURI).href;
+
+        var customerInfoHTML = '';
+        if (currentPrice || additionalInfo) {
+            customerInfoHTML = '' +
+                '<div class="mb-10">' +
+                    '<p class="text-xl mb-4">Youve told us you currently pay:</p>' +
+                    (currentPrice ? '<p class="mb-2 text-xl font-semibold">£' + parseFloat(currentPrice).toFixed(2) + ' per month</p>' : '') +
+                    (additionalInfo ? '<p class="text-gray-700 text-lg whitespace-pre-wrap">' + additionalInfo + '</p>' : '') +
+                '</div>';
+        }
+
+        var simMonthly = document.getElementById('sim-monthly').value || '0.00';
+        var simHandset = document.getElementById('sim-handset').value || '0.00';
+        var simTotal = document.getElementById('sim-total-display').textContent;
+        var simEffective = document.getElementById('sim-effective-display').textContent;
+
+        var contractMonthly = document.getElementById('contract-monthly').value || '0.00';
+        var year1 = document.getElementById('label-year-1').value;
+        var contract2026 = document.getElementById('contract-2026').value || contractMonthly;
+        var year2 = document.getElementById('label-year-2').value;
+        var contract2027 = document.getElementById('contract-2027').value || contract2026;
+        var contractUpfront = document.getElementById('contract-upfront').value || '0.00';
+        var contractTotal = document.getElementById('contract-total-display').textContent;
+        var contractEffective = document.getElementById('contract-effective-display').textContent;
+
+        var savingDisplay = document.getElementById('total-saving-display').textContent;
+        var monthlySavingDisplay = document.getElementById('monthly-saving-display').textContent;
+
+        var printWindow = window.open('', '_blank');
+        printWindow.document.write('' +
+            '<!DOCTYPE html>' +
+            '<html lang="en">' +
+            '<head>' +
+                '<meta charset="utf-8">' +
+                '<title>Your Mobile Quote</title>' +
+                '<script src="https://cdn.tailwindcss.com"><\/script>' +
+                '<style>' +
+                    '@font-face {' +
+                        'font-family: \'CurrysSans\';' +
+                        'src: url(\'' + fontRegularUrl + '\') format(\'opentype\');' +
+                        'font-weight: 400;' +
+                    '}' +
+                    '@font-face {' +
+                        'font-family: \'CurrysSans\';' +
+                        'src: url(\'' + fontBoldUrl + '\') format(\'opentype\');' +
+                        'font-weight: 700;' +
+                    '}' +
+                    'body { ' +
+                        'background-color: #f3f4f6; ' +
+                        'font-family: \'CurrysSans\', sans-serif !important;' +
+                    '}' +
+                    '@media print {' +
+                        'body { background-color: white; padding: 0 !important; margin: 0 !important; }' +
+                        '.no-print { display: none !important; }' +
+                        '@page { margin: 0; }' +
+                    '}' +
+                '</style>' +
+            '</head>' +
+            '<body class="py-8 print:py-0 text-black">' +
+                '<div class="bg-white p-12 print:px-8 print:py-0 max-w-[21cm] mx-auto min-h-[29.7cm] print:min-h-0 shadow-2xl relative">' +
+                    '<button onclick="window.print()" class="no-print absolute top-8 right-8 bg-[#5112A8] hover:bg-[#3d0d82] text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-colors flex items-center gap-2">' +
+                        '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>' +
+                        'Print Quote' +
+                    '</button>' +
+
+                    '<div class="flex items-center gap-6 mb-8 mt-4">' +
+                        '<div class="flex items-center gap-2">' +
+                            '<img src="' + logoUrl + '" class="w-20 h-20 rounded-full object-contain bg-[#5112A8]">' +
+                            '<img src="' + providerLogoUrl + '" class="w-20 h-20 object-contain">' +
+                        '</div>' +
+                        '<div>' +
+                            '<h1 class="text-3xl font-bold mb-1">Your ' + contractProvider + ' quote</h1>' +
+                            '<p class="text-lg text-gray-700">Generated on ' + dateStr + '</p>' +
+                            '<p class="text-lg text-gray-700">Generated by: ' + staffName + '</p>' +
+                        '</div>' +
+                    '</div>' +
+
+                    (customerInfoHTML || '') +
+
+                    '<div class="mb-10">' +
+                        '<p class="text-xl mb-4 leading-relaxed">If you chose to pay a SIM Only Deal (24 months) and to purchase a handset outright you would be looking at paying:</p>' +
+                        '<table class="w-full max-w-md text-left text-xl">' +
+                            '<tr><td class="py-1">SIM Per month:</td><td class="font-semibold text-right">£' + parseFloat(simMonthly).toFixed(2) + '</td></tr>' +
+                            '<tr><td class="py-1">Handset Outright:</td><td class="font-semibold text-right">£' + parseFloat(simHandset).toFixed(2) + '</td></tr>' +
+                            '<tr><td class="py-1 pt-4">Total (24 months):</td><td class="font-semibold text-right pt-4">' + simTotal + '</td></tr>' +
+                            '<tr><td class="py-1 font-bold">Effective Monthly Cost:</td><td class="font-bold text-right">' + simEffective + '</td></tr>' +
+                        '</table>' +
+                    '</div>' +
+
+                    '<div class="mb-10">' +
+                        '<p class="text-xl mb-4 leading-relaxed">While the 24-month contract alternative would be priced at:</p>' +
+                        '<table class="w-full max-w-md text-left text-xl">' +
+                            '<tr><td class="py-1">Network:</td><td class="font-semibold text-right">' + contractProvider + '</td></tr>' +
+                            '<tr><td class="py-1">Initial Monthly Cost</td><td class="font-semibold text-right">£' + parseFloat(contractMonthly).toFixed(2) + '</td></tr>' +
+                            '<tr><td class="py-1">Price from April ' + year1 + ':</td><td class="font-semibold text-right">£' + parseFloat(contract2026).toFixed(2) + '</td></tr>' +
+                            '<tr><td class="py-1">Price from April ' + year2 + ':</td><td class="font-semibold text-right">£' + parseFloat(contract2027).toFixed(2) + '</td></tr>' +
+                            '<tr><td class="py-1">Upfront cost:</td><td class="font-semibold text-right">£' + parseFloat(contractUpfront).toFixed(2) + '</td></tr>' +
+                            '<tr><td class="py-1 pt-4">Total (24 months):</td><td class="font-semibold text-right pt-4">' + contractTotal + '</td></tr>' +
+                            '<tr><td class="py-1 font-bold">Effective Monthly Cost:</td><td class="font-bold text-right">' + contractEffective + '</td></tr>' +
+                        '</table>' +
+                    '</div>' +
+
+                    '<div class="mb-10">' +
+                        '<h2 class="text-2xl font-bold mb-4">Comparison results</h2>' +
+                        '<table class="w-full border-collapse border border-black text-lg">' +
+                            '<tr>' +
+                                '<td class="border border-black p-4 w-1/2 align-top">' +
+                                    '<p class="mb-1 text-gray-800">Your total 24-month saving would be</p>' +
+                                    '<p class="font-bold text-xl">' + savingDisplay + '</p>' +
+                                '</td>' +
+                                '<td class="border border-black p-4 w-1/2 align-top">' +
+                                    '<p class="mb-1 text-gray-800">Your average monthly saving would be:</p>' +
+                                    '<p class="font-bold text-xl">' + monthlySavingDisplay + '</p>' +
+                                '</td>' +
+                            '</tr>' +
+                        '</table>' +
+                    '</div>' +
+
+                    '<div class="mt-6 mb-0">' +
+                        '<h3 class="text-2xl font-bold mb-2">Disclaimer</h3>' +
+                        '<p class="text-gray-800 text-xl leading-relaxed">' +
+                            'Please note that while we can guarantee this price for the contract today, we cannot promise it will be this amount if you return after today!' +
+                        '</p>' +
+                    '</div>' +
+                '</div>' +
+            '</body>' +
+            '</html>'
+        );
+        printWindow.document.close();
+    }
+    var ICON_PATHS = {
+        dark_mode: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>',
+        light_mode: '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>'
+    };
+    function toggleDarkMode() {
+        var html = document.documentElement;
+        var icon = document.getElementById('theme-icon');
+        if ((' ' + html.className + ' ').indexOf(' dark ') !== -1) {
+            removeClass(html, 'dark');
+            icon.innerHTML = ICON_PATHS.dark_mode;
+        } else {
+            addClass(html, 'dark');
+            icon.innerHTML = ICON_PATHS.light_mode;
+        }
+    }
+    function calculate() {
+        // SIM Inputs
+        var simMonthly = parseFloat(document.getElementById('sim-monthly').value) || 0;
+        var simHandset = parseFloat(document.getElementById('sim-handset').value) || 0;
+        // Contract Inputs
+        var contractMonthly = parseFloat(document.getElementById('contract-monthly').value) || 0;
+        var contract2026 = parseFloat(document.getElementById('contract-2026').value) || contractMonthly;
+        var contract2027 = parseFloat(document.getElementById('contract-2027').value) || contract2026;
+        var contractUpfront = parseFloat(document.getElementById('contract-upfront').value) || 0;
+        // Calculation
+        var simTotal = (simMonthly * 24) + simHandset;
+        var simEffective = simTotal / 24;
+
+        // Dynamic Calculation based on months until April
+        var currentDate = new Date();
+        var currentMonth = currentDate.getMonth(); // 0 = Jan, 3 = April
+
+        var monthsToFirstApril = 0;
+        if (currentMonth < 3) {
+            // Before April (Jan, Feb, Mar)
+            monthsToFirstApril = 3 - currentMonth;
+        } else {
+            // April or later (Apr-Dec)
+            monthsToFirstApril = 12 - (currentMonth - 3);
+        }
+
+        // Split the 24 month contract across initial, first April, and second April prices
+        var monthsAtInitial = Math.min(24, monthsToFirstApril);
+        var monthsAtPrice1 = Math.min(24 - monthsAtInitial, 12);
+        var monthsAtPrice2 = Math.max(0, 24 - monthsAtInitial - monthsAtPrice1);
+
+        var contractTotal = (contractMonthly * monthsAtInitial) +
+                              (contract2026 * monthsAtPrice1) +
+                              (contract2027 * monthsAtPrice2) +
+                              contractUpfront;
+        var contractEffective = contractTotal / 24;
+        var totalSaving = contractTotal - simTotal;
+        var monthlySaving = totalSaving / 24;
+
+        // Breakdown UI
+        var year1 = document.getElementById('label-year-1').value;
+        var year2 = document.getElementById('label-year-2').value;
+        var breakdownDiv = document.getElementById('contract-breakdown');
+
+        if (breakdownDiv) {
+            var breakdownHTML = '' +
+                '<div class="flex justify-between items-center text-slate-500 dark:text-white">' +
+                    '<span>Initial (' + monthsAtInitial + 'mo @ £' + contractMonthly.toFixed(2) + ')</span>' +
+                    '<span class="font-bold text-slate-900 dark:text-white">£' + (contractMonthly * monthsAtInitial).toFixed(2) + '</span>' +
+                '</div>';
+            if (monthsAtPrice1 > 0) {
+                breakdownHTML += '' +
+                '<div class="flex justify-between items-center text-slate-500 dark:text-white">' +
+                    '<span>April ' + year1 + ' (' + monthsAtPrice1 + 'mo @ £' + contract2026.toFixed(2) + ')</span>' +
+                    '<span class="font-bold text-slate-900 dark:text-white">£' + (contract2026 * monthsAtPrice1).toFixed(2) + '</span>' +
+                '</div>';
+            }
+            if (monthsAtPrice2 > 0) {
+                breakdownHTML += '' +
+                '<div class="flex justify-between items-center text-slate-500 dark:text-white">' +
+                    '<span>April ' + year2 + ' (' + monthsAtPrice2 + 'mo @ £' + contract2027.toFixed(2) + ')</span>' +
+                    '<span class="font-bold text-slate-900 dark:text-white">£' + (contract2027 * monthsAtPrice2).toFixed(2) + '</span>' +
+                '</div>';
+            }
+            if (contractUpfront > 0) {
+                breakdownHTML += '' +
+                '<div class="flex justify-between items-center text-slate-500 dark:text-white border-t border-slate-100 dark:border-slate-800 pt-2 mt-2">' +
+                    '<span>Upfront Cost</span>' +
+                    '<span class="font-bold text-slate-900 dark:text-white">£' + contractUpfront.toFixed(2) + '</span>' +
+                '</div>';
+            }
+            breakdownDiv.innerHTML = breakdownHTML;
+        }
+
+        // Updates
+        document.getElementById('sim-total-display').textContent = '£' + simTotal.toFixed(2);
+        document.getElementById('sim-effective-display').textContent = '£' + simEffective.toFixed(2);
+        document.getElementById('contract-total-display').textContent = '£' + contractTotal.toFixed(2);
+        document.getElementById('contract-effective-display').textContent = '£' + contractEffective.toFixed(2);
+        var savingDisplay = document.getElementById('total-saving-display');
+        var monthlyDisplay = document.getElementById('monthly-saving-display');
+        var verdictBox = document.getElementById('verdict-box');
+        var verdictText = document.getElementById('verdict-text');
+        savingDisplay.textContent = '£' + Math.abs(totalSaving).toFixed(2);
+        monthlyDisplay.textContent = '£' + Math.abs(monthlySaving).toFixed(2);
+        var simSection = document.getElementById('sim-section');
+        var contractSection = document.getElementById('contract-section');
+
+        // Reset styles
+        removeClass(simSection, 'ring-4 ring-green-500 shadow-green-500/50');
+        removeClass(contractSection, 'ring-4 ring-green-500 shadow-green-500/50');
+
+        if (totalSaving > 0) {
+            removeClass(verdictBox, 'hidden');
+            verdictText.textContent = "Choosing a SIM Only with Outright purchase is cheaper!";
+            addClass(simSection, 'ring-4 ring-green-500 shadow-green-500/50');
+        } else if (totalSaving < 0) {
+            removeClass(verdictBox, 'hidden');
+            verdictText.textContent = "Choosing a 24 Month Contract is cheaper!";
+            addClass(contractSection, 'ring-4 ring-green-500 shadow-green-500/50');
+        } else {
+            addClass(verdictBox, 'hidden');
+        }
+    }
+    function resetAll() {
+        var inputs = document.querySelectorAll('input:not(#label-year-1):not(#label-year-2):not(#customer-current-price)');
+        for (var i = 0; i < inputs.length; i++) {
+            inputs[i].value = "0.00";
+        }
+
+        document.getElementById('customer-current-price').value = "";
+        document.getElementById('customer-info').value = "";
+        document.getElementById('contract-provider').value = "ID Mobile";
+        selectProvider('ID Mobile', 'ID_Logo.png');
+
+        var currentYear = new Date().getFullYear();
+        document.getElementById('label-year-1').value = currentYear + 1;
+        document.getElementById('label-year-2').value = currentYear + 2;
+
+        calculate();
+    }
+    // Auto-clear inputs on focus
+    (function() {
+        var autoInputs = document.querySelectorAll('input:not(#label-year-1):not(#label-year-2):not(#customer-current-price)');
+        for (var i = 0; i < autoInputs.length; i++) {
+            autoInputs[i].addEventListener('focus', function() {
+                if (this.value === '0.00' || this.value === '0') {
+                    this.value = '';
+                }
+            });
+            autoInputs[i].addEventListener('blur', function() {
+                if (this.value === '') {
+                    this.value = '0.00';
+                    calculate();
+                }
+            });
+        }
+    })();
+
+    // Initialize
+    var currentYear = new Date().getFullYear();
+    document.getElementById('label-year-1').value = currentYear + 1;
+    document.getElementById('label-year-2').value = currentYear + 2;
+
+    calculate();
+    initStaffModal();
+    placeAllCircles();
+</script>
+
+</body></html>
