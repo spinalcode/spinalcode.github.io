@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
@@ -40,8 +41,8 @@ a { color: inherit; text-decoration: none; }
 img { display: block; max-width: 100%; }
 
 /* ===== Layout ===== */
-.flex { display: flex; }
-.grid { display: grid; }
+.flex { display: -webkit-box; display: -webkit-flex; display: -ms-flexbox; display: flex; }
+.grid { display: -webkit-box; display: -webkit-flex; display: -ms-flexbox; display: flex; -webkit-flex-wrap: wrap; -ms-flex-wrap: wrap; flex-wrap: wrap; }
 .block { display: block; }
 .hidden { display: none; }
 .relative { position: relative; }
@@ -62,7 +63,9 @@ img { display: block; max-width: 100%; }
 .justify-center { justify-content: center; }
 .justify-between { justify-content: space-between; }
 
-.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+/* grid replaced with a wrapping flexbox: each direct child is full-width
+   by default (1 column) and becomes a 2-up row at the md/sm breakpoint. */
+.grid > * { box-sizing: border-box; flex: 0 0 100%; max-width: 100%; }
 
 .gap-2 { gap: 0.5rem; }
 .gap-3 { gap: 0.75rem; }
@@ -263,12 +266,12 @@ img { display: block; max-width: 100%; }
 /* ===== Responsive (Tailwind default breakpoints) ===== */
 @media (min-width: 640px) {
   .sm\:flex-row { flex-direction: row; }
-  .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sm\:grid-cols-2 > * { flex: 0 0 calc(50% - 0.5rem); max-width: calc(50% - 0.5rem); }
 }
 @media (min-width: 768px) {
-  .md\:col-span-2 { grid-column: span 2 / span 2; }
+  .md\:col-span-2 { flex-basis: 100% !important; max-width: 100% !important; }
   .md\:flex-row { flex-direction: row; }
-  .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .md\:grid-cols-2 > * { flex: 0 0 calc(50% - 1rem); max-width: calc(50% - 1rem); }
   .md\:items-center { align-items: center; }
   .md\:text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
   .md\:text-base { font-size: 1rem; line-height: 1.5rem; }
@@ -512,8 +515,7 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
 </section>
 </main>
 <footer class="mt-6 text-center text-slate-500 dark:text-white text-sm">
-<p>© Currys - Improved in the Team Valley (2402) • <a href="mailto:wardj02@currys.co.uk">Jonathon Ward</a></p>
-<p>Improved more in the Cramlington (2864/7601) • <a href="mailto:balmen01@dixonscarphone.com">Neil Balmer</a></p>
+<p>© Currys - Improved in the Team Valley (2402) • <a href="mailto:wardj02@currys.co.uk"></a>Jonathon Ward</a></p>
 </footer>
 </div>
 
