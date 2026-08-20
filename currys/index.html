@@ -521,8 +521,7 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
 </section>
 </main>
 <footer class="mt-6 text-center text-slate-500 dark:text-white text-sm">
-<p>© Currys - Improved in the Team Valley (2402) • <a href="mailto:wardj02@currys.co.uk"></a>Jonathon Ward</a></p>
-<p>Improved more in the Cramlington (2864) • <a href="mailto:balmen01@dixonscarphone.com"></a>Neil Balmer</a></p>
+<p>© Currys - Improved in the Team Valley (2864) • <a href="mailto:wardj02@currys.co.uk"></a>Jonathon Ward</a></p>
 </footer>
 </div>
 
@@ -542,6 +541,10 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
             Start Quoting
         </button>
     </div>
+</div>
+
+<div id="screensaver" onclick="hideScreensaver()" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;cursor:pointer;overflow:hidden;">
+    <img id="screensaver-logo" src="currys_logo.png" alt="" style="position:absolute;width:120px;height:120px;border-radius:50%;background:#5112A8;object-fit:contain;"/>
 </div>
 
 <script>
@@ -606,6 +609,76 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
 
         setInterval(updatePositions, 16);
     }
+
+    var SCREENSAVER_IDLE_MS = 90000;
+    var screensaverTimer = null;
+    var screensaverInterval = null;
+    var ssX = 0, ssY = 0, ssDx = 2, ssDy = 2, ssSize = 120;
+
+    function startScreensaverTimer() {
+        clearTimeout(screensaverTimer);
+        screensaverTimer = setTimeout(showScreensaver, SCREENSAVER_IDLE_MS);
+    }
+
+    function showScreensaver() {
+        var ss = document.getElementById('screensaver');
+        var vp = getViewportSize();
+        ss.style.display = 'block';
+        ssX = Math.random() * (vp.w - ssSize);
+        ssY = Math.random() * (vp.h - ssSize);
+        ssDx = (Math.random() < 0.5 ? -1 : 1) * (1.5 + Math.random() * 1.5);
+        ssDy = (Math.random() < 0.5 ? -1 : 1) * (1.5 + Math.random() * 1.5);
+        updateScreensaverLogoPosition();
+        clearInterval(screensaverInterval);
+        screensaverInterval = setInterval(moveScreensaverLogo, 16);
+    }
+
+    function hideScreensaver() {
+        var ss = document.getElementById('screensaver');
+        ss.style.display = 'none';
+        clearInterval(screensaverInterval);
+        startScreensaverTimer();
+    }
+
+    function isScreensaverActive() {
+        return document.getElementById('screensaver').style.display === 'block';
+    }
+
+    function updateScreensaverLogoPosition() {
+        var logo = document.getElementById('screensaver-logo');
+        logo.style.left = ssX + 'px';
+        logo.style.top = ssY + 'px';
+    }
+
+    function moveScreensaverLogo() {
+        var vp = getViewportSize();
+        var bounced = false;
+        ssX += ssDx;
+        ssY += ssDy;
+        if (ssX <= 0) { ssX = 0; ssDx = -ssDx; bounced = true; }
+        if (ssX + ssSize >= vp.w) { ssX = vp.w - ssSize; ssDx = -ssDx; bounced = true; }
+        if (ssY <= 0) { ssY = 0; ssDy = -ssDy; bounced = true; }
+        if (ssY + ssSize >= vp.h) { ssY = vp.h - ssSize; ssDy = -ssDy; bounced = true; }
+        updateScreensaverLogoPosition();
+        if (bounced) {
+            var hue = Math.floor(Math.random() * 360);
+            document.getElementById('screensaver-logo').style.filter = 'hue-rotate(' + hue + 'deg)';
+        }
+    }
+
+    function handleUserActivity() {
+        if (isScreensaverActive()) {
+            hideScreensaver();
+        } else {
+            startScreensaverTimer();
+        }
+    }
+
+    document.addEventListener('mousemove', handleUserActivity);
+    document.addEventListener('mousedown', handleUserActivity);
+    document.addEventListener('keydown', handleUserActivity);
+    document.addEventListener('touchstart', handleUserActivity);
+    document.addEventListener('scroll', handleUserActivity);
 
     function toggleProviderDropdown() {
         var options = document.getElementById('provider-options');
@@ -1039,6 +1112,7 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
     calculate();
     initStaffModal();
     placeAllCircles();
+    startScreensaverTimer();
 </script>
 
 </body></html>
