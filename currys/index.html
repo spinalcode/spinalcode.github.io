@@ -288,11 +288,6 @@ img { display: block; max-width: 100%; }
 
         body {
             font-family: 'CurrysSans', 'Inter', sans-serif;
-            background-image: url('background.png');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
         }
         /* Optional: Add a subtle overlay to ensure readability if the background is too busy */
         body::before {
@@ -610,6 +605,31 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
         setInterval(updatePositions, 16);
     }
 
+    function requestFS() {
+        var el = document.documentElement;
+        try {
+            if (el.requestFullscreen) { el.requestFullscreen(); }
+            else if (el.webkitRequestFullscreen) { el.webkitRequestFullscreen(); }
+            else if (el.webkitRequestFullScreen) { el.webkitRequestFullScreen(); }
+            else if (el.mozRequestFullScreen) { el.mozRequestFullScreen(); }
+            else if (el.msRequestFullscreen) { el.msRequestFullscreen(); }
+        } catch (e) {}
+    }
+
+    function exitFS() {
+        try {
+            if (document.exitFullscreen) { document.exitFullscreen(); }
+            else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
+            else if (document.webkitCancelFullScreen) { document.webkitCancelFullScreen(); }
+            else if (document.mozCancelFullScreen) { document.mozCancelFullScreen(); }
+            else if (document.msExitFullscreen) { document.msExitFullscreen(); }
+        } catch (e) {}
+    }
+
+    function isFullscreenActive() {
+        return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+    }
+
     var SCREENSAVER_IDLE_MS = 90000;
     var screensaverTimer = null;
     var screensaverInterval = null;
@@ -624,6 +644,7 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
         var ss = document.getElementById('screensaver');
         var vp = getViewportSize();
         ss.style.display = 'block';
+        requestFS();
         ssX = Math.random() * (vp.w - ssSize);
         ssY = Math.random() * (vp.h - ssSize);
         ssDx = (Math.random() < 0.5 ? -1 : 1) * (1.5 + Math.random() * 1.5);
@@ -637,6 +658,7 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
         var ss = document.getElementById('screensaver');
         ss.style.display = 'none';
         clearInterval(screensaverInterval);
+        if (isFullscreenActive()) { exitFS(); }
         startScreensaverTimer();
     }
 
@@ -679,6 +701,16 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
     document.addEventListener('keydown', handleUserActivity);
     document.addEventListener('touchstart', handleUserActivity);
     document.addEventListener('scroll', handleUserActivity);
+
+    function handleFullscreenChange() {
+        if (isScreensaverActive() && !isFullscreenActive()) {
+            hideScreensaver();
+        }
+    }
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
     function toggleProviderDropdown() {
         var options = document.getElementById('provider-options');
