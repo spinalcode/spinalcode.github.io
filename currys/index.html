@@ -609,14 +609,20 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
     }
 
     var SCREENSAVER_IDLE_MS = 90000;
-    var screensaverTimer = null;
+    var lastActivityTime = new Date().getTime();
     var screensaverInterval = null;
     var ssX = 0, ssY = 0, ssDx = 2, ssDy = 2, ssSize = 120;
 
     function startScreensaverTimer() {
-        clearTimeout(screensaverTimer);
-        screensaverTimer = setTimeout(showScreensaver, SCREENSAVER_IDLE_MS);
+        lastActivityTime = new Date().getTime();
     }
+
+    function checkScreensaverIdle() {
+        if (!isScreensaverActive() && (new Date().getTime() - lastActivityTime) >= SCREENSAVER_IDLE_MS) {
+            showScreensaver();
+        }
+    }
+    setInterval(checkScreensaverIdle, 1000);
 
     function showScreensaver() {
         var ss = document.getElementById('screensaver');
@@ -778,4 +784,346 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
 
         var contractMonthly = document.getElementById('contract-monthly').value || '0.00';
         var year1 = document.getElementById('label-year-1').value;
-        var contract2026 = document.getElementById('contract-2
+        var contract2026 = document.getElementById('contract-2026').value || contractMonthly;
+        var year2 = document.getElementById('label-year-2').value;
+        var contract2027 = document.getElementById('contract-2027').value || contract2026;
+        var contractUpfront = document.getElementById('contract-upfront').value || '0.00';
+        var contractTotal = document.getElementById('contract-total-display').textContent;
+        var contractEffective = document.getElementById('contract-effective-display').textContent;
+
+        var savingDisplay = document.getElementById('total-saving-display').textContent;
+        var monthlySavingDisplay = document.getElementById('monthly-saving-display').textContent;
+
+        var printWindow = window.open('', '_blank');
+        printWindow.document.write('' +
+            '<!DOCTYPE html>' +
+            '<html lang="en">' +
+            '<head>' +
+                '<meta charset="utf-8">' +
+                '<title>Your Mobile Quote</title>' +
+                '<style>' +
+                    '*,*::before,*::after{box-sizing:border-box;}' +
+                    'button{font:inherit;color:#fff;background:#5112A8;border:none;cursor:pointer;}' +
+                    'img{display:block;max-width:100%;}' +
+                    '.flex{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}' +
+                    '.items-center{align-items:center;}' +
+                    '.relative{position:relative;}' +
+                    '.absolute{position:absolute;}' +
+                    '.qtop{top:1.5rem;}' +
+                    '.qright{right:1.5rem;}' +
+                    '.gap-2{margin:-0.25rem;}' +
+                    '.gap-2>*{margin:0.25rem;}' +
+                    '.gap-6{margin:-0.5rem;}' +
+                    '.gap-6>*{margin:0.5rem;}' +
+                    '.mx-auto{margin-left:auto;margin-right:auto;}' +
+                    '.mb-0{margin-bottom:0;}' +
+                    '.mb-1{margin-bottom:0.2rem;}' +
+                    '.mb-2{margin-bottom:0.3rem;}' +
+                    '.mb-4{margin-bottom:0.5rem;}' +
+                    '.mb-8{margin-bottom:0.75rem;}' +
+                    '.mb-10{margin-bottom:0.9rem;}' +
+                    '.mt-4{margin-top:0.5rem;}' +
+                    '.mt-6{margin-top:0.6rem;}' +
+                    '.qpad{padding:1.5rem;}' +
+                    '.qbtnpad{padding:0.6rem 1.1rem;}' +
+                    '.py-1{padding-top:0.15rem;padding-bottom:0.15rem;}' +
+                    '.pt-4{padding-top:0.4rem;}' +
+                    '.qlogo{width:3rem;height:3rem;}' +
+                    '.w-full{width:100%;}' +
+                    '.qhalf{width:50%;}' +
+                    '.max-w-md{max-width:28rem;}' +
+                    '.qpage{max-width:21cm;}' +
+                    '.rounded-full{border-radius:9999px;}' +
+                    '.rounded-xl{border-radius:0.6rem;}' +
+                    '.border{border-width:1px;border-style:solid;border-color:#000;}' +
+                    '.border-black{border-color:#000;}' +
+                    '.border-collapse{border-collapse:collapse;}' +
+                    '.shadow-lg{box-shadow:0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -4px rgba(0,0,0,0.1);}' +
+                    '.shadow-2xl{box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);}' +
+                    '.object-contain{object-fit:contain;}' +
+                    '.text-left{text-align:left;}' +
+                    '.text-right{text-align:right;}' +
+                    '.align-top{vertical-align:top;}' +
+                    '.text-lg{font-size:0.85rem;line-height:1.2rem;}' +
+                    '.text-xl{font-size:0.9rem;line-height:1.25rem;}' +
+                    '.text-2xl{font-size:1.05rem;line-height:1.4rem;}' +
+                    '.text-3xl{font-size:1.3rem;line-height:1.6rem;}' +
+                    '.font-semibold{font-weight:600;}' +
+                    '.font-bold{font-weight:700;}' +
+                    '.leading-relaxed{line-height:1.4;}' +
+                    '.text-black{color:#000;}' +
+                    '.text-white{color:#fff;}' +
+                    '.text-gray-700{color:#374151;}' +
+                    '.text-gray-800{color:#1f2937;}' +
+                    '.bg-white{background-color:#fff;}' +
+                    '.qbg-primary{background-color:#5112A8;}' +
+                    '.qbg-primary:hover{background-color:#3d0d82;}' +
+                    '.transition-colors{transition-property:color,background-color,border-color;}' +
+                    '@font-face {' +
+                        'font-family: \'CurrysSans\';' +
+                        'src: url(\'' + fontRegularUrl + '\') format(\'opentype\');' +
+                        'font-weight: 400;' +
+                    '}' +
+                    '@font-face {' +
+                        'font-family: \'CurrysSans\';' +
+                        'src: url(\'' + fontBoldUrl + '\') format(\'opentype\');' +
+                        'font-weight: 700;' +
+                    '}' +
+                    'body { ' +
+                        'background-color: #f3f4f6; ' +
+                        'font-family: \'CurrysSans\', sans-serif !important;' +
+                        'padding: 2rem 0;' +
+                    '}' +
+                    '@media print {' +
+                        'body { background-color: white; padding: 0 !important; margin: 0 !important; }' +
+                        '.no-print { display: none !important; }' +
+                        '.qpad { padding: 0.8rem !important; }' +
+                        '@page { margin: 0.6cm; }' +
+                    '}' +
+                '</style>' +
+            '</head>' +
+            '<body class="text-black">' +
+                '<div class="bg-white qpad qpage mx-auto shadow-2xl relative">' +
+                    '<button onclick="window.print()" class="no-print absolute qtop qright qbg-primary text-white qbtnpad rounded-xl font-bold shadow-lg transition-colors flex items-center gap-2">' +
+                        '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>' +
+                        '<span style="color:#fff;">Print Quote</span>' +
+                    '</button>' +
+
+                    '<div class="flex items-center gap-6 mb-8 mt-4">' +
+                        '<div class="flex items-center gap-2">' +
+                            '<img src="' + logoUrl + '" class="qlogo rounded-full object-contain qbg-primary">' +
+                            '<img src="' + providerLogoUrl + '" class="qlogo object-contain">' +
+                        '</div>' +
+                        '<div>' +
+                            '<h1 class="text-3xl font-bold mb-1">Your ' + contractProvider + ' quote</h1>' +
+                            '<p class="text-lg text-gray-700">Generated on ' + dateStr + '</p>' +
+                            '<p class="text-lg text-gray-700">Generated by: ' + staffName + '</p>' +
+                        '</div>' +
+                    '</div>' +
+
+                    (customerInfoHTML || '') +
+
+                    '<div class="mb-10">' +
+                        '<p class="text-xl mb-4 leading-relaxed">If you chose to pay a SIM Only Deal (24 months) and to purchase a handset outright you would be looking at paying:</p>' +
+                        '<table class="w-full max-w-md text-left text-xl">' +
+                            '<tr><td class="py-1">SIM Per month:</td><td class="font-semibold text-right">£' + parseFloat(simMonthly).toFixed(2) + '</td></tr>' +
+                            '<tr><td class="py-1">Handset Outright:</td><td class="font-semibold text-right">£' + parseFloat(simHandset).toFixed(2) + '</td></tr>' +
+                            '<tr><td class="py-1 pt-4">Total (24 months):</td><td class="font-semibold text-right pt-4">' + simTotal + '</td></tr>' +
+                            '<tr><td class="py-1 font-bold">Effective Monthly Cost:</td><td class="font-bold text-right">' + simEffective + '</td></tr>' +
+                        '</table>' +
+                    '</div>' +
+
+                    '<div class="mb-10">' +
+                        '<p class="text-xl mb-4 leading-relaxed">While the 24-month contract alternative would be priced at:</p>' +
+                        '<table class="w-full max-w-md text-left text-xl">' +
+                            '<tr><td class="py-1">Network:</td><td class="font-semibold text-right">' + contractProvider + '</td></tr>' +
+                            '<tr><td class="py-1">Initial Monthly Cost</td><td class="font-semibold text-right">£' + parseFloat(contractMonthly).toFixed(2) + '</td></tr>' +
+                            '<tr><td class="py-1">Price from April ' + year1 + ':</td><td class="font-semibold text-right">£' + parseFloat(contract2026).toFixed(2) + '</td></tr>' +
+                            '<tr><td class="py-1">Price from April ' + year2 + ':</td><td class="font-semibold text-right">£' + parseFloat(contract2027).toFixed(2) + '</td></tr>' +
+                            '<tr><td class="py-1">Upfront cost:</td><td class="font-semibold text-right">£' + parseFloat(contractUpfront).toFixed(2) + '</td></tr>' +
+                            '<tr><td class="py-1 pt-4">Total (24 months):</td><td class="font-semibold text-right pt-4">' + contractTotal + '</td></tr>' +
+                            '<tr><td class="py-1 font-bold">Effective Monthly Cost:</td><td class="font-bold text-right">' + contractEffective + '</td></tr>' +
+                        '</table>' +
+                    '</div>' +
+
+                    '<div class="mb-10">' +
+                        '<h2 class="text-2xl font-bold mb-4">Comparison results</h2>' +
+                        '<table class="w-full border-collapse border border-black text-lg">' +
+                            '<tr>' +
+                                '<td class="border border-black p-4 qhalf align-top">' +
+                                    '<p class="mb-1 text-gray-800">Your total 24-month saving would be</p>' +
+                                    '<p class="font-bold text-xl">' + savingDisplay + '</p>' +
+                                '</td>' +
+                                '<td class="border border-black p-4 qhalf align-top">' +
+                                    '<p class="mb-1 text-gray-800">Your average monthly saving would be:</p>' +
+                                    '<p class="font-bold text-xl">' + monthlySavingDisplay + '</p>' +
+                                '</td>' +
+                            '</tr>' +
+                        '</table>' +
+                    '</div>' +
+
+                    '<div class="mt-6 mb-0">' +
+                        '<h3 class="text-2xl font-bold mb-2">Disclaimer</h3>' +
+                        '<p class="text-gray-800 text-xl leading-relaxed">' +
+                            'Please note that while we can guarantee this price for the contract today, we cannot promise it will be this amount if you return after today!' +
+                        '</p>' +
+                    '</div>' +
+                '</div>' +
+            '</body>' +
+            '</html>'
+        );
+        printWindow.document.close();
+    }
+    var ICON_PATHS = {
+        dark_mode: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>',
+        light_mode: '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>'
+    };
+    function toggleDarkMode() {
+        var html = document.documentElement;
+        var icon = document.getElementById('theme-icon');
+        if ((' ' + html.className + ' ').indexOf(' dark ') !== -1) {
+            removeClass(html, 'dark');
+            icon.innerHTML = ICON_PATHS.dark_mode;
+        } else {
+            addClass(html, 'dark');
+            icon.innerHTML = ICON_PATHS.light_mode;
+        }
+    }
+    function calculate() {
+        // SIM Inputs
+        var simMonthly = parseFloat(document.getElementById('sim-monthly').value) || 0;
+        var simHandset = parseFloat(document.getElementById('sim-handset').value) || 0;
+        // Contract Inputs
+        var contractMonthly = parseFloat(document.getElementById('contract-monthly').value) || 0;
+        var contract2026 = parseFloat(document.getElementById('contract-2026').value) || contractMonthly;
+        var contract2027 = parseFloat(document.getElementById('contract-2027').value) || contract2026;
+        var contractUpfront = parseFloat(document.getElementById('contract-upfront').value) || 0;
+        // Calculation
+        var simTotal = (simMonthly * 24) + simHandset;
+        var simEffective = simTotal / 24;
+
+        // Dynamic Calculation based on months until April
+        var currentDate = new Date();
+        var currentMonth = currentDate.getMonth(); // 0 = Jan, 3 = April
+
+        var monthsToFirstApril = 0;
+        if (currentMonth < 3) {
+            // Before April (Jan, Feb, Mar)
+            monthsToFirstApril = 3 - currentMonth;
+        } else {
+            // April or later (Apr-Dec)
+            monthsToFirstApril = 12 - (currentMonth - 3);
+        }
+
+        // Split the 24 month contract across initial, first April, and second April prices
+        var monthsAtInitial = Math.min(24, monthsToFirstApril);
+        var monthsAtPrice1 = Math.min(24 - monthsAtInitial, 12);
+        var monthsAtPrice2 = Math.max(0, 24 - monthsAtInitial - monthsAtPrice1);
+
+        var contractTotal = (contractMonthly * monthsAtInitial) +
+                              (contract2026 * monthsAtPrice1) +
+                              (contract2027 * monthsAtPrice2) +
+                              contractUpfront;
+        var contractEffective = contractTotal / 24;
+        var totalSaving = contractTotal - simTotal;
+        var monthlySaving = totalSaving / 24;
+
+        // Breakdown UI
+        var year1 = document.getElementById('label-year-1').value;
+        var year2 = document.getElementById('label-year-2').value;
+        var breakdownDiv = document.getElementById('contract-breakdown');
+
+        if (breakdownDiv) {
+            var breakdownHTML = '' +
+                '<div class="flex justify-between items-center text-slate-500 dark:text-white">' +
+                    '<span>Initial (' + monthsAtInitial + 'mo @ £' + contractMonthly.toFixed(2) + ')</span>' +
+                    '<span class="font-bold text-slate-900 dark:text-white">£' + (contractMonthly * monthsAtInitial).toFixed(2) + '</span>' +
+                '</div>';
+            if (monthsAtPrice1 > 0) {
+                breakdownHTML += '' +
+                '<div class="flex justify-between items-center text-slate-500 dark:text-white">' +
+                    '<span>April ' + year1 + ' (' + monthsAtPrice1 + 'mo @ £' + contract2026.toFixed(2) + ')</span>' +
+                    '<span class="font-bold text-slate-900 dark:text-white">£' + (contract2026 * monthsAtPrice1).toFixed(2) + '</span>' +
+                '</div>';
+            }
+            if (monthsAtPrice2 > 0) {
+                breakdownHTML += '' +
+                '<div class="flex justify-between items-center text-slate-500 dark:text-white">' +
+                    '<span>April ' + year2 + ' (' + monthsAtPrice2 + 'mo @ £' + contract2027.toFixed(2) + ')</span>' +
+                    '<span class="font-bold text-slate-900 dark:text-white">£' + (contract2027 * monthsAtPrice2).toFixed(2) + '</span>' +
+                '</div>';
+            }
+            if (contractUpfront > 0) {
+                breakdownHTML += '' +
+                '<div class="flex justify-between items-center text-slate-500 dark:text-white border-t border-slate-100 dark:border-slate-800 pt-2 mt-2">' +
+                    '<span>Upfront Cost</span>' +
+                    '<span class="font-bold text-slate-900 dark:text-white">£' + contractUpfront.toFixed(2) + '</span>' +
+                '</div>';
+            }
+            breakdownDiv.innerHTML = breakdownHTML;
+        }
+
+        // Updates
+        document.getElementById('sim-total-display').textContent = '£' + simTotal.toFixed(2);
+        document.getElementById('sim-effective-display').textContent = '£' + simEffective.toFixed(2);
+        document.getElementById('contract-total-display').textContent = '£' + contractTotal.toFixed(2);
+        document.getElementById('contract-effective-display').textContent = '£' + contractEffective.toFixed(2);
+        var savingDisplay = document.getElementById('total-saving-display');
+        var monthlyDisplay = document.getElementById('monthly-saving-display');
+        var verdictBox = document.getElementById('verdict-box');
+        var verdictText = document.getElementById('verdict-text');
+        savingDisplay.textContent = '£' + Math.abs(totalSaving).toFixed(2);
+        monthlyDisplay.textContent = '£' + Math.abs(monthlySaving).toFixed(2);
+        var simSection = document.getElementById('sim-section');
+        var contractSection = document.getElementById('contract-section');
+        var HIGHLIGHT_SHADOW = '0 0 0 4px rgba(34, 197, 94, 0.5), 0 15px 30px -8px rgba(34, 197, 94, 0.5)';
+
+        // Reset styles
+        simSection.style.borderColor = '';
+        simSection.style.boxShadow = '';
+        contractSection.style.borderColor = '';
+        contractSection.style.boxShadow = '';
+
+        if (isNaN(totalSaving)) {
+            addClass(verdictBox, 'hidden');
+        } else if (totalSaving > 0) {
+            removeClass(verdictBox, 'hidden');
+            verdictText.textContent = "Choosing a SIM Only with Outright purchase is cheaper!";
+            simSection.style.borderColor = '#22C55E';
+            simSection.style.boxShadow = HIGHLIGHT_SHADOW;
+        } else if (totalSaving < 0) {
+            removeClass(verdictBox, 'hidden');
+            verdictText.textContent = "Choosing a 24 Month Contract is cheaper!";
+            contractSection.style.borderColor = '#22C55E';
+            contractSection.style.boxShadow = HIGHLIGHT_SHADOW;
+        } else {
+            addClass(verdictBox, 'hidden');
+        }
+    }
+    function resetAll() {
+        var inputs = document.querySelectorAll('input:not(#label-year-1):not(#label-year-2):not(#customer-current-price)');
+        for (var i = 0; i < inputs.length; i++) {
+            inputs[i].value = "0.00";
+        }
+
+        document.getElementById('customer-current-price').value = "";
+        document.getElementById('customer-info').value = "";
+        document.getElementById('contract-provider').value = "ID Mobile";
+        selectProvider('ID Mobile', 'ID_Logo.png');
+
+        var currentYear = new Date().getFullYear();
+        document.getElementById('label-year-1').value = currentYear + 1;
+        document.getElementById('label-year-2').value = currentYear + 2;
+
+        calculate();
+    }
+    // Auto-clear inputs on focus
+    (function() {
+        var autoInputs = document.querySelectorAll('input:not(#label-year-1):not(#label-year-2):not(#customer-current-price)');
+        for (var i = 0; i < autoInputs.length; i++) {
+            autoInputs[i].addEventListener('focus', function() {
+                if (this.value === '0.00' || this.value === '0') {
+                    this.value = '';
+                }
+            });
+            autoInputs[i].addEventListener('blur', function() {
+                if (this.value === '') {
+                    this.value = '0.00';
+                    calculate();
+                }
+            });
+        }
+    })();
+
+    // Initialize
+    var currentYear = new Date().getFullYear();
+    document.getElementById('label-year-1').value = currentYear + 1;
+    document.getElementById('label-year-2').value = currentYear + 2;
+
+    calculate();
+    try { initStaffModal(); } catch (e) {}
+    try { placeAllCircles(); } catch (e) {}
+    try { startScreensaverTimer(); } catch (e) {}
+</script>
+
+</body></html>
