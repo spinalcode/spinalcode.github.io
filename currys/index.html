@@ -545,6 +545,8 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
     <img id="screensaver-logo" src="currys_logo.png" alt="" style="position:absolute;width:120px;height:120px;border-radius:50%;background:#5112A8;object-fit:contain;"/>
 </div>
 
+<div id="idle-debug" style="position:fixed;bottom:10px;right:10px;background:rgba(0,0,0,0.7);color:#0f0;font-family:monospace;font-size:12px;padding:6px 10px;border-radius:4px;z-index:99999;pointer-events:none;">idle: 0s</div>
+
 <script>
     function getViewportSize() {
         var w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
@@ -618,6 +620,9 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
     }
 
     function checkScreensaverIdle() {
+        var idleSeconds = Math.floor((new Date().getTime() - lastActivityTime) / 1000);
+        var debugEl = document.getElementById('idle-debug');
+        if (debugEl) { debugEl.textContent = 'idle: ' + idleSeconds + 's'; }
         if (!isScreensaverActive() && (new Date().getTime() - lastActivityTime) >= SCREENSAVER_IDLE_MS) {
             showScreensaver();
         }
