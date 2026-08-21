@@ -176,6 +176,8 @@ img { display: block; max-width: 100%; }
 .bg-background-light { background-color: #FFF5D4; }
 .bg-card-light { background-color: #FFFFFF; }
 .bg-card-light\/50 { background-color: rgba(255, 255, 255, 0.5); }
+.bg-card-light\/90 { background-color: rgba(255, 255, 255, 0.9); }
+.dark .dark\:bg-card-dark\/90 { background-color: rgba(30, 30, 30, 0.9); }
 .dark .dark\:bg-background-dark { background-color: #121212; }
 .dark .dark\:bg-card-dark { background-color: #1E1E1E; }
 .dark .dark\:bg-card-dark\/50 { background-color: rgba(30, 30, 30, 0.5); }
@@ -210,6 +212,7 @@ img { display: block; max-width: 100%; }
 .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
 .shadow-primary\/20 { box-shadow: 0 10px 15px -3px rgba(81, 18, 168, 0.2); }
 .shadow-secondary\/20 { box-shadow: 0 10px 15px -3px rgba(230, 21, 113, 0.2); }
+.ring-4.ring-green-500.shadow-green-500\/50 { box-shadow: 0 0 0 4px #22C55E, 0 15px 30px -8px rgba(34, 197, 94, 0.5); }
 
 .bg-gradient-to-br { background-image: linear-gradient(to bottom right, var(--tw-gradient-from), var(--tw-gradient-to)); }
 .from-primary { --tw-gradient-from: #5112A8; }
@@ -272,7 +275,7 @@ img { display: block; max-width: 100%; }
   .sm\:grid-cols-2 > * { flex: 0 0 calc(50% - 1rem); max-width: calc(50% - 1rem); }
 }
 @media (min-width: 768px) {
-  .md\:col-span-2 { flex-basis: 100% !important; max-width: 100% !important; }
+  .md\:col-span-2 { flex-basis: calc(100% - 2rem) !important; max-width: calc(100% - 2rem) !important; }
   .md\:flex-row { flex-direction: row; }
   .md\:grid-cols-2 > * { flex: 0 0 calc(50% - 1rem); max-width: calc(50% - 1rem); }
   .md\:grid-cols-2.gap-8 > * { flex: 0 0 calc(50% - 2rem); max-width: calc(50% - 2rem); }
@@ -362,7 +365,7 @@ img { display: block; max-width: 100%; }
         </div>
     </div>
 </details>
-<section id="sim-section" class="bg-card-light dark:bg-card-dark p-8 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 transition-all">
+<section id="sim-section" class="bg-card-light/90 dark:bg-card-dark/90 p-8 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 transition-all">
 <div class="flex items-center gap-3 mb-6">
 <svg class="icon text-primary" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3H9L4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"></path><rect x="9" y="11" width="6" height="5"></rect></svg>
 <h2 class="text-xl font-bold">SIM Only & Device Outright</h2>
@@ -394,7 +397,7 @@ img { display: block; max-width: 100%; }
 </div>
 </div>
 </section>
-<section id="contract-section" class="bg-card-light dark:bg-card-dark p-8 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 transition-all">
+<section id="contract-section" class="bg-card-light/90 dark:bg-card-dark/90 p-8 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 transition-all">
 <div class="flex items-center gap-3 mb-6">
 <svg class="icon text-secondary" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2" ry="2"></rect><line x1="11" y1="18" x2="13" y2="18"></line></svg>
 <h2 class="text-xl font-bold">24 Month Contract</h2>
