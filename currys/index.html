@@ -757,7 +757,6 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
     function generateQuote() {
         var staffName = localStorage.getItem('currys_staff_name') || 'Staff Member';
         var dateStr = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-        var quoteRef = 'Q' + Math.floor(100000000 + Math.random() * 899999999);
 
         var currentPrice = document.getElementById('customer-current-price').value;
         var additionalInfo = document.getElementById('customer-info').value;
@@ -885,8 +884,7 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
                         '<span style="color:#fff;">Print Quote</span>' +
                     '</button>' +
 
-                    '<div class="q-header"></div>' +
-                    '<div class="q-logo-badge"><img src="' + logoUrl + '" alt="Currys"></div>' +
+                    '<div class="q-header"><div class="q-logo-badge"><img src="' + logoUrl + '" alt="Currys"></div></div>' +
 
                     '<div class="q-body">' +
 
@@ -897,7 +895,6 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
                             '</div>' +
                             '<div>' +
                                 '<h3 class="q-section-title">Quote Details</h3>' +
-                                '<p class="q-kv">Quote No: <strong>' + quoteRef + '</strong></p>' +
                                 '<p class="q-kv">Date: <strong>' + dateStr + '</strong></p>' +
                                 '<p class="q-kv">Consultant: <strong>' + staffName + '</strong></p>' +
                             '</div>' +
@@ -934,7 +931,6 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
                             '</div>' +
                         '</div>' +
 
-                        '<div class="q-vatreg" style="margin-top:2rem;">Quote reference: ' + quoteRef + '</div>' +
                         '<div class="q-footer-legal">' +
                             'Please note that while we can guarantee this price for the contract today, we cannot promise it will be this amount if you return after today. ' +
                             'Currys Retail Limited is authorised and regulated by the Financial Conduct Authority. Currys Retail Limited, Currys Newark Campus, Long Hollow Way, Newark, NG24 2NH. Registered in England No. 2142673.' +
@@ -965,157 +961,4 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
         // SIM Inputs
         var simMonthly = parseFloat(document.getElementById('sim-monthly').value) || 0;
         var simHandset = parseFloat(document.getElementById('sim-handset').value) || 0;
-        // Contract Inputs
-        var contractMonthly = parseFloat(document.getElementById('contract-monthly').value) || 0;
-        var contract2026 = parseFloat(document.getElementById('contract-2026').value) || contractMonthly;
-        var contract2027 = parseFloat(document.getElementById('contract-2027').value) || contract2026;
-        var contractUpfront = parseFloat(document.getElementById('contract-upfront').value) || 0;
-        // Calculation
-        var simTotal = (simMonthly * 24) + simHandset;
-        var simEffective = simTotal / 24;
-
-        // Dynamic Calculation based on months until April
-        var currentDate = new Date();
-        var currentMonth = currentDate.getMonth(); // 0 = Jan, 3 = April
-
-        var monthsToFirstApril = 0;
-        if (currentMonth < 3) {
-            // Before April (Jan, Feb, Mar)
-            monthsToFirstApril = 3 - currentMonth;
-        } else {
-            // April or later (Apr-Dec)
-            monthsToFirstApril = 12 - (currentMonth - 3);
-        }
-
-        // Split the 24 month contract across initial, first April, and second April prices
-        var monthsAtInitial = Math.min(24, monthsToFirstApril);
-        var monthsAtPrice1 = Math.min(24 - monthsAtInitial, 12);
-        var monthsAtPrice2 = Math.max(0, 24 - monthsAtInitial - monthsAtPrice1);
-
-        var contractTotal = (contractMonthly * monthsAtInitial) +
-                              (contract2026 * monthsAtPrice1) +
-                              (contract2027 * monthsAtPrice2) +
-                              contractUpfront;
-        var contractEffective = contractTotal / 24;
-        var totalSaving = contractTotal - simTotal;
-        var monthlySaving = totalSaving / 24;
-
-        // Breakdown UI
-        var year1 = document.getElementById('label-year-1').value;
-        var year2 = document.getElementById('label-year-2').value;
-        var breakdownDiv = document.getElementById('contract-breakdown');
-
-        if (breakdownDiv) {
-            var breakdownHTML = '' +
-                '<div class="flex justify-between items-center text-slate-500 dark:text-white">' +
-                    '<span>Initial (' + monthsAtInitial + 'mo @ £' + contractMonthly.toFixed(2) + ')</span>' +
-                    '<span class="font-bold text-slate-900 dark:text-white">£' + (contractMonthly * monthsAtInitial).toFixed(2) + '</span>' +
-                '</div>';
-            if (monthsAtPrice1 > 0) {
-                breakdownHTML += '' +
-                '<div class="flex justify-between items-center text-slate-500 dark:text-white">' +
-                    '<span>April ' + year1 + ' (' + monthsAtPrice1 + 'mo @ £' + contract2026.toFixed(2) + ')</span>' +
-                    '<span class="font-bold text-slate-900 dark:text-white">£' + (contract2026 * monthsAtPrice1).toFixed(2) + '</span>' +
-                '</div>';
-            }
-            if (monthsAtPrice2 > 0) {
-                breakdownHTML += '' +
-                '<div class="flex justify-between items-center text-slate-500 dark:text-white">' +
-                    '<span>April ' + year2 + ' (' + monthsAtPrice2 + 'mo @ £' + contract2027.toFixed(2) + ')</span>' +
-                    '<span class="font-bold text-slate-900 dark:text-white">£' + (contract2027 * monthsAtPrice2).toFixed(2) + '</span>' +
-                '</div>';
-            }
-            if (contractUpfront > 0) {
-                breakdownHTML += '' +
-                '<div class="flex justify-between items-center text-slate-500 dark:text-white border-t border-slate-100 dark:border-slate-800 pt-2 mt-2">' +
-                    '<span>Upfront Cost</span>' +
-                    '<span class="font-bold text-slate-900 dark:text-white">£' + contractUpfront.toFixed(2) + '</span>' +
-                '</div>';
-            }
-            breakdownDiv.innerHTML = breakdownHTML;
-        }
-
-        // Updates
-        document.getElementById('sim-total-display').textContent = '£' + simTotal.toFixed(2);
-        document.getElementById('sim-effective-display').textContent = '£' + simEffective.toFixed(2);
-        document.getElementById('contract-total-display').textContent = '£' + contractTotal.toFixed(2);
-        document.getElementById('contract-effective-display').textContent = '£' + contractEffective.toFixed(2);
-        var savingDisplay = document.getElementById('total-saving-display');
-        var monthlyDisplay = document.getElementById('monthly-saving-display');
-        var verdictBox = document.getElementById('verdict-box');
-        var verdictText = document.getElementById('verdict-text');
-        savingDisplay.textContent = '£' + Math.abs(totalSaving).toFixed(2);
-        monthlyDisplay.textContent = '£' + Math.abs(monthlySaving).toFixed(2);
-        var simSection = document.getElementById('sim-section');
-        var contractSection = document.getElementById('contract-section');
-        var HIGHLIGHT_SHADOW = '0 0 0 4px rgba(34, 197, 94, 0.5), 0 15px 30px -8px rgba(34, 197, 94, 0.5)';
-
-        // Reset styles
-        simSection.style.borderColor = '';
-        simSection.style.boxShadow = '';
-        contractSection.style.borderColor = '';
-        contractSection.style.boxShadow = '';
-
-        if (isNaN(totalSaving)) {
-            addClass(verdictBox, 'hidden');
-        } else if (totalSaving > 0) {
-            removeClass(verdictBox, 'hidden');
-            verdictText.textContent = "Choosing a SIM Only with Outright purchase is cheaper!";
-            simSection.style.borderColor = '#22C55E';
-            simSection.style.boxShadow = HIGHLIGHT_SHADOW;
-        } else if (totalSaving < 0) {
-            removeClass(verdictBox, 'hidden');
-            verdictText.textContent = "Choosing a 24 Month Contract is cheaper!";
-            contractSection.style.borderColor = '#22C55E';
-            contractSection.style.boxShadow = HIGHLIGHT_SHADOW;
-        } else {
-            addClass(verdictBox, 'hidden');
-        }
-    }
-    function resetAll() {
-        var inputs = document.querySelectorAll('input:not(#label-year-1):not(#label-year-2):not(#customer-current-price)');
-        for (var i = 0; i < inputs.length; i++) {
-            inputs[i].value = "0.00";
-        }
-
-        document.getElementById('customer-current-price').value = "";
-        document.getElementById('customer-info').value = "";
-        document.getElementById('contract-provider').value = "ID Mobile";
-        selectProvider('ID Mobile', 'ID_Logo.png');
-
-        var currentYear = new Date().getFullYear();
-        document.getElementById('label-year-1').value = currentYear + 1;
-        document.getElementById('label-year-2').value = currentYear + 2;
-
-        calculate();
-    }
-    // Auto-clear inputs on focus
-    (function() {
-        var autoInputs = document.querySelectorAll('input:not(#label-year-1):not(#label-year-2):not(#customer-current-price)');
-        for (var i = 0; i < autoInputs.length; i++) {
-            autoInputs[i].addEventListener('focus', function() {
-                if (this.value === '0.00' || this.value === '0') {
-                    this.value = '';
-                }
-            });
-            autoInputs[i].addEventListener('blur', function() {
-                if (this.value === '') {
-                    this.value = '0.00';
-                    calculate();
-                }
-            });
-        }
-    })();
-
-    // Initialize
-    var currentYear = new Date().getFullYear();
-    document.getElementById('label-year-1').value = currentYear + 1;
-    document.getElementById('label-year-2').value = currentYear + 2;
-
-    calculate();
-    try { initStaffModal(); } catch (e) {}
-    try { placeAllCircles(); } catch (e) {}
-    try { startScreensaverTimer(); } catch (e) {}
-</script>
-
-</body></html>
+        // Contract
