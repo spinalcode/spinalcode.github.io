@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
@@ -545,8 +546,6 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
     <img id="screensaver-logo" src="currys_logo.png" alt="" style="position:absolute;width:120px;height:120px;border-radius:50%;background:#5112A8;object-fit:contain;"/>
 </div>
 
-<div id="idle-debug" style="position:fixed;bottom:10px;right:10px;background:rgba(0,0,0,0.7);color:#0f0;font-family:monospace;font-size:12px;padding:6px 10px;border-radius:4px;z-index:99999;pointer-events:none;">idle: 0s</div>
-
 <script>
     function getViewportSize() {
         var w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
@@ -620,9 +619,6 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
     }
 
     function checkScreensaverIdle() {
-        var idleSeconds = Math.floor((new Date().getTime() - lastActivityTime) / 1000);
-        var debugEl = document.getElementById('idle-debug');
-        if (debugEl) { debugEl.textContent = 'idle: ' + idleSeconds + 's'; }
         if (!isScreensaverActive() && (new Date().getTime() - lastActivityTime) >= SCREENSAVER_IDLE_MS) {
             showScreensaver();
         }
@@ -761,6 +757,7 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
     function generateQuote() {
         var staffName = localStorage.getItem('currys_staff_name') || 'Staff Member';
         var dateStr = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+        var quoteRef = 'Q' + Math.floor(100000000 + Math.random() * 899999999);
 
         var currentPrice = document.getElementById('customer-current-price').value;
         var additionalInfo = document.getElementById('customer-info').value;
@@ -771,16 +768,6 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
         var providerLogoUrl = new URL(providerLogoFile, document.baseURI).href;
         var fontRegularUrl = new URL('CurrysSans-Regular.otf', document.baseURI).href;
         var fontBoldUrl = new URL('CurrysSans-Headline.otf', document.baseURI).href;
-
-        var customerInfoHTML = '';
-        if (currentPrice || additionalInfo) {
-            customerInfoHTML = '' +
-                '<div class="mb-10">' +
-                    '<p class="text-xl mb-4">Youve told us you currently pay:</p>' +
-                    (currentPrice ? '<p class="mb-2 text-xl font-semibold">£' + parseFloat(currentPrice).toFixed(2) + ' per month</p>' : '') +
-                    (additionalInfo ? '<p class="text-gray-700 text-lg whitespace-pre-wrap">' + additionalInfo + '</p>' : '') +
-                '</div>';
-        }
 
         var simMonthly = document.getElementById('sim-monthly').value || '0.00';
         var simHandset = document.getElementById('sim-handset').value || '0.00';
@@ -799,6 +786,29 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
         var savingDisplay = document.getElementById('total-saving-display').textContent;
         var monthlySavingDisplay = document.getElementById('monthly-saving-display').textContent;
 
+        var customerDetailRows = '';
+        if (currentPrice) {
+            customerDetailRows += '<p class="q-kv">Current monthly price: <strong>£' + parseFloat(currentPrice).toFixed(2) + '</strong></p>';
+        }
+        if (additionalInfo) {
+            customerDetailRows += '<p class="q-kv" style="white-space:pre-wrap;">' + additionalInfo + '</p>';
+        }
+        if (!customerDetailRows) {
+            customerDetailRows = '<p class="q-kv">&nbsp;</p>';
+        }
+
+        var simRows =
+            '<tr><td>SIM Only plan</td><td class="text-right">£' + parseFloat(simMonthly).toFixed(2) + '</td><td class="text-right">24 mo</td><td class="text-right">£' + (parseFloat(simMonthly) * 24).toFixed(2) + '</td></tr>' +
+            '<tr><td>Handset (outright)</td><td class="text-right">£' + parseFloat(simHandset).toFixed(2) + '</td><td class="text-right">1</td><td class="text-right">£' + parseFloat(simHandset).toFixed(2) + '</td></tr>';
+
+        var contractRows =
+            '<tr><td>Initial monthly price</td><td class="text-right">£' + parseFloat(contractMonthly).toFixed(2) + '</td><td class="text-right">-</td><td class="text-right">-</td></tr>' +
+            '<tr><td>Price from April ' + year1 + '</td><td class="text-right">£' + parseFloat(contract2026).toFixed(2) + '</td><td class="text-right">-</td><td class="text-right">-</td></tr>' +
+            '<tr><td>Price from April ' + year2 + '</td><td class="text-right">£' + parseFloat(contract2027).toFixed(2) + '</td><td class="text-right">-</td><td class="text-right">-</td></tr>';
+        if (parseFloat(contractUpfront) > 0) {
+            contractRows += '<tr><td>Upfront cost</td><td class="text-right">-</td><td class="text-right">1</td><td class="text-right">£' + parseFloat(contractUpfront).toFixed(2) + '</td></tr>';
+        }
+
         var printWindow = window.open('', '_blank');
         printWindow.document.write('' +
             '<!DOCTYPE html>' +
@@ -810,148 +820,125 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
                     '*,*::before,*::after{box-sizing:border-box;}' +
                     'button{font:inherit;color:#fff;background:#5112A8;border:none;cursor:pointer;}' +
                     'img{display:block;max-width:100%;}' +
+                    'table{border-collapse:collapse;width:100%;}' +
                     '.flex{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}' +
                     '.items-center{align-items:center;}' +
                     '.relative{position:relative;}' +
                     '.absolute{position:absolute;}' +
-                    '.qtop{top:1.5rem;}' +
-                    '.qright{right:1.5rem;}' +
-                    '.gap-2{margin:-0.25rem;}' +
-                    '.gap-2>*{margin:0.25rem;}' +
-                    '.gap-6{margin:-0.5rem;}' +
-                    '.gap-6>*{margin:0.5rem;}' +
+                    '.qtop{top:1rem;}' +
+                    '.qright{right:1rem;}' +
                     '.mx-auto{margin-left:auto;margin-right:auto;}' +
-                    '.mb-0{margin-bottom:0;}' +
-                    '.mb-1{margin-bottom:0.2rem;}' +
-                    '.mb-2{margin-bottom:0.3rem;}' +
-                    '.mb-4{margin-bottom:0.5rem;}' +
-                    '.mb-8{margin-bottom:0.75rem;}' +
-                    '.mb-10{margin-bottom:0.9rem;}' +
-                    '.mt-4{margin-top:0.5rem;}' +
-                    '.mt-6{margin-top:0.6rem;}' +
-                    '.qpad{padding:1.5rem;}' +
-                    '.qbtnpad{padding:0.6rem 1.1rem;}' +
-                    '.py-1{padding-top:0.15rem;padding-bottom:0.15rem;}' +
-                    '.pt-4{padding-top:0.4rem;}' +
-                    '.qlogo{width:3rem;height:3rem;}' +
-                    '.w-full{width:100%;}' +
-                    '.qhalf{width:50%;}' +
-                    '.max-w-md{max-width:28rem;}' +
-                    '.qpage{max-width:21cm;}' +
-                    '.rounded-full{border-radius:9999px;}' +
-                    '.rounded-xl{border-radius:0.6rem;}' +
-                    '.border{border-width:1px;border-style:solid;border-color:#000;}' +
-                    '.border-black{border-color:#000;}' +
-                    '.border-collapse{border-collapse:collapse;}' +
-                    '.shadow-lg{box-shadow:0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -4px rgba(0,0,0,0.1);}' +
-                    '.shadow-2xl{box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);}' +
-                    '.object-contain{object-fit:contain;}' +
-                    '.text-left{text-align:left;}' +
                     '.text-right{text-align:right;}' +
-                    '.align-top{vertical-align:top;}' +
-                    '.text-lg{font-size:0.85rem;line-height:1.2rem;}' +
-                    '.text-xl{font-size:0.9rem;line-height:1.25rem;}' +
-                    '.text-2xl{font-size:1.05rem;line-height:1.4rem;}' +
-                    '.text-3xl{font-size:1.3rem;line-height:1.6rem;}' +
-                    '.font-semibold{font-weight:600;}' +
-                    '.font-bold{font-weight:700;}' +
-                    '.leading-relaxed{line-height:1.4;}' +
-                    '.text-black{color:#000;}' +
-                    '.text-white{color:#fff;}' +
-                    '.text-gray-700{color:#374151;}' +
-                    '.text-gray-800{color:#1f2937;}' +
-                    '.bg-white{background-color:#fff;}' +
+                    '.text-left{text-align:left;}' +
+                    '.qpad{padding:0 2.2rem 2rem 2.2rem;}' +
+                    '.qbtnpad{padding:0.5rem 1rem;}' +
+                    '.qpage{max-width:21cm;}' +
+                    '.rounded-xl{border-radius:0.5rem;}' +
+                    '.shadow-lg{box-shadow:0 6px 14px rgba(0,0,0,0.15);}' +
+                    '.shadow-2xl{box-shadow:0 20px 40px rgba(0,0,0,0.15);}' +
+                    '.object-contain{object-fit:contain;}' +
                     '.qbg-primary{background-color:#5112A8;}' +
                     '.qbg-primary:hover{background-color:#3d0d82;}' +
                     '.transition-colors{transition-property:color,background-color,border-color;}' +
-                    '@font-face {' +
-                        'font-family: \'CurrysSans\';' +
-                        'src: url(\'' + fontRegularUrl + '\') format(\'opentype\');' +
-                        'font-weight: 400;' +
+                    'body{background:#f3f4f6;font-family:\'CurrysSans\',sans-serif !important;padding:2rem 0;color:#1f2937;font-size:13px;line-height:1.5;}' +
+                    '.q-doc{background:#fff;overflow:hidden;}' +
+                    '.q-header{' +
+                        'background:linear-gradient(135deg,#E2EFF2 0%,#BFE2D9 45%,#8CCABC 100%);' +
+                        'height:150px;' +
+                        'border-radius:0 0 50% 50% / 0 0 46px 46px;' +
+                        'position:relative;' +
                     '}' +
-                    '@font-face {' +
-                        'font-family: \'CurrysSans\';' +
-                        'src: url(\'' + fontBoldUrl + '\') format(\'opentype\');' +
-                        'font-weight: 700;' +
+                    '.q-logo-badge{' +
+                        'position:absolute;left:50%;bottom:-46px;transform:translateX(-50%);' +
+                        'width:100px;height:100px;border-radius:50%;background:#5112A8;' +
+                        'display:flex;align-items:center;justify-content:center;' +
+                        'box-shadow:0 8px 18px rgba(0,0,0,0.18);' +
+                        'padding:14px;' +
                     '}' +
-                    'body { ' +
-                        'background-color: #f3f4f6; ' +
-                        'font-family: \'CurrysSans\', sans-serif !important;' +
-                        'padding: 2rem 0;' +
-                    '}' +
+                    '.q-logo-badge img{width:100%;height:100%;object-fit:contain;}' +
+                    '.q-body{padding:70px 44px 30px 44px;}' +
+                    '.q-two-col{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;gap:2rem;margin-bottom:2rem;}' +
+                    '.q-two-col > div{flex:1;}' +
+                    '.q-section-title{color:#5112A8;font-weight:700;font-size:14px;margin:0 0 0.6rem 0;}' +
+                    '.q-kv{margin:0 0 0.25rem 0;color:#1f2937;}' +
+                    '.q-table{margin-bottom:0.75rem;}' +
+                    '.q-table th{color:#5112A8;font-weight:700;font-size:12px;text-align:left;padding:4px 6px;border-bottom:2px solid #5112A8;}' +
+                    '.q-table th.text-right{text-align:right;}' +
+                    '.q-table td{padding:5px 6px;border-bottom:1px solid #E5E7EB;}' +
+                    '.q-total-row td{font-weight:700;border-bottom:none;padding-top:8px;}' +
+                    '.q-provider-row{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;align-items:center;gap:10px;margin-bottom:0.4rem;}' +
+                    '.q-provider-row img{width:26px;height:26px;object-fit:contain;}' +
+                    '.q-footer-legal{margin-top:2rem;padding-top:1rem;border-top:1px solid #E5E7EB;color:#6B7280;font-size:10px;line-height:1.5;}' +
+                    '.q-vatreg{color:#6B7280;font-size:10px;margin-bottom:0.5rem;}' +
                     '@media print {' +
-                        'body { background-color: white; padding: 0 !important; margin: 0 !important; }' +
-                        '.no-print { display: none !important; }' +
-                        '.qpad { padding: 0.8rem !important; }' +
-                        '@page { margin: 0.6cm; }' +
+                        'body{background:#fff;padding:0 !important;margin:0 !important;}' +
+                        '.no-print{display:none !important;}' +
+                        '.q-body{padding:70px 30px 20px 30px !important;}' +
+                        '@page{margin:0.6cm;}' +
                     '}' +
                 '</style>' +
             '</head>' +
-            '<body class="text-black">' +
-                '<div class="bg-white qpad qpage mx-auto shadow-2xl relative">' +
+            '<body>' +
+                '<div class="q-doc qpage mx-auto shadow-2xl relative">' +
                     '<button onclick="window.print()" class="no-print absolute qtop qright qbg-primary text-white qbtnpad rounded-xl font-bold shadow-lg transition-colors flex items-center gap-2">' +
-                        '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>' +
+                        '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>' +
                         '<span style="color:#fff;">Print Quote</span>' +
                     '</button>' +
 
-                    '<div class="flex items-center gap-6 mb-8 mt-4">' +
-                        '<div class="flex items-center gap-2">' +
-                            '<img src="' + logoUrl + '" class="qlogo rounded-full object-contain qbg-primary">' +
-                            '<img src="' + providerLogoUrl + '" class="qlogo object-contain">' +
+                    '<div class="q-header"></div>' +
+                    '<div class="q-logo-badge"><img src="' + logoUrl + '" alt="Currys"></div>' +
+
+                    '<div class="q-body">' +
+
+                        '<div class="q-two-col">' +
+                            '<div>' +
+                                '<h3 class="q-section-title">Customer Details</h3>' +
+                                customerDetailRows +
+                            '</div>' +
+                            '<div>' +
+                                '<h3 class="q-section-title">Quote Details</h3>' +
+                                '<p class="q-kv">Quote No: <strong>' + quoteRef + '</strong></p>' +
+                                '<p class="q-kv">Date: <strong>' + dateStr + '</strong></p>' +
+                                '<p class="q-kv">Consultant: <strong>' + staffName + '</strong></p>' +
+                            '</div>' +
                         '</div>' +
-                        '<div>' +
-                            '<h1 class="text-3xl font-bold mb-1">Your ' + contractProvider + ' quote</h1>' +
-                            '<p class="text-lg text-gray-700">Generated on ' + dateStr + '</p>' +
-                            '<p class="text-lg text-gray-700">Generated by: ' + staffName + '</p>' +
+
+                        '<h3 class="q-section-title">SIM Only &amp; Device Outright</h3>' +
+                        '<table class="q-table">' +
+                            '<tr><th>Description</th><th class="text-right">Price</th><th class="text-right">Term</th><th class="text-right">Amount</th></tr>' +
+                            simRows +
+                            '<tr class="q-total-row"><td colspan="3">Total (24 months)</td><td class="text-right">' + simTotal + '</td></tr>' +
+                            '<tr class="q-total-row"><td colspan="3">Effective monthly cost</td><td class="text-right">' + simEffective + '</td></tr>' +
+                        '</table>' +
+
+                        '<div class="q-provider-row">' +
+                            '<img src="' + providerLogoUrl + '" alt="">' +
+                            '<h3 class="q-section-title" style="margin:0;">24 Month Contract &mdash; ' + contractProvider + '</h3>' +
                         '</div>' +
-                    '</div>' +
-
-                    (customerInfoHTML || '') +
-
-                    '<div class="mb-10">' +
-                        '<p class="text-xl mb-4 leading-relaxed">If you chose to pay a SIM Only Deal (24 months) and to purchase a handset outright you would be looking at paying:</p>' +
-                        '<table class="w-full max-w-md text-left text-xl">' +
-                            '<tr><td class="py-1">SIM Per month:</td><td class="font-semibold text-right">£' + parseFloat(simMonthly).toFixed(2) + '</td></tr>' +
-                            '<tr><td class="py-1">Handset Outright:</td><td class="font-semibold text-right">£' + parseFloat(simHandset).toFixed(2) + '</td></tr>' +
-                            '<tr><td class="py-1 pt-4">Total (24 months):</td><td class="font-semibold text-right pt-4">' + simTotal + '</td></tr>' +
-                            '<tr><td class="py-1 font-bold">Effective Monthly Cost:</td><td class="font-bold text-right">' + simEffective + '</td></tr>' +
+                        '<table class="q-table">' +
+                            '<tr><th>Description</th><th class="text-right">Price</th><th class="text-right">Term</th><th class="text-right">Amount</th></tr>' +
+                            contractRows +
+                            '<tr class="q-total-row"><td colspan="3">Total (24 months)</td><td class="text-right">' + contractTotal + '</td></tr>' +
+                            '<tr class="q-total-row"><td colspan="3">Effective monthly cost</td><td class="text-right">' + contractEffective + '</td></tr>' +
                         '</table>' +
-                    '</div>' +
 
-                    '<div class="mb-10">' +
-                        '<p class="text-xl mb-4 leading-relaxed">While the 24-month contract alternative would be priced at:</p>' +
-                        '<table class="w-full max-w-md text-left text-xl">' +
-                            '<tr><td class="py-1">Network:</td><td class="font-semibold text-right">' + contractProvider + '</td></tr>' +
-                            '<tr><td class="py-1">Initial Monthly Cost</td><td class="font-semibold text-right">£' + parseFloat(contractMonthly).toFixed(2) + '</td></tr>' +
-                            '<tr><td class="py-1">Price from April ' + year1 + ':</td><td class="font-semibold text-right">£' + parseFloat(contract2026).toFixed(2) + '</td></tr>' +
-                            '<tr><td class="py-1">Price from April ' + year2 + ':</td><td class="font-semibold text-right">£' + parseFloat(contract2027).toFixed(2) + '</td></tr>' +
-                            '<tr><td class="py-1">Upfront cost:</td><td class="font-semibold text-right">£' + parseFloat(contractUpfront).toFixed(2) + '</td></tr>' +
-                            '<tr><td class="py-1 pt-4">Total (24 months):</td><td class="font-semibold text-right pt-4">' + contractTotal + '</td></tr>' +
-                            '<tr><td class="py-1 font-bold">Effective Monthly Cost:</td><td class="font-bold text-right">' + contractEffective + '</td></tr>' +
-                        '</table>' +
-                    '</div>' +
+                        '<div class="q-two-col" style="margin-top:1.5rem;">' +
+                            '<div>' +
+                                '<h3 class="q-section-title">Recommendation</h3>' +
+                                '<p class="q-kv">' + (savingDisplay === '£0.00' ? 'Both options cost the same over 24 months.' : ('The cheaper option saves you money over the 24 month period &mdash; see totals above for the breakdown.')) + '</p>' +
+                            '</div>' +
+                            '<div>' +
+                                '<h3 class="q-section-title">Total Savings</h3>' +
+                                '<p class="q-kv">24-month saving: <strong>' + savingDisplay + '</strong></p>' +
+                                '<p class="q-kv">Average monthly saving: <strong>' + monthlySavingDisplay + '</strong></p>' +
+                            '</div>' +
+                        '</div>' +
 
-                    '<div class="mb-10">' +
-                        '<h2 class="text-2xl font-bold mb-4">Comparison results</h2>' +
-                        '<table class="w-full border-collapse border border-black text-lg">' +
-                            '<tr>' +
-                                '<td class="border border-black p-4 qhalf align-top">' +
-                                    '<p class="mb-1 text-gray-800">Your total 24-month saving would be</p>' +
-                                    '<p class="font-bold text-xl">' + savingDisplay + '</p>' +
-                                '</td>' +
-                                '<td class="border border-black p-4 qhalf align-top">' +
-                                    '<p class="mb-1 text-gray-800">Your average monthly saving would be:</p>' +
-                                    '<p class="font-bold text-xl">' + monthlySavingDisplay + '</p>' +
-                                '</td>' +
-                            '</tr>' +
-                        '</table>' +
-                    '</div>' +
-
-                    '<div class="mt-6 mb-0">' +
-                        '<h3 class="text-2xl font-bold mb-2">Disclaimer</h3>' +
-                        '<p class="text-gray-800 text-xl leading-relaxed">' +
-                            'Please note that while we can guarantee this price for the contract today, we cannot promise it will be this amount if you return after today!' +
-                        '</p>' +
+                        '<div class="q-vatreg" style="margin-top:2rem;">Quote reference: ' + quoteRef + '</div>' +
+                        '<div class="q-footer-legal">' +
+                            'Please note that while we can guarantee this price for the contract today, we cannot promise it will be this amount if you return after today. ' +
+                            'Currys Retail Limited is authorised and regulated by the Financial Conduct Authority. Currys Retail Limited, Currys Newark Campus, Long Hollow Way, Newark, NG24 2NH. Registered in England No. 2142673.' +
+                        '</div>' +
                     '</div>' +
                 '</div>' +
             '</body>' +
