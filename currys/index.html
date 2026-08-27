@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
@@ -340,6 +339,9 @@ img { display: block; max-width: 100%; }
 </div>
 </div>
 <div class="flex items-center gap-2">
+<button class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors" onclick="openSettingsModal()" title="Yearly price increase settings">
+<svg class="icon text-slate-600 dark:text-slate-300" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+</button>
 <button class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors" onclick="toggleDarkMode()">
 <svg class="icon text-slate-600 dark:text-slate-300" id="theme-icon" data-icon="dark_mode" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
 </button>
@@ -429,7 +431,7 @@ img { display: block; max-width: 100%; }
 <label class="block text-sm font-semibold mb-2 text-slate-600 dark:text-white">Initial Monthly Cost (£)</label>
 <div class="relative">
 <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400 dark:text-white">£</span>
-<input class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-transparent focus:ring-2 focus:ring-secondary focus:border-transparent rounded-xl font-medium transition-all" id="contract-monthly" oninput="calculate()" step="0.01" type="number" value="0.00"/>
+<input class="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-transparent focus:ring-2 focus:ring-secondary focus:border-transparent rounded-xl font-medium transition-all" id="contract-monthly" oninput="updateYearPrices(); calculate()" step="0.01" type="number" value="0.00"/>
 </div>
 </div>
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -439,7 +441,7 @@ Price from April <input type="number" id="label-year-1" class="w-11 bg-transpare
 </label>
 <div class="relative">
 <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400 dark:text-white text-sm">£</span>
-<input class="w-full pl-8 pr-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 border-transparent focus:ring-2 focus:ring-secondary focus:border-transparent rounded-xl font-medium transition-all text-sm" id="contract-2026" oninput="calculate()" step="0.01" type="number" value="0.00"/>
+<input class="w-full pl-8 pr-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 border-transparent focus:ring-2 focus:ring-secondary focus:border-transparent rounded-xl font-medium transition-all text-sm" id="contract-2026" oninput="markYear2Manual(); calculate()" step="0.01" type="number" value="0.00"/>
 </div>
 </div>
 <div>
@@ -448,7 +450,7 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
 </label>
 <div class="relative">
 <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400 dark:text-white text-sm">£</span>
-<input class="w-full pl-8 pr-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 border-transparent focus:ring-2 focus:ring-secondary focus:border-transparent rounded-xl font-medium transition-all text-sm" id="contract-2027" oninput="calculate()" step="0.01" type="number" value="0.00"/>
+<input class="w-full pl-8 pr-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 border-transparent focus:ring-2 focus:ring-secondary focus:border-transparent rounded-xl font-medium transition-all text-sm" id="contract-2027" oninput="markYear3Manual(); calculate()" step="0.01" type="number" value="0.00"/>
 </div>
 </div>
 </div>
@@ -540,6 +542,25 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
         <button onclick="saveStaffName()" class="w-full bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-xl font-bold shadow-lg hover:shadow-primary/20 transition-all">
             Start Quoting
         </button>
+    </div>
+</div>
+
+<div id="settings-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0 pointer-events-none">
+    <div class="bg-card-light dark:bg-card-dark p-8 rounded-2xl shadow-2xl max-w-md w-full transform scale-95 transition-transform duration-300 border border-slate-100 dark:border-slate-800">
+        <h2 class="text-2xl font-bold text-center mb-2 text-slate-900 dark:text-white">Yearly Price Increase</h2>
+        <p class="text-center text-slate-500 dark:text-slate-400 mb-6">Set the automatic price increase applied per network for each contract year.</p>
+        <div class="mb-4">
+            <label class="block text-sm font-semibold mb-2 text-slate-600 dark:text-white">ID Mobile Increase (£ per year)</label>
+            <input type="number" id="settings-id-increase" step="0.01" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-transparent focus:ring-2 focus:ring-primary focus:border-transparent rounded-xl font-medium transition-all text-center text-lg" value="1.80">
+        </div>
+        <div class="mb-6">
+            <label class="block text-sm font-semibold mb-2 text-slate-600 dark:text-white">Vodafone Increase (£ per year)</label>
+            <input type="number" id="settings-vf-increase" step="0.01" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border-transparent focus:ring-2 focus:ring-primary focus:border-transparent rounded-xl font-medium transition-all text-center text-lg" value="1.50">
+        </div>
+        <div class="flex gap-3">
+            <button onclick="closeSettingsModal()" class="flex-1 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-white py-3 px-6 rounded-xl font-bold transition-all">Cancel</button>
+            <button onclick="saveSettings()" class="flex-1 bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-xl font-bold shadow-lg hover:shadow-primary/20 transition-all">Save</button>
+        </div>
     </div>
 </div>
 
@@ -695,11 +716,83 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
         }
     }
 
+    var year2Manual = false;
+    var year3Manual = false;
+
+    function markYear2Manual() {
+        year2Manual = true;
+    }
+
+    function markYear3Manual() {
+        year3Manual = true;
+    }
+
+    var DEFAULT_ID_INCREASE = 1.80;
+    var DEFAULT_VF_INCREASE = 1.50;
+
+    function getProviderIncrease(provider) {
+        var key = provider === 'Vodafone' ? 'currys_vf_increase' : 'currys_id_increase';
+        var stored = localStorage.getItem(key);
+        var val = parseFloat(stored);
+        if (isNaN(val)) {
+            val = provider === 'Vodafone' ? DEFAULT_VF_INCREASE : DEFAULT_ID_INCREASE;
+        }
+        return val;
+    }
+
+    function openSettingsModal() {
+        document.getElementById('settings-id-increase').value = getProviderIncrease('ID Mobile').toFixed(2);
+        document.getElementById('settings-vf-increase').value = getProviderIncrease('Vodafone').toFixed(2);
+        var modal = document.getElementById('settings-modal');
+        removeClass(modal, 'opacity-0 pointer-events-none');
+        addClass(modal, 'opacity-100');
+        removeClass(modal.querySelector('div'), 'scale-95');
+        addClass(modal.querySelector('div'), 'scale-100');
+    }
+
+    function closeSettingsModal() {
+        var modal = document.getElementById('settings-modal');
+        removeClass(modal, 'opacity-100');
+        addClass(modal, 'opacity-0 pointer-events-none');
+        removeClass(modal.querySelector('div'), 'scale-100');
+        addClass(modal.querySelector('div'), 'scale-95');
+    }
+
+    function saveSettings() {
+        var idVal = parseFloat(document.getElementById('settings-id-increase').value);
+        var vfVal = parseFloat(document.getElementById('settings-vf-increase').value);
+        if (isNaN(idVal)) { idVal = DEFAULT_ID_INCREASE; }
+        if (isNaN(vfVal)) { vfVal = DEFAULT_VF_INCREASE; }
+        localStorage.setItem('currys_id_increase', idVal.toFixed(2));
+        localStorage.setItem('currys_vf_increase', vfVal.toFixed(2));
+        closeSettingsModal();
+        updateYearPrices();
+        calculate();
+    }
+
+    function updateYearPrices() {
+        var provider = document.getElementById('contract-provider').value;
+        var increase = getProviderIncrease(provider);
+        var contractMonthly = parseFloat(document.getElementById('contract-monthly').value) || 0;
+        var year2Field = document.getElementById('contract-2026');
+        var year3Field = document.getElementById('contract-2027');
+
+        if (!year2Manual) {
+            year2Field.value = (contractMonthly + increase).toFixed(2);
+        }
+        if (!year3Manual) {
+            var year2Value = parseFloat(year2Field.value) || contractMonthly;
+            year3Field.value = (year2Value + increase).toFixed(2);
+        }
+    }
+
     function selectProvider(name, logo) {
         document.getElementById('contract-provider').value = name;
         document.getElementById('provider-button-text').textContent = name;
         document.getElementById('provider-button-logo').src = logo;
         addClass(document.getElementById('provider-options'), 'hidden');
+        updateYearPrices();
+        calculate();
     }
 
     document.addEventListener('click', function(e) {
@@ -728,14 +821,19 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
 
     function initStaffModal() {
         var storedName = localStorage.getItem('currys_staff_name');
-        if (!storedName) {
-            var modal = document.getElementById('staff-modal');
-            removeClass(modal, 'opacity-0 pointer-events-none');
-            addClass(modal, 'opacity-100');
-            removeClass(modal.querySelector('div'), 'scale-95');
-            addClass(modal.querySelector('div'), 'scale-100');
-            setTimeout(function() { document.getElementById('staff-name-input').focus(); }, 100);
+        var modal = document.getElementById('staff-modal');
+        removeClass(modal, 'opacity-0 pointer-events-none');
+        addClass(modal, 'opacity-100');
+        removeClass(modal.querySelector('div'), 'scale-95');
+        addClass(modal.querySelector('div'), 'scale-100');
+        if (storedName) {
+            document.getElementById('staff-name-input').value = storedName;
         }
+        setTimeout(function() {
+            var input = document.getElementById('staff-name-input');
+            input.focus();
+            if (input.select) { input.select(); }
+        }, 100);
     }
 
     function saveStaffName() {
@@ -1041,7 +1139,8 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
         // Updates
         document.getElementById('sim-total-display').textContent = '£' + simTotal.toFixed(2);
         document.getElementById('sim-effective-display').textContent = '£' + simEffective.toFixed(2);
-        document.getElementById('contract-total-display').textContent = '£' + contractEffective.toFixed(2);
+        document.getElementById('contract-total-display').textContent = '£' + contractTotal.toFixed(2);
+        document.getElementById('contract-effective-display').textContent = '£' + contractEffective.toFixed(2);
         var savingDisplay = document.getElementById('total-saving-display');
         var monthlyDisplay = document.getElementById('monthly-saving-display');
         var verdictBox = document.getElementById('verdict-box');
@@ -1083,7 +1182,11 @@ Price from April <input type="number" id="label-year-2" class="w-11 bg-transpare
         document.getElementById('customer-current-price').value = "";
         document.getElementById('customer-info').value = "";
         document.getElementById('contract-provider').value = "ID Mobile";
+        year2Manual = false;
+        year3Manual = false;
         selectProvider('ID Mobile', 'ID_Logo.png');
+        document.getElementById('contract-2026').value = "0.00";
+        document.getElementById('contract-2027').value = "0.00";
 
         var currentYear = new Date().getFullYear();
         document.getElementById('label-year-1').value = currentYear + 1;
