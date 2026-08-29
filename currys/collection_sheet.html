@@ -15,7 +15,6 @@
     <meta charset="UTF-8">
     <title>Goods Collection Sheet - Currys (A5 on A4 Landscape)</title>
     <style>
-        /* Custom Font Declaration */
         @font-face {
             font-family: 'Currys Sans';
             src: url('Currys sans.ttf') format('truetype');
@@ -30,29 +29,36 @@
             --border-color: #3b2260;
         }
 
-        /* Page Setup: A4 Landscape */
+        /* Set page size to A4 Landscape with strictly zero margins */
         @page {
             size: A4 landscape;
             margin: 0;
         }
 
-        body {
-            font-family: 'Currys Sans', Arial, Helvetica, sans-serif;
-            background-color: #f4f4f9;
+        html, body {
             margin: 0;
-            padding: 10px;
-            display: flex;
-            justify-content: flex-start;
+            padding: 0;
+            height: 100%;
+            background-color: #ffffff;
+            font-family: 'Currys Sans', Arial, Helvetica, sans-serif;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
         }
 
-        /* Fixed container dimensions to strictly prevent page spill */
+        body {
+            display: flex;
+            justify-content: flex-start;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #f4f4f9;
+        }
+
+        /* Restored to exact half A4 height (148mm x 210mm) */
         .form-container {
             width: 148mm;
-            height: 205mm; /* Reduced slightly from 210mm to guarantee single-page printing */
+            height: 210mm;
             background: #ffffff;
-            padding: 4mm 6mm;
+            padding: 6mm 8mm;
             box-sizing: border-box;
             border-radius: 4px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -63,12 +69,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .header-section h1 {
             color: var(--purple-main);
-            font-size: 28px;
+            font-size: 25px;
             margin: 0;
             font-weight: bold;
             text-align: left;
@@ -78,13 +84,13 @@
             background-color: var(--purple-main) !important;
             color: #ffffff !important;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 11px;
+            font-size: 12px;
             text-transform: lowercase;
             text-align: center;
             -webkit-print-color-adjust: exact;
@@ -93,9 +99,9 @@
         /* Top Meta Information */
         .meta-group {
             background-color: var(--purple-light) !important;
-            padding: 4px 6px;
+            padding: 5px 8px;
             border-radius: 2px;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
             -webkit-print-color-adjust: exact;
         }
 
@@ -103,7 +109,7 @@
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
         }
 
         .meta-row:last-child {
@@ -112,23 +118,23 @@
 
         .meta-row label {
             width: 22%;
-            font-size: 7.5px;
+            font-size: 8px;
             font-weight: bold;
             color: var(--purple-main);
             text-transform: uppercase;
             text-align: right;
-            padding-right: 6px;
+            padding-right: 8px;
             box-sizing: border-box;
-            line-height: 1.0;
+            line-height: 1.1;
         }
 
         .meta-row input {
             width: 78%;
-            padding: 1px 3px;
+            padding: 2px 4px;
             border: 1px solid #ccc;
             border-radius: 0;
-            font-size: 9px;
-            height: 14px;
+            font-size: 10px;
+            height: 16px;
             text-align: left;
             box-sizing: border-box;
             background-color: #ffffff;
@@ -139,21 +145,21 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         th, td {
             border: 1px solid var(--border-color);
-            padding: 0px 2px;
+            padding: 1px 2px;
         }
 
         th {
             background-color: var(--purple-main) !important;
             color: #ffffff !important;
-            font-size: 7.5px;
+            font-size: 8px;
             text-transform: uppercase;
             font-weight: bold;
-            padding: 2px 2px;
+            padding: 3px 2px;
             text-align: center;
             -webkit-print-color-adjust: exact;
         }
@@ -162,11 +168,11 @@
             width: 100%;
             border: none;
             outline: none;
-            padding: 0px;
-            font-size: 8.5px;
+            padding: 1px;
+            font-size: 9px;
             box-sizing: border-box;
             background: transparent;
-            height: 11px;
+            height: 13px;
             text-align: left;
             font-family: 'Currys Sans', Arial, sans-serif;
         }
@@ -179,7 +185,7 @@
 
         .tote-input-cell span {
             font-weight: bold;
-            font-size: 7.5px;
+            font-size: 8px;
             color: var(--purple-main);
             margin-right: 2px;
         }
@@ -191,8 +197,8 @@
         }
 
         .signatures-table td.label-col {
-            width: 45px;
-            font-size: 7.5px;
+            width: 50px;
+            font-size: 8px;
             font-weight: bold;
             color: var(--purple-main);
             background-color: #f9f9f9;
@@ -202,9 +208,9 @@
 
         /* Footer Metadata */
         .footer-info {
-            font-size: 7.5px;
+            font-size: 8px;
             color: #333;
-            line-height: 1.1;
+            line-height: 1.2;
             font-weight: bold;
             text-transform: uppercase;
             margin-top: 2px;
@@ -212,18 +218,22 @@
         }
 
         @media print {
-            body {
+            html, body {
+                width: 297mm;
+                height: 210mm;
                 padding: 0;
                 margin: 0;
                 background: white;
+                overflow: hidden;
             }
             .form-container {
                 box-shadow: none;
-                padding: 4mm 6mm;
+                padding: 6mm 8mm;
                 width: 148mm;
-                height: 205mm;
+                height: 210mm;
                 float: left;
-                page-break-inside: avoid;
+                page-break-after: avoid;
+                page-break-before: avoid;
             }
         }
     </style>
@@ -315,7 +325,7 @@
                 <tr>
                     <td colspan="3">
                         <div style="display: flex; align-items: center; padding: 1px;">
-                            <label for="qty-envelopes" style="font-size: 7.5px; font-weight: bold; color: var(--purple-main); text-transform: uppercase; margin-right: 6px; text-align: left;">Quantity of Envelopes</label>
+                            <label for="qty-envelopes" style="font-size: 8px; font-weight: bold; color: var(--purple-main); text-transform: uppercase; margin-right: 6px; text-align: left;">Quantity of Envelopes</label>
                             <input type="number" id="qty-envelopes" name="quantity_of_envelopes" min="0" style="flex: 1;" class="nav-input">
                         </div>
                     </td>
@@ -368,7 +378,6 @@
     </form>
 </div>
 
-<!-- XP / Old Chrome Compatible Scripts -->
 <script>
     function disableFormSubmit(e) {
         var key = e.keyCode || e.which;
@@ -378,7 +387,6 @@
     }
 
     window.onload = function() {
-        // Auto fill today's date
         var dateInput = document.getElementById('date');
         if (dateInput) {
             var now = new Date();
@@ -388,14 +396,12 @@
             dateInput.value = today;
         }
 
-        // Target persistent fields
         var fieldsToPersist = [
             { id: 'branch-number', key: 'currys_branch_number' },
             { id: 'branch-name', key: 'currys_branch_name' },
             { id: 'store-rep-company', key: 'currys_company' }
         ];
 
-        // Helper event binder
         function bindEvent(element, eventName, handler) {
             if (element.addEventListener) {
                 element.addEventListener(eventName, handler, false);
@@ -404,7 +410,6 @@
             }
         }
 
-        // Restore values & auto-save
         if (window.localStorage) {
             for (var k = 0; k < fieldsToPersist.length; k++) {
                 (function(item) {
@@ -425,13 +430,12 @@
             }
         }
 
-        // Enter key navigation logic
         var inputs = document.getElementsByClassName('nav-input');
         for (var n = 0; n < inputs.length; n++) {
             (function(index) {
                 bindEvent(inputs[index], 'keydown', function(e) {
                     var keyCode = e.keyCode || e.which;
-                    if (keyCode === 13) { // Enter key
+                    if (keyCode === 13) {
                         if (e.preventDefault) {
                             e.preventDefault();
                         } else {
