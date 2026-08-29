@@ -29,16 +29,16 @@
             --border-color: #3b2260;
         }
 
-        /* Set page size to A4 Landscape with strictly zero margins */
         @page {
             size: A4 landscape;
-            margin: 0;
+            margin: 0mm;
         }
 
         html, body {
-            margin: 0;
-            padding: 0;
+            margin: 0 !important;
+            padding: 0 !important;
             height: 100%;
+            width: 100%;
             background-color: #ffffff;
             font-family: 'Currys Sans', Arial, Helvetica, sans-serif;
             -webkit-print-color-adjust: exact;
@@ -53,7 +53,6 @@
             background-color: #f4f4f9;
         }
 
-        /* Restored to exact half A4 height (148mm x 210mm) */
         .form-container {
             width: 148mm;
             height: 210mm;
@@ -63,6 +62,7 @@
             border-radius: 4px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            position: relative;
         }
 
         .header-section {
@@ -217,23 +217,30 @@
             text-align: left;
         }
 
+        /* STRICT PRINT STYLES FOR EXACT SINGLE PAGE */
         @media print {
             html, body {
-                width: 297mm;
-                height: 210mm;
-                padding: 0;
-                margin: 0;
-                background: white;
-                overflow: hidden;
+                width: 297mm !important;
+                height: 210mm !important;
+                max-width: 297mm !important;
+                max-height: 210mm !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                background: white !important;
+                overflow: hidden !important;
             }
             .form-container {
-                box-shadow: none;
-                padding: 6mm 8mm;
-                width: 148mm;
-                height: 210mm;
-                float: left;
-                page-break-after: avoid;
-                page-break-before: avoid;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                box-shadow: none !important;
+                padding: 6mm 8mm !important;
+                width: 148mm !important;
+                height: 210mm !important;
+                max-height: 210mm !important;
+                box-sizing: border-box !important;
+                overflow: hidden !important;
+                float: none !important;
             }
         }
     </style>
