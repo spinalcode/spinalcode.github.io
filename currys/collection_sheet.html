@@ -40,19 +40,19 @@
             font-family: 'Currys Sans', Arial, Helvetica, sans-serif;
             background-color: #f4f4f9;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             display: flex;
             justify-content: flex-start;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
         }
 
-        /* Container takes up exact half of A4 Landscape (148mm width x 210mm height) */
+        /* Fixed container dimensions to strictly prevent page spill */
         .form-container {
             width: 148mm;
-            height: 210mm;
+            height: 205mm; /* Reduced slightly from 210mm to guarantee single-page printing */
             background: #ffffff;
-            padding: 6mm 8mm;
+            padding: 4mm 6mm;
             box-sizing: border-box;
             border-radius: 4px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -63,13 +63,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
-        /* Larger Title Font */
         .header-section h1 {
             color: var(--purple-main);
-            font-size: 25px;
+            font-size: 28px;
             margin: 0;
             font-weight: bold;
             text-align: left;
@@ -79,13 +78,13 @@
             background-color: var(--purple-main) !important;
             color: #ffffff !important;
             border-radius: 50%;
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 11px;
             text-transform: lowercase;
             text-align: center;
             -webkit-print-color-adjust: exact;
@@ -94,9 +93,9 @@
         /* Top Meta Information */
         .meta-group {
             background-color: var(--purple-light) !important;
-            padding: 5px 8px;
+            padding: 4px 6px;
             border-radius: 2px;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             -webkit-print-color-adjust: exact;
         }
 
@@ -104,7 +103,7 @@
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
 
         .meta-row:last-child {
@@ -113,23 +112,23 @@
 
         .meta-row label {
             width: 22%;
-            font-size: 8px;
+            font-size: 7.5px;
             font-weight: bold;
             color: var(--purple-main);
             text-transform: uppercase;
             text-align: right;
-            padding-right: 8px;
+            padding-right: 6px;
             box-sizing: border-box;
-            line-height: 1.1;
+            line-height: 1.0;
         }
 
         .meta-row input {
             width: 78%;
-            padding: 2px 4px;
+            padding: 1px 3px;
             border: 1px solid #ccc;
             border-radius: 0;
-            font-size: 10px;
-            height: 16px;
+            font-size: 9px;
+            height: 14px;
             text-align: left;
             box-sizing: border-box;
             background-color: #ffffff;
@@ -140,21 +139,21 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         th, td {
             border: 1px solid var(--border-color);
-            padding: 1px 2px;
+            padding: 0px 2px;
         }
 
         th {
             background-color: var(--purple-main) !important;
             color: #ffffff !important;
-            font-size: 8px;
+            font-size: 7.5px;
             text-transform: uppercase;
             font-weight: bold;
-            padding: 3px 2px;
+            padding: 2px 2px;
             text-align: center;
             -webkit-print-color-adjust: exact;
         }
@@ -163,11 +162,11 @@
             width: 100%;
             border: none;
             outline: none;
-            padding: 1px;
-            font-size: 9px;
+            padding: 0px;
+            font-size: 8.5px;
             box-sizing: border-box;
             background: transparent;
-            height: 13px;
+            height: 11px;
             text-align: left;
             font-family: 'Currys Sans', Arial, sans-serif;
         }
@@ -180,7 +179,7 @@
 
         .tote-input-cell span {
             font-weight: bold;
-            font-size: 8px;
+            font-size: 7.5px;
             color: var(--purple-main);
             margin-right: 2px;
         }
@@ -192,8 +191,8 @@
         }
 
         .signatures-table td.label-col {
-            width: 50px;
-            font-size: 8px;
+            width: 45px;
+            font-size: 7.5px;
             font-weight: bold;
             color: var(--purple-main);
             background-color: #f9f9f9;
@@ -203,9 +202,9 @@
 
         /* Footer Metadata */
         .footer-info {
-            font-size: 8px;
+            font-size: 7.5px;
             color: #333;
-            line-height: 1.2;
+            line-height: 1.1;
             font-weight: bold;
             text-transform: uppercase;
             margin-top: 2px;
@@ -220,10 +219,11 @@
             }
             .form-container {
                 box-shadow: none;
-                padding: 6mm 8mm;
+                padding: 4mm 6mm;
                 width: 148mm;
-                height: 210mm;
+                height: 205mm;
                 float: left;
+                page-break-inside: avoid;
             }
         }
     </style>
@@ -315,7 +315,7 @@
                 <tr>
                     <td colspan="3">
                         <div style="display: flex; align-items: center; padding: 1px;">
-                            <label for="qty-envelopes" style="font-size: 8px; font-weight: bold; color: var(--purple-main); text-transform: uppercase; margin-right: 6px; text-align: left;">Quantity of Envelopes</label>
+                            <label for="qty-envelopes" style="font-size: 7.5px; font-weight: bold; color: var(--purple-main); text-transform: uppercase; margin-right: 6px; text-align: left;">Quantity of Envelopes</label>
                             <input type="number" id="qty-envelopes" name="quantity_of_envelopes" min="0" style="flex: 1;" class="nav-input">
                         </div>
                     </td>
