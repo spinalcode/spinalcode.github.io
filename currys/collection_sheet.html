@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>collection sheet</title>
+  <style>
+
+  </style>
+</head>
+<body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Goods Collection Sheet - Currys (A5)</title>
+    <style>
+        :root {
+            --purple-main: #4d2d7c;
+            --purple-light: #eadef0;
+            --purple-header: #3b2260;
+            --border-color: #3b2260;
+        }
+
+        @page {
+            size: A5 portrait;
+            margin: 5mm;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .form-container {
+            width: 148mm;
+            min-height: 210mm;
+            background: #ffffff;
+            padding: 8mm;
+            box-sizing: border-box;
+            border-radius: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .header-section h1 {
+            color: var(--purple-main);
+            font-size: 20px;
+            margin: 0;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        .logo {
+            background-color: var(--purple-main) !important;
+            color: #ffffff !important;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            text-transform: lowercase;
+            text-align: center;
+            -webkit-print-color-adjust: exact;
+        }
+
+        /* Top Meta Information */
+        .meta-group {
+            background-color: var(--purple-light) !important;
+            padding: 6px 8px;
+            border-radius: 2px;
+            margin-bottom: 6px;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .meta-row {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-bottom: 4px;
+        }
+
+        .meta-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .meta-row label {
+            width: 22%;
+            font-size: 8px;
+            font-weight: bold;
+            color: var(--purple-main);
+            text-transform: uppercase;
+            text-align: right;
+            padding-right: 8px;
+            box-sizing: border-box;
+            line-height: 1.1;
+        }
+
+        .meta-row input {
+            width: 78%;
+            padding: 2px 4px;
+            border: 1px solid #ccc;
+            border-radius: 0;
+            font-size: 10px;
+            height: 16px;
+            text-align: left;
+            box-sizing: border-box;
+            background-color: #ffffff;
+        }
+
+        /* Tables Setup */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 8px;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 1px 2px;
+        }
+
+        th {
+            background-color: var(--purple-main) !important;
+            color: #ffffff !important;
+            font-size: 8px;
+            text-transform: uppercase;
+            font-weight: bold;
+            padding: 4px 2px;
+            text-align: center;
+            -webkit-print-color-adjust: exact;
+        }
+
+        td input {
+            width: 100%;
+            border: none;
+            outline: none;
+            padding: 1px;
+            font-size: 9px;
+            box-sizing: border-box;
+            background: transparent;
+            height: 14px;
+            text-align: left;
+        }
+
+        .tote-input-cell {
+            display: flex;
+            align-items: center;
+            text-align: left;
+        }
+
+        .tote-input-cell span {
+            font-weight: bold;
+            font-size: 8px;
+            color: var(--purple-main);
+            margin-right: 2px;
+        }
+
+        /* Signatures Section */
+        .signatures-table th {
+            width: 50%;
+            text-align: center;
+        }
+
+        .signatures-table td.label-col {
+            width: 50px;
+            font-size: 8px;
+            font-weight: bold;
+            color: var(--purple-main);
+            background-color: #f9f9f9;
+            text-transform: uppercase;
+            text-align: left;
+        }
+
+        /* Footer Metadata */
+        .footer-info {
+            font-size: 8px;
+            color: #333;
+            line-height: 1.2;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 4px;
+            text-align: left;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+                background: white;
+            }
+            .form-container {
+                box-shadow: none;
+                padding: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <form>
+        <!-- Header -->
+        <div class="header-section">
+            <h1>Goods collection sheet</h1>
+            <div class="logo">currys</div>
+        </div>
+
+        <!-- Date & Branch Info -->
+        <div class="meta-group">
+            <div class="meta-row">
+                <label for="date">DATE</label>
+                <input type="date" id="date" name="date">
+            </div>
+            <div class="meta-row">
+                <label for="branch-number">BRANCH<br>NUMBER</label>
+                <input type="text" id="branch-number" name="branch_number">
+            </div>
+            <div class="meta-row">
+                <label for="branch-name">BRANCH<br>NAME</label>
+                <input type="text" id="branch-name" name="branch_name">
+            </div>
+        </div>
+
+        <!-- Number of Boxes -->
+        <div class="meta-group">
+            <div class="meta-row">
+                <label for="number-of-boxes">NUMBER<br>OF BOXES</label>
+                <input type="number" id="number-of-boxes" name="number_of_boxes" min="0">
+            </div>
+        </div>
+
+        <!-- Consignment Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Consignment Number</th>
+                    <th>Type of Return</th>
+                    <th>Tote Seal 1</th>
+                    <th>Tote Seal 2</th>
+                    <th>Tote Number</th>
+                </tr>
+            </thead>
+            <tbody>
+                <script>
+                    for (var i = 0; i < 10; i++) {
+                        document.write('<tr>' +
+                            '<td><input type="text" name="consignment_number[]"></td>' +
+                            '<td><input type="text" name="type_of_return[]"></td>' +
+                            '<td><input type="text" name="tote_seal_1[]"></td>' +
+                            '<td><input type="text" name="tote_seal_2[]"></td>' +
+                            '<td>' +
+                                '<div class="tote-input-cell">' +
+                                    '<span>T:</span>' +
+                                    '<input type="text" name="tote_number[]">' +
+                                '</div>' +
+                            '</td>' +
+                        '</tr>');
+                    }
+                </script>
+            </tbody>
+        </table>
+
+        <!-- Paperwork & Batch Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 33.33%;">Paperwork</th>
+                    <th style="width: 33.33%;">Barcode Number</th>
+                    <th style="width: 33.33%;">Batch Number</th>
+                </tr>
+            </thead>
+            <tbody>
+                <script>
+                    for (var j = 0; j < 5; j++) {
+                        document.write('<tr>' +
+                            '<td><input type="text" name="paperwork[]"></td>' +
+                            '<td><input type="text" name="barcode_number[]"></td>' +
+                            '<td><input type="text" name="batch_number[]"></td>' +
+                        '</tr>');
+                    }
+                </script>
+                <tr>
+                    <td colspan="3">
+                        <div style="display: flex; align-items: center; padding: 1px;">
+                            <label for="qty-envelopes" style="font-size: 8px; font-weight: bold; color: var(--purple-main); text-transform: uppercase; margin-right: 6px; text-align: left;">Quantity of Envelopes</label>
+                            <input type="number" id="qty-envelopes" name="quantity_of_envelopes" min="0" style="flex: 1;">
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Signatures Table -->
+        <table class="signatures-table">
+            <thead>
+                <tr>
+                    <th>Store Rep</th>
+                    <th>Collected By</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="2" style="padding: 0;">
+                        <table style="width: 100%; margin: 0; border: none;">
+                            <tr>
+                                <td class="label-col" style="border-left: none; border-top: none;">Sign</td>
+                                <td style="width: 40%; border-top: none;"><input type="text" name="store_rep_sign"></td>
+                                <td class="label-col" style="border-top: none;">Sign</td>
+                                <td style="width: 40%; border-right: none; border-top: none;"><input type="text" name="collected_by_sign"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-col" style="border-left: none;">Print</td>
+                                <td><input type="text" name="store_rep_print"></td>
+                                <td class="label-col">Print</td>
+                                <td style="border-right: none;"><input type="text" name="collected_by_print"></td>
+                            </tr>
+                            <tr>
+                                <td class="label-col" style="border-left: none; border-bottom: none;">Company</td>
+                                <td style="border-bottom: none;"><input type="text" id="store-rep-company" name="store_rep_company"></td>
+                                <td style="border-bottom: none; border-right: none;" colspan="2"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Footer Info -->
+        <div class="footer-info">
+            HH CODE: 930008388<br>
+            CPW CODE: 930036206<br>
+            CPW PLU: ZZVMGOODSCOLLEC<br>
+            TN1999
+        </div>
+    </form>
+</div>
+
+<!-- Legacy JS for auto-date & localStorage save/load (Chrome on XP compatible) -->
+<script>
+    window.onload = function() {
+        // Auto fill today's date
+        var dateInput = document.getElementById('date');
+        if (dateInput) {
+            var now = new Date();
+            var day = ("0" + now.getDate()).slice(-2);
+            var month = ("0" + (now.getMonth() + 1)).slice(-2);
+            var today = now.getFullYear() + "-" + month + "-" + day;
+            dateInput.value = today;
+        }
+
+        // Target persistent fields
+        var fieldsToPersist = [
+            { id: 'branch-number', key: 'currys_branch_number' },
+            { id: 'branch-name', key: 'currys_branch_name' },
+            { id: 'store-rep-company', key: 'currys_company' }
+        ];
+
+        // Helper to bind events cross-browser
+        function bindEvent(element, eventName, handler) {
+            if (element.addEventListener) {
+                element.addEventListener(eventName, handler, false);
+            } else if (element.attachEvent) {
+                element.attachEvent('on' + eventName, handler);
+            }
+        }
+
+        // Restore values from localStorage & attach auto-save listeners
+        if (window.localStorage) {
+            for (var k = 0; k < fieldsToPersist.length; k++) {
+                (function(item) {
+                    var inputEl = document.getElementById(item.id);
+                    if (inputEl) {
+                        var savedVal = localStorage.getItem(item.key);
+                        if (savedVal !== null) {
+                            inputEl.value = savedVal;
+                        }
+                        bindEvent(inputEl, 'keyup', function() {
+                            localStorage.setItem(item.key, inputEl.value);
+                        });
+                        bindEvent(inputEl, 'change', function() {
+                            localStorage.setItem(item.key, inputEl.value);
+                        });
+                    }
+                })(fieldsToPersist[k]);
+            }
+        }
+    };
+</script>
+
+</body>
+</html>
+
+  <script>
+
+  </script>
+</body>
+</html>
