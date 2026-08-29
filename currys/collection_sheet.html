@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -53,6 +52,15 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-container form {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            height: 100%;
         }
 
         .header-section {
@@ -132,15 +140,27 @@
         }
 
         /* Tables Setup */
+        :root {
+            --row-h: 6.39mm;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 6px;
+            table-layout: fixed;
+        }
+
+        table tr {
+            height: var(--row-h);
         }
 
         th, td {
             border: 1px solid var(--border-color);
             padding: 1px 2px;
+            height: var(--row-h);
+            box-sizing: border-box;
+            vertical-align: middle;
         }
 
         th {
@@ -162,7 +182,7 @@
             font-size: 9px;
             box-sizing: border-box;
             background: transparent;
-            height: 13px;
+            height: 100%;
             text-align: left;
             font-family: 'Currys Sans', Arial, sans-serif;
         }
@@ -171,6 +191,7 @@
             display: flex;
             align-items: center;
             text-align: left;
+            height: 100%;
         }
 
         .tote-input-cell span {
@@ -194,6 +215,10 @@
             background-color: #f9f9f9;
             text-transform: uppercase;
             text-align: left;
+        }
+
+        .signatures-table tbody td[colspan] table {
+            margin: 0;
         }
 
         /* Footer Metadata */
@@ -321,7 +346,7 @@
                 </script>
                 <tr>
                     <td colspan="3">
-                        <div style="display: flex; align-items: center; padding: 1px;">
+                        <div style="display: flex; align-items: center; padding: 1px; width: 100%;">
                             <label for="qty-envelopes" style="font-size: 8px; font-weight: bold; color: var(--purple-main); text-transform: uppercase; margin-right: 6px; text-align: left;">Quantity of Envelopes</label>
                             <input type="number" id="qty-envelopes" name="quantity_of_envelopes" min="0" style="flex: 1;" class="nav-input">
                         </div>
