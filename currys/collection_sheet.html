@@ -13,8 +13,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Goods Collection Sheet - Currys (A5)</title>
+    <title>Goods Collection Sheet - Currys (A5 on A4 Landscape)</title>
     <style>
+        /* Custom Font Declaration */
+        @font-face {
+            font-family: 'Currys Sans';
+            src: url('Currys sans.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
         :root {
             --purple-main: #4d2d7c;
             --purple-light: #eadef0;
@@ -22,42 +30,46 @@
             --border-color: #3b2260;
         }
 
+        /* Page Setup: A4 Landscape */
         @page {
-            size: A5 portrait;
-            margin: 5mm;
+            size: A4 landscape;
+            margin: 0;
         }
 
         body {
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: 'Currys Sans', Arial, Helvetica, sans-serif;
             background-color: #f4f4f9;
             margin: 0;
-            padding: 10px;
+            padding: 20px;
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
         }
 
+        /* Container takes up exact half of A4 Landscape (148mm width x 210mm height) */
         .form-container {
             width: 148mm;
-            min-height: 210mm;
+            height: 210mm;
             background: #ffffff;
-            padding: 8mm;
+            padding: 6mm 8mm;
             box-sizing: border-box;
             border-radius: 4px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
 
         .header-section {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
+        /* Larger Title Font */
         .header-section h1 {
             color: var(--purple-main);
-            font-size: 20px;
+            font-size: 25px;
             margin: 0;
             font-weight: bold;
             text-align: left;
@@ -82,9 +94,9 @@
         /* Top Meta Information */
         .meta-group {
             background-color: var(--purple-light) !important;
-            padding: 6px 8px;
+            padding: 5px 8px;
             border-radius: 2px;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
             -webkit-print-color-adjust: exact;
         }
 
@@ -92,7 +104,7 @@
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .meta-row:last-child {
@@ -121,13 +133,14 @@
             text-align: left;
             box-sizing: border-box;
             background-color: #ffffff;
+            font-family: 'Currys Sans', Arial, sans-serif;
         }
 
         /* Tables Setup */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         th, td {
@@ -141,7 +154,7 @@
             font-size: 8px;
             text-transform: uppercase;
             font-weight: bold;
-            padding: 4px 2px;
+            padding: 3px 2px;
             text-align: center;
             -webkit-print-color-adjust: exact;
         }
@@ -154,8 +167,9 @@
             font-size: 9px;
             box-sizing: border-box;
             background: transparent;
-            height: 14px;
+            height: 13px;
             text-align: left;
+            font-family: 'Currys Sans', Arial, sans-serif;
         }
 
         .tote-input-cell {
@@ -194,19 +208,22 @@
             line-height: 1.2;
             font-weight: bold;
             text-transform: uppercase;
-            margin-top: 4px;
+            margin-top: 2px;
             text-align: left;
         }
 
         @media print {
             body {
                 padding: 0;
+                margin: 0;
                 background: white;
             }
             .form-container {
                 box-shadow: none;
-                padding: 0;
-                width: 100%;
+                padding: 6mm 8mm;
+                width: 148mm;
+                height: 210mm;
+                float: left;
             }
         }
     </style>
@@ -214,7 +231,7 @@
 <body>
 
 <div class="form-container">
-    <form>
+    <form id="collection-form" onkeydown="return disableFormSubmit(event);">
         <!-- Header -->
         <div class="header-section">
             <h1>Goods collection sheet</h1>
@@ -225,15 +242,15 @@
         <div class="meta-group">
             <div class="meta-row">
                 <label for="date">DATE</label>
-                <input type="date" id="date" name="date">
+                <input type="date" id="date" name="date" class="nav-input">
             </div>
             <div class="meta-row">
                 <label for="branch-number">BRANCH<br>NUMBER</label>
-                <input type="text" id="branch-number" name="branch_number">
+                <input type="text" id="branch-number" name="branch_number" class="nav-input">
             </div>
             <div class="meta-row">
                 <label for="branch-name">BRANCH<br>NAME</label>
-                <input type="text" id="branch-name" name="branch_name">
+                <input type="text" id="branch-name" name="branch_name" class="nav-input">
             </div>
         </div>
 
@@ -241,7 +258,7 @@
         <div class="meta-group">
             <div class="meta-row">
                 <label for="number-of-boxes">NUMBER<br>OF BOXES</label>
-                <input type="number" id="number-of-boxes" name="number_of_boxes" min="0">
+                <input type="number" id="number-of-boxes" name="number_of_boxes" min="0" class="nav-input">
             </div>
         </div>
 
@@ -260,14 +277,14 @@
                 <script>
                     for (var i = 0; i < 10; i++) {
                         document.write('<tr>' +
-                            '<td><input type="text" name="consignment_number[]"></td>' +
-                            '<td><input type="text" name="type_of_return[]"></td>' +
-                            '<td><input type="text" name="tote_seal_1[]"></td>' +
-                            '<td><input type="text" name="tote_seal_2[]"></td>' +
+                            '<td><input type="text" name="consignment_number[]" class="nav-input"></td>' +
+                            '<td><input type="text" name="type_of_return[]" class="nav-input"></td>' +
+                            '<td><input type="text" name="tote_seal_1[]" class="nav-input"></td>' +
+                            '<td><input type="text" name="tote_seal_2[]" class="nav-input"></td>' +
                             '<td>' +
                                 '<div class="tote-input-cell">' +
                                     '<span>T:</span>' +
-                                    '<input type="text" name="tote_number[]">' +
+                                    '<input type="text" name="tote_number[]" class="nav-input">' +
                                 '</div>' +
                             '</td>' +
                         '</tr>');
@@ -289,9 +306,9 @@
                 <script>
                     for (var j = 0; j < 5; j++) {
                         document.write('<tr>' +
-                            '<td><input type="text" name="paperwork[]"></td>' +
-                            '<td><input type="text" name="barcode_number[]"></td>' +
-                            '<td><input type="text" name="batch_number[]"></td>' +
+                            '<td><input type="text" name="paperwork[]" class="nav-input"></td>' +
+                            '<td><input type="text" name="barcode_number[]" class="nav-input"></td>' +
+                            '<td><input type="text" name="batch_number[]" class="nav-input"></td>' +
                         '</tr>');
                     }
                 </script>
@@ -299,7 +316,7 @@
                     <td colspan="3">
                         <div style="display: flex; align-items: center; padding: 1px;">
                             <label for="qty-envelopes" style="font-size: 8px; font-weight: bold; color: var(--purple-main); text-transform: uppercase; margin-right: 6px; text-align: left;">Quantity of Envelopes</label>
-                            <input type="number" id="qty-envelopes" name="quantity_of_envelopes" min="0" style="flex: 1;">
+                            <input type="number" id="qty-envelopes" name="quantity_of_envelopes" min="0" style="flex: 1;" class="nav-input">
                         </div>
                     </td>
                 </tr>
@@ -320,19 +337,19 @@
                         <table style="width: 100%; margin: 0; border: none;">
                             <tr>
                                 <td class="label-col" style="border-left: none; border-top: none;">Sign</td>
-                                <td style="width: 40%; border-top: none;"><input type="text" name="store_rep_sign"></td>
+                                <td style="width: 40%; border-top: none;"><input type="text" name="store_rep_sign" class="nav-input"></td>
                                 <td class="label-col" style="border-top: none;">Sign</td>
-                                <td style="width: 40%; border-right: none; border-top: none;"><input type="text" name="collected_by_sign"></td>
+                                <td style="width: 40%; border-right: none; border-top: none;"><input type="text" name="collected_by_sign" class="nav-input"></td>
                             </tr>
                             <tr>
                                 <td class="label-col" style="border-left: none;">Print</td>
-                                <td><input type="text" name="store_rep_print"></td>
+                                <td><input type="text" name="store_rep_print" class="nav-input"></td>
                                 <td class="label-col">Print</td>
-                                <td style="border-right: none;"><input type="text" name="collected_by_print"></td>
+                                <td style="border-right: none;"><input type="text" name="collected_by_print" class="nav-input"></td>
                             </tr>
                             <tr>
                                 <td class="label-col" style="border-left: none; border-bottom: none;">Company</td>
-                                <td style="border-bottom: none;"><input type="text" id="store-rep-company" name="store_rep_company"></td>
+                                <td style="border-bottom: none;"><input type="text" id="store-rep-company" name="store_rep_company" class="nav-input"></td>
                                 <td style="border-bottom: none; border-right: none;" colspan="2"></td>
                             </tr>
                         </table>
@@ -351,8 +368,15 @@
     </form>
 </div>
 
-<!-- Legacy JS for auto-date & localStorage save/load (Chrome on XP compatible) -->
+<!-- XP / Old Chrome Compatible Scripts -->
 <script>
+    function disableFormSubmit(e) {
+        var key = e.keyCode || e.which;
+        if (key === 13) {
+            return false;
+        }
+    }
+
     window.onload = function() {
         // Auto fill today's date
         var dateInput = document.getElementById('date');
@@ -371,7 +395,7 @@
             { id: 'store-rep-company', key: 'currys_company' }
         ];
 
-        // Helper to bind events cross-browser
+        // Helper event binder
         function bindEvent(element, eventName, handler) {
             if (element.addEventListener) {
                 element.addEventListener(eventName, handler, false);
@@ -380,7 +404,7 @@
             }
         }
 
-        // Restore values from localStorage & attach auto-save listeners
+        // Restore values & auto-save
         if (window.localStorage) {
             for (var k = 0; k < fieldsToPersist.length; k++) {
                 (function(item) {
@@ -399,6 +423,29 @@
                     }
                 })(fieldsToPersist[k]);
             }
+        }
+
+        // Enter key navigation logic
+        var inputs = document.getElementsByClassName('nav-input');
+        for (var n = 0; n < inputs.length; n++) {
+            (function(index) {
+                bindEvent(inputs[index], 'keydown', function(e) {
+                    var keyCode = e.keyCode || e.which;
+                    if (keyCode === 13) { // Enter key
+                        if (e.preventDefault) {
+                            e.preventDefault();
+                        } else {
+                            e.returnValue = false;
+                        }
+                        if (index + 1 < inputs.length) {
+                            inputs[index + 1].focus();
+                            if (inputs[index + 1].select) {
+                                inputs[index + 1].select();
+                            }
+                        }
+                    }
+                });
+            })(n);
         }
     };
 </script>
