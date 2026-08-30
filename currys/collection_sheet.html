@@ -243,7 +243,28 @@
             text-align: left;
         }
 
-        /* STRICT PRINT STYLES FOR EXACT SINGLE PAGE */
+        .print-btn {
+            position: fixed;
+            top: 10px;
+            right: 20px;
+            margin: 0;
+            padding: 8px 16px;
+            background-color: var(--purple-main);
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Currys Sans', Arial, sans-serif;
+            z-index: 1000;
+        }
+
+        @media print {
+            .print-btn {
+                display: none !important;
+            }
+        }
         @media print {
             html, body {
                 width: 297mm !important;
@@ -277,6 +298,7 @@
 </head>
 <body>
 
+<button type="button" class="print-btn" onclick="window.print();">Print</button>
 <div class="form-container">
     <form id="collection-form" onkeydown="return disableFormSubmit(event);">
         <!-- Header -->
