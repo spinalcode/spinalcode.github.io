@@ -11,13 +11,6 @@
             font-style: normal;
         }
 
-        :root {
-            --purple-main: #4d2d7c;
-            --purple-light: #eadef0;
-            --purple-header: #3b2260;
-            --border-color: #3b2260;
-        }
-
         @page {
             size: A4 landscape;
             margin: 0mm;
@@ -37,58 +30,64 @@
         body {
             display: flex;
             justify-content: flex-start;
-            padding: 10px;
+            padding: 0px;
             box-sizing: border-box;
-            background-color: #f4f4f9;
+            background-color: #FFFFFF;
         }
 
         .form-container {
-            width: 148mm;
+            width: 145mm;
             height: 210mm;
             background: #ffffff;
-            padding: 6mm 8mm;
+            padding: 0;
             box-sizing: border-box;
-            border-radius: 4px;
+            border-radius: 0px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             position: relative;
-            display: flex;
-            flex-direction: column;
         }
 
         .form-container form {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
+            position: relative;
+            display: block;
             height: 100%;
+            z-index: 1;
         }
 
         .header-section {
+            position: absolute;
+            left: 10mm;
+            top: 6mm;
+            width: 127mm;
+            height: 15mm;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 6px;
+            margin: 0;
         }
 
         .header-section h1 {
-            color: var(--purple-main);
-            font-size: 25px;
+            color: #4C4288;
+            font-size: 26.5px;
             margin: 0;
             font-weight: bold;
             text-align: left;
         }
 
         .logo {
-            background-color: var(--purple-main) !important;
+            position: absolute;
+			left: 111.5mm;
+			top: -3mm;
+            background-color: #4C4288 !important;
             color: #ffffff !important;
             border-radius: 50%;
-            width: 48px;
-            height: 48px;
+            width: 58px;
+            height: 58px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 16px;
             text-transform: lowercase;
             text-align: center;
             -webkit-print-color-adjust: exact;
@@ -96,29 +95,50 @@
 
         /* Top Meta Information */
         .meta-group {
-            background-color: var(--purple-light) !important;
+            background-color: #A096DC !important;
             padding: 5px 8px;
             border-radius: 2px;
-            margin-bottom: 5px;
+            box-sizing: border-box;
             -webkit-print-color-adjust: exact;
+        }
+
+        #date-branch-box {
+            position: absolute;
+            left: 10mm;
+            top: 21mm;
+            width: 127mm;
+            height: 24.5mm;
+            margin: 0;
+        }
+
+        #boxes-count-box {
+            position: absolute;
+            left: 10mm;
+            top: 48mm;
+            width: 127mm;
+            height: 10mm;
+            margin: 0;
         }
 
         .meta-row {
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            margin-bottom: 3px;
-        }
-
-        .meta-row:last-child {
             margin-bottom: 0;
         }
 
+        #date-branch-box .meta-row:nth-child(1) { height: 7mm; }
+        #date-branch-box .meta-row:nth-child(2) { height: 7mm; }
+        #date-branch-box .meta-row:nth-child(3) { height: 7mm; }
+        #boxes-count-box .meta-row { height: 7mm; }
+
+
         .meta-row label {
-            width: 22%;
-            font-size: 8px;
+            width: 20mm;
+            flex-shrink: 0;
+            font-size: 10px;
             font-weight: bold;
-            color: var(--purple-main);
+            color: #4C4288;
             text-transform: uppercase;
             text-align: right;
             padding-right: 8px;
@@ -127,12 +147,13 @@
         }
 
         .meta-row input {
-            width: 78%;
+            flex: 1;
+            align-self: center;
             padding: 2px 4px;
             border: 1px solid #ccc;
             border-radius: 0;
             font-size: 10px;
-            height: 16px;
+            height: 22px;
             text-align: left;
             box-sizing: border-box;
             background-color: #ffffff;
@@ -140,31 +161,55 @@
         }
 
         /* Tables Setup */
-        :root {
-            --row-h: 6.39mm;
-        }
-
         table {
-            width: 100%;
             border-collapse: collapse;
-            margin-bottom: 6px;
+            margin: 0;
             table-layout: fixed;
+            width: 100%;
         }
 
-        table tr {
-            height: var(--row-h);
+        .consignment-table, .paperwork-table, .signatures-table {
+            position: absolute;
+            left: 10mm;
+            width: 127mm;
         }
 
         th, td {
-            border: 1px solid var(--border-color);
+            border: 1px solid #4C4288;
             padding: 1px 2px;
-            height: var(--row-h);
             box-sizing: border-box;
             vertical-align: middle;
+			font-size: 0;
         }
 
+        /* Consignment table */
+        .consignment-table {
+            top: 60mm;
+        }
+        .consignment-table thead tr { height: 8.5mm; }
+        .consignment-table thead th { height: 8.5mm; }
+        .consignment-table tbody tr { height: 5mm; }
+        .consignment-table tbody td { height: 5mm; }
+
+        /* Paperwork table (6 blank rows + 1 "quantity of envelopes" row) */
+        .paperwork-table {
+            top: 122mm;
+        }
+        .paperwork-table thead th { height: 8mm; }
+        .paperwork-table tbody tr { height: 5mm; }
+        .paperwork-table tbody td { height: 5mm; }
+
+        /* Signatures table (outer) + nested table share the same row height */
+        .signatures-table {
+            top: 167.82mm;
+        }
+        .signatures-table thead tr { height: 8.39mm; }
+        .signatures-table thead th { height: 8.39mm; }
+        .signatures-table tbody table tr { height: 7.05mm; }
+        .signatures-table tbody table td { height: 7.05mm; }
+
         th {
-            background-color: var(--purple-main) !important;
+            background-color: #4C4288 !important;
             color: #ffffff !important;
             font-size: 8px;
             text-transform: uppercase;
@@ -174,12 +219,20 @@
             -webkit-print-color-adjust: exact;
         }
 
+        /* White dividers between header cells, but keep the outer edges purple */
+        th:not(:last-child) {
+            border-right-color: #ffffff;
+        }
+        th:not(:first-child) {
+            border-left-color: #ffffff;
+        }
+
         td input {
             width: 100%;
             border: none;
             outline: none;
-            padding: 1px;
-            font-size: 9px;
+            padding: 0 2px;
+            font-size: 8px;
             box-sizing: border-box;
             background: transparent;
             height: 100%;
@@ -197,7 +250,7 @@
         .tote-input-cell span {
             font-weight: bold;
             font-size: 8px;
-            color: var(--purple-main);
+            color: #4C4288;
             margin-right: 2px;
         }
 
@@ -208,11 +261,11 @@
         }
 
         .signatures-table td.label-col {
-            width: 50px;
+            width: 10%;
             font-size: 8px;
             font-weight: bold;
-            color: var(--purple-main);
-            background-color: #f9f9f9;
+            color: #4C4288;
+            background-color: #FFFFFF;
             text-transform: uppercase;
             text-align: left;
         }
@@ -221,14 +274,25 @@
             margin: 0;
         }
 
+        /* White divider between each Sign/Print/Company label and its own input field (to its right) */
+        .signatures-table td.label-col {
+            border-right-color: #ffffff;
+        }
+        .signatures-table td.label-col + td {
+            border-left-color: #ffffff;
+        }
+
         /* Footer Metadata */
         .footer-info {
-            font-size: 8px;
+            position: absolute;
+            left: 10mm;
+            top: 200mm;
+            width: 127mm;
+            font-size: 7px;
             color: #333;
-            line-height: 1.2;
+            line-height: 1.1;
             font-weight: bold;
             text-transform: uppercase;
-            margin-top: 2px;
             text-align: left;
         }
 
@@ -238,7 +302,7 @@
             right: 20px;
             margin: 0;
             padding: 8px 16px;
-            background-color: var(--purple-main);
+            background-color: #4C4288;
             color: #fff;
             border: none;
             border-radius: 4px;
@@ -270,10 +334,10 @@
                 top: 0 !important;
                 left: 0 !important;
                 box-shadow: none !important;
-                padding: 6mm 8mm !important;
+                padding: 0 !important;
                 width: 145mm !important;
-                height: 205mm !important;
-                max-height: 205mm !important;
+                height: 209mm !important;
+                max-height: 209mm !important;
                 box-sizing: border-box !important;
                 overflow: hidden !important;
                 float: none !important;
@@ -281,9 +345,6 @@
                 page-break-inside: avoid !important;
                 break-after: avoid !important;
                 break-inside: avoid !important;
-            }
-            :root {
-                --row-h: 6.25mm !important;
             }
         }
     </style>
@@ -300,7 +361,7 @@
         </div>
 
         <!-- Date & Branch Info -->
-        <div class="meta-group">
+        <div class="meta-group" id="date-branch-box">
             <div class="meta-row">
                 <label for="date">DATE</label>
                 <input type="date" id="date" name="date" class="nav-input">
@@ -316,7 +377,7 @@
         </div>
 
         <!-- Number of Boxes -->
-        <div class="meta-group">
+        <div class="meta-group" id="boxes-count-box">
             <div class="meta-row">
                 <label for="number-of-boxes">NUMBER<br>OF BOXES</label>
                 <input type="number" id="number-of-boxes" name="number_of_boxes" min="0" class="nav-input">
@@ -324,7 +385,7 @@
         </div>
 
         <!-- Consignment Table -->
-        <table>
+        <table class="consignment-table">
             <thead>
                 <tr>
                     <th>Consignment Number</th>
@@ -355,7 +416,7 @@
         </table>
 
         <!-- Paperwork & Batch Table -->
-        <table>
+        <table class="paperwork-table">
             <thead>
                 <tr>
                     <th style="width: 33.33%;">Paperwork</th>
@@ -365,7 +426,7 @@
             </thead>
             <tbody>
                 <script>
-                    for (var j = 0; j < 5; j++) {
+                    for (var j = 0; j < 6; j++) {
                         document.write('<tr>' +
                             '<td><input type="text" name="paperwork[]" class="nav-input"></td>' +
                             '<td><input type="text" name="barcode_number[]" class="nav-input"></td>' +
@@ -376,7 +437,7 @@
                 <tr>
                     <td colspan="3">
                         <div style="display: flex; align-items: center; padding: 1px; width: 100%;">
-                            <label for="qty-envelopes" style="font-size: 8px; font-weight: bold; color: var(--purple-main); text-transform: uppercase; margin-right: 6px; text-align: left;">Quantity of Envelopes</label>
+                            <label for="qty-envelopes" style="font-size: 8px; font-weight: bold; color: #4C4288; text-transform: uppercase; margin-right: 6px; text-align: left;">Quantity of Envelopes</label>
                             <input type="number" id="qty-envelopes" name="quantity_of_envelopes" min="0" style="flex: 1;" class="nav-input">
                         </div>
                     </td>
