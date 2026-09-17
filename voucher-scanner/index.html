@@ -1,1 +1,168 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Voucher Code OCR</title>
+<script src="tesseract.min.js"></script>
+<script src="JsBarcode.all.min.js"></script>
+<style>
+  :root{
+    --bg:#ffffff; --fg:#1a1a2e; --card:#f4f4f8; --accent:#6b2fa0; --border:#ddd;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){ --bg:#15151f; --fg:#eee; --card:#232332; --border:#3a3a4a; }
+  }
+  :root[data-theme="dark"]{ --bg:#15151f; --fg:#eee; --card:#232332; --border:#3a3a4a; }
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg); color:var(--fg); font-family:-apple-system,Segoe UI,Roboto,sans-serif;
+    margin:0; padding:2rem 1rem; display:flex; flex-direction:column; align-items:center; min-height:100vh;
+  }
+  h1{font-size:1.3rem; margin-bottom:0.25rem;}
+  p.sub{opacity:0.7; margin-top:0; font-size:0.9rem; text-align:center;}
+  .card{
+    background:var(--card); border:1px solid var(--border); border-radius:12px;
+    padding:1.5rem; width:100%; max-width:420px; text-align:center;
+  }
+  input[type=file]{ display:block; margin:1rem auto; max-width:100%; }
+  canvas{ max-width:100%; border-radius:8px; margin-top:0.5rem; display:none; }
+  #status{ margin-top:1rem; font-size:0.9rem; opacity:0.8; min-height:1.2em; }
+  #result{
+    margin-top:1rem; font-family:ui-monospace,Menlo,monospace; font-size:1.6rem;
+    letter-spacing:0.05em; word-break:break-all; color:var(--accent); font-weight:700;
+    min-height:2rem;
+  }
+  button{
+    background:var(--accent); color:#fff; border:none; border-radius:8px;
+    padding:0.6rem 1.2rem; font-size:0.9rem; cursor:pointer; margin-top:0.75rem;
+  }
+  button:disabled{opacity:0.5; cursor:default;}
+  progress{ width:100%; margin-top:0.5rem; }
+</style>
+</head>
+<body>
+  <h1>Voucher Code Reader</h1>
+  <p class="sub">Runs fully in your browser — the photo never leaves your device.</p>
+  <div class="card">
+    <button id="camBtn">Scan Voucher</button>
+    <video id="video" autoplay playsinline style="display:none;max-width:100%;border-radius:8px;margin-top:0.5rem"></video>
+    <button id="snapBtn" style="display:none">Capture photo</button>
+    <canvas id="preview"></canvas>
+    <progress id="progress" value="0" max="1" style="display:none"></progress>
+    <div id="status">Tap Scan Voucher to start.</div>
+    <div id="result"></div>
+    <svg id="barcode" style="display:none;margin-top:0.5rem;max-width:100%"></svg>
+    <div id="barcodeNote" style="font-size:0.75rem;opacity:0.7;margin-top:0.25rem"></div>
+    <button id="copyBtn" style="display:none">Copy code</button>
+  </div>
+
+<script>
+const canvas = document.getElementById('preview');
+const ctx = canvas.getContext('2d');
+const statusEl = document.getElementById('status');
+const resultEl = document.getElementById('result');
+const progressEl = document.getElementById('progress');
+const copyBtn = document.getElementById('copyBtn');
+const barcodeEl = document.getElementById('barcode');
+const barcodeNoteEl = document.getElementById('barcodeNote');
+
+const camBtn = document.getElementById('camBtn');
+const snapBtn = document.getElementById('snapBtn');
+const video = document.getElementById('video');
+let stream = null;
+
+camBtn.addEventListener('click', async () => {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    video.srcObject = stream;
+    video.style.display = 'block';
+    snapBtn.style.display = 'inline-block';
+    canvas.style.display = 'none';
+    statusEl.textContent = 'Position the code, then capture.';
+  } catch (err) {
+    statusEl.textContent = 'Camera access failed: ' + (err && err.message ? err.message : 'permission denied');
+  }
+});
+
+snapBtn.addEventListener('click', () => {
+  const maxW = 400;
+  const scale = maxW / video.videoWidth;
+  canvas.width = maxW;
+  canvas.height = video.videoHeight * scale;
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  canvas.style.display = 'block';
+  video.style.display = 'none';
+  snapBtn.style.display = 'none';
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+  canvas.toBlob(runOcr, 'image/png');
+});
+
+async function runOcr(blob) {
+    resultEl.textContent = '';
+    copyBtn.style.display = 'none';
+    statusEl.textContent = 'Reading code locally…';
+    progressEl.style.display = 'block';
+    progressEl.value = 0;
+
+    try {
+      const { data } = await Tesseract.recognize(blob, 'eng', {
+        workerPath: 'worker.min.js',
+        corePath: 'tesseract-core-lstm.wasm.js',
+        langPath: '.',
+        cacheMethod: 'none',
+        gzip: true,
+        logger: (m) => {
+          if (m.status === 'recognizing text') {
+            progressEl.value = m.progress;
+            statusEl.textContent = 'Reading… ' + Math.round(m.progress * 100) + '%';
+          } else {
+            statusEl.textContent = m.status;
+          }
+        },
+        tessedit_char_whitelist: '0123456789'
+      });
+
+      // Grab the longest run of digits found (the voucher code)
+      const matches = (data.text.match(/\d{6,}/g) || []).sort((a,b)=>b.length-a.length);
+      progressEl.style.display = 'none';
+
+      if (matches.length) {
+        const code = matches[0];
+        const barcodeValue = 'DSG16' + code;
+        resultEl.textContent = code;
+        statusEl.textContent = 'Code found:';
+        copyBtn.style.display = 'inline-block';
+
+        let format = 'CODE128';
+        barcodeNoteEl.textContent = 'Barcode value: ' + barcodeValue;
+        try {
+          JsBarcode(barcodeEl, barcodeValue, { format, displayValue: true, width: 2, height: 60, fontSize: 14 });
+          barcodeEl.style.display = 'block';
+        } catch (bcErr) {
+          barcodeEl.style.display = 'none';
+          barcodeNoteEl.textContent = 'Could not render barcode: ' + bcErr.message;
+        }
+      } else {
+        statusEl.textContent = 'No digit code found — try a clearer, closer photo.';
+        barcodeEl.style.display = 'none';
+        barcodeNoteEl.textContent = '';
+      }
+    } catch (err) {
+      progressEl.style.display = 'none';
+      statusEl.textContent = 'OCR failed: ' + (err && err.message ? err.message : 'unknown error');
+    }
+}
+
+copyBtn.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(resultEl.textContent);
+    copyBtn.textContent = 'Copied!';
+    setTimeout(() => (copyBtn.textContent = 'Copy code'), 1200);
+  } catch {
+    statusEl.textContent = 'Could not copy — select and copy manually.';
+  }
+});
+</script>
+</body>
+</html>
