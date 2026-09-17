@@ -88,6 +88,9 @@
     max-width: 900px;
     margin: 10px auto 0;
     display: none;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
   }
 
   #barcode { width: 100%; height: auto; display: block; }
@@ -230,7 +233,7 @@ async function runOcr(blob) {
           barcodeEl.setAttribute('viewBox', `0 0 ${w} ${h}`);
           barcodeEl.removeAttribute('width');
           barcodeEl.removeAttribute('height');
-          barcodeBoxEl.style.display = 'block';
+          barcodeBoxEl.style.display = 'flex';
         } catch (bcErr) {
           barcodeBoxEl.style.display = 'none';
           barcodeNoteEl.textContent = 'Could not render barcode: ' + bcErr.message;
