@@ -130,7 +130,6 @@
 
     <br>
     <button id="toggle-button">Scan Voucher</button>
-    <button class="button" id="copyBtn" style="display:none">Copy</button>
   </div>
 
 <script>
@@ -139,7 +138,6 @@ const ctx = canvas.getContext('2d');
 const statusEl = document.getElementById('status');
 const resultEl = document.getElementById('result');
 const progressEl = document.getElementById('progress');
-const copyBtn = document.getElementById('copyBtn');
 const barcodeEl = document.getElementById('barcode');
 const barcodeBoxEl = document.getElementById('barcodeBox');
 const barcodeNoteEl = document.getElementById('barcodeNote');
@@ -183,7 +181,6 @@ camBtn.addEventListener('click', async () => {
 
 async function runOcr(blob) {
     resultEl.textContent = '';
-    copyBtn.style.display = 'none';
     barcodeBoxEl.style.display = 'none';
     statusEl.textContent = 'Reading code locally…';
     progressEl.style.display = 'block';
@@ -216,7 +213,7 @@ async function runOcr(blob) {
         const barcodeValue = 'DSG16' + code;
         resultEl.textContent = code;
         statusEl.textContent = 'Code found:';
-        copyBtn.style.display = 'inline-block';
+        canvas.style.display = 'none';
 
         barcodeNoteEl.textContent = 'Barcode value: ' + barcodeValue;
         try {
@@ -236,15 +233,6 @@ async function runOcr(blob) {
     }
 }
 
-copyBtn.addEventListener('click', async () => {
-  try {
-    await navigator.clipboard.writeText(resultEl.textContent);
-    copyBtn.textContent = 'Copied!';
-    setTimeout(() => (copyBtn.textContent = 'Copy'), 1200);
-  } catch {
-    statusEl.textContent = 'Could not copy — select and copy manually.';
-  }
-});
 </script>
 </body>
 </html>
