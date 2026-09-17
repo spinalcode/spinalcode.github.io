@@ -73,17 +73,23 @@
     letter-spacing: 0.05em;
     margin: 10px auto 0;
     min-height: 1.4em;
+    display: none;
   }
 
   #barcodeBox {
     border: 2px solid #4C12A1;
     border-radius: 5px;
-    padding: 5px;
+    padding: 10px;
     text-align: center;
     background-color: #FFFFFF;
     color: #000000;
-    width: 700px;
-    max-width: 92vw;
+    width: 90vw;
+    max-width: 900px;
+    margin: 10px auto 0;
+    display: none;
+  }
+
+  #barcode { width: 100%; height: auto; display: block; }
 
   #scanner-container {
     display: none;
@@ -178,6 +184,7 @@ camBtn.addEventListener('click', async () => {
 
 async function runOcr(blob) {
     resultEl.textContent = '';
+    resultEl.style.display = 'none';
     barcodeBoxEl.style.display = 'none';
     statusEl.textContent = 'Reading code locally…';
     progressEl.style.display = 'block';
@@ -209,12 +216,18 @@ async function runOcr(blob) {
         const code = matches[0];
         const barcodeValue = 'DSG16' + code;
         resultEl.textContent = code;
+        resultEl.style.display = 'block';
         statusEl.textContent = 'Code found:';
         canvas.style.display = 'none';
 
         barcodeNoteEl.textContent = 'Barcode value: ' + barcodeValue;
         try {
           JsBarcode(barcodeEl, barcodeValue, { format: 'CODE128', displayValue: true, width: 4, height: 120, fontSize: 28 });
+          const w = barcodeEl.getAttribute('width');
+          const h = barcodeEl.getAttribute('height');
+          barcodeEl.setAttribute('viewBox', `0 0 ${w} ${h}`);
+          barcodeEl.removeAttribute('width');
+          barcodeEl.removeAttribute('height');
           barcodeBoxEl.style.display = 'block';
         } catch (bcErr) {
           barcodeBoxEl.style.display = 'none';
