@@ -1,60 +1,136 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Voucher Code OCR</title>
+<title>Barcode Display</title>
 <script src="tesseract.min.js"></script>
 <script src="JsBarcode.all.min.js"></script>
 <style>
-  :root{
-    --bg:#ffffff; --fg:#1a1a2e; --card:#f4f4f8; --accent:#6b2fa0; --border:#ddd;
+  body {
+    align-items: center;
+    justify-content: center;
+    background-color: #CAE7E6;
+    position: relative;
+    display: flex;
+    margin: 0;
+    min-height: 100vh;
+    font-family: -apple-system, Segoe UI, Roboto, sans-serif;
   }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){ --bg:#15151f; --fg:#eee; --card:#232332; --border:#3a3a4a; }
+
+  .container1 {
+    position: relative;
+    border: 2px solid #4C12A1;
+    text-align: center;
+    background-color: #B8D2F3;
+    border-radius: 20px;
+    padding: 20px;
+    margin-top: 50px;
   }
-  :root[data-theme="dark"]{ --bg:#15151f; --fg:#eee; --card:#232332; --border:#3a3a4a; }
-  *{box-sizing:border-box;}
-  body{
-    background:var(--bg); color:var(--fg); font-family:-apple-system,Segoe UI,Roboto,sans-serif;
-    margin:0; padding:2rem 1rem; display:flex; flex-direction:column; align-items:center; min-height:100vh;
+
+  .h1-container { margin-top: -40px; }
+
+  .container1 h1 {
+    display: inline-block;
+    border: 2px solid #4C12A1;
+    border-radius: 10px;
+    padding: 5px 20px;
+    text-align: center;
+    background-color: #FFFFFF;
+    color: #4C12A1;
+    font-size: 1.4rem;
+    margin: 0;
   }
-  h1{font-size:1.3rem; margin-bottom:0.25rem;}
-  p.sub{opacity:0.7; margin-top:0; font-size:0.9rem; text-align:center;}
-  .card{
-    background:var(--card); border:1px solid var(--border); border-radius:12px;
-    padding:1.5rem; width:100%; max-width:420px; text-align:center;
+
+  button {
+    border: 1px solid #4C12A1;
+    border-radius: 50px;
+    padding: 5px;
+    width: 100px;
+    text-align: center;
+    background-color: #4C12A1;
+    color: #FFF;
+    cursor: pointer;
   }
-  input[type=file]{ display:block; margin:1rem auto; max-width:100%; }
-  canvas{ max-width:100%; border-radius:8px; margin-top:0.5rem; display:none; }
-  #status{ margin-top:1rem; font-size:0.9rem; opacity:0.8; min-height:1.2em; }
-  #result{
-    margin-top:1rem; font-family:ui-monospace,Menlo,monospace; font-size:1.6rem;
-    letter-spacing:0.05em; word-break:break-all; color:var(--accent); font-weight:700;
-    min-height:2rem;
+
+  #status {
+    color: #4C12A1;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    min-height: 1.2em;
   }
-  button{
-    background:var(--accent); color:#fff; border:none; border-radius:8px;
-    padding:0.6rem 1.2rem; font-size:0.9rem; cursor:pointer; margin-top:0.75rem;
+
+  #result {
+    border: 2px solid #4C12A1;
+    border-radius: 5px;
+    padding: 5px;
+    text-align: center;
+    background-color: #FFFFFF;
+    color: #4C12A1;
+    width: 400px;
+    max-width: 80vw;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin: 10px auto 0;
+    min-height: 1.4em;
   }
-  button:disabled{opacity:0.5; cursor:default;}
-  progress{ width:100%; margin-top:0.5rem; }
+
+  #barcodeBox {
+    border: 2px solid #4C12A1;
+    border-radius: 5px;
+    padding: 5px;
+    text-align: center;
+    background-color: #FFFFFF;
+    color: #000000;
+    width: 400px;
+    max-width: 80vw;
+    margin: 10px auto 0;
+    display: none;
+  }
+
+  #scanner-container {
+    display: none;
+    border-radius: 10px;
+    margin-top: 10px;
+  }
+  #scanner-container.open {
+    display: block;
+    border: 2px solid #4C12A1;
+  }
+
+  video, canvas { max-width: 100%; border-radius: 8px; display: block; }
+  canvas { display: none; }
+
+  #toggle-button, .button {
+    width: 300px;
+    height: 60px;
+    font-size: 1.3rem;
+    margin-top: 20px;
+  }
+
+  progress { width: 100%; margin-top: 0.5rem; display: none; }
+
+  #barcodeNote { font-size: 0.75rem; opacity: 0.7; margin-top: 0.25rem; }
 </style>
 </head>
 <body>
-  <h1>Voucher Code Reader</h1>
-  <p class="sub">Runs fully in your browser — the photo never leaves your device.</p>
-  <div class="card">
-    <button id="camBtn">Scan Voucher</button>
-    <video id="video" autoplay playsinline style="display:none;max-width:100%;border-radius:8px;margin-top:0.5rem"></video>
-    <button id="snapBtn" style="display:none">Capture photo</button>
-    <canvas id="preview"></canvas>
-    <progress id="progress" value="0" max="1" style="display:none"></progress>
-    <div id="status">Tap Scan Voucher to start.</div>
+  <div class="container1">
+    <div class="h1-container"><h1>Barcode Display</h1></div>
+
     <div id="result"></div>
-    <svg id="barcode" style="display:none;margin-top:0.5rem;max-width:100%"></svg>
-    <div id="barcodeNote" style="font-size:0.75rem;opacity:0.7;margin-top:0.25rem"></div>
-    <button id="copyBtn" style="display:none">Copy code</button>
+    <div id="barcodeBox"><svg id="barcode"></svg></div>
+    <div id="barcodeNote"></div>
+    <progress id="progress" value="0" max="1"></progress>
+    <div id="status">Tap Scan Voucher to start.</div>
+
+    <div id="scanner-container">
+      <video id="video" autoplay playsinline></video>
+      <canvas id="preview"></canvas>
+    </div>
+
+    <br>
+    <button id="toggle-button">Scan Voucher</button>
+    <button class="button" id="copyBtn" style="display:none">Copy</button>
   </div>
 
 <script>
@@ -65,42 +141,50 @@ const resultEl = document.getElementById('result');
 const progressEl = document.getElementById('progress');
 const copyBtn = document.getElementById('copyBtn');
 const barcodeEl = document.getElementById('barcode');
+const barcodeBoxEl = document.getElementById('barcodeBox');
 const barcodeNoteEl = document.getElementById('barcodeNote');
 
-const camBtn = document.getElementById('camBtn');
-const snapBtn = document.getElementById('snapBtn');
+const camBtn = document.getElementById('toggle-button');
+const scannerContainer = document.getElementById('scanner-container');
 const video = document.getElementById('video');
 let stream = null;
+let scanning = false;
 
 camBtn.addEventListener('click', async () => {
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-    video.srcObject = stream;
-    video.style.display = 'block';
-    snapBtn.style.display = 'inline-block';
-    canvas.style.display = 'none';
-    statusEl.textContent = 'Position the code, then capture.';
-  } catch (err) {
-    statusEl.textContent = 'Camera access failed: ' + (err && err.message ? err.message : 'permission denied');
+  if (!scanning) {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      video.srcObject = stream;
+      scannerContainer.classList.add('open');
+      scannerContainer.style.display = 'block';
+      canvas.style.display = 'none';
+      video.style.display = 'block';
+      statusEl.textContent = 'Position the code, then tap Capture.';
+      camBtn.textContent = 'Capture';
+      scanning = true;
+    } catch (err) {
+      statusEl.textContent = 'Camera access failed: ' + (err && err.message ? err.message : 'permission denied');
+    }
+  } else {
+    const maxW = 400;
+    const scale = maxW / video.videoWidth;
+    canvas.width = maxW;
+    canvas.height = video.videoHeight * scale;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.style.display = 'block';
+    video.style.display = 'none';
+    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+    scannerContainer.classList.remove('open');
+    camBtn.textContent = 'Scan Voucher';
+    scanning = false;
+    canvas.toBlob(runOcr, 'image/png');
   }
-});
-
-snapBtn.addEventListener('click', () => {
-  const maxW = 400;
-  const scale = maxW / video.videoWidth;
-  canvas.width = maxW;
-  canvas.height = video.videoHeight * scale;
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  canvas.style.display = 'block';
-  video.style.display = 'none';
-  snapBtn.style.display = 'none';
-  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
-  canvas.toBlob(runOcr, 'image/png');
 });
 
 async function runOcr(blob) {
     resultEl.textContent = '';
     copyBtn.style.display = 'none';
+    barcodeBoxEl.style.display = 'none';
     statusEl.textContent = 'Reading code locally…';
     progressEl.style.display = 'block';
     progressEl.value = 0;
@@ -134,18 +218,16 @@ async function runOcr(blob) {
         statusEl.textContent = 'Code found:';
         copyBtn.style.display = 'inline-block';
 
-        let format = 'CODE128';
         barcodeNoteEl.textContent = 'Barcode value: ' + barcodeValue;
         try {
-          JsBarcode(barcodeEl, barcodeValue, { format, displayValue: true, width: 2, height: 60, fontSize: 14 });
-          barcodeEl.style.display = 'block';
+          JsBarcode(barcodeEl, barcodeValue, { format: 'CODE128', displayValue: true, width: 2, height: 60, fontSize: 14 });
+          barcodeBoxEl.style.display = 'block';
         } catch (bcErr) {
-          barcodeEl.style.display = 'none';
+          barcodeBoxEl.style.display = 'none';
           barcodeNoteEl.textContent = 'Could not render barcode: ' + bcErr.message;
         }
       } else {
         statusEl.textContent = 'No digit code found — try a clearer, closer photo.';
-        barcodeEl.style.display = 'none';
         barcodeNoteEl.textContent = '';
       }
     } catch (err) {
@@ -158,7 +240,7 @@ copyBtn.addEventListener('click', async () => {
   try {
     await navigator.clipboard.writeText(resultEl.textContent);
     copyBtn.textContent = 'Copied!';
-    setTimeout(() => (copyBtn.textContent = 'Copy code'), 1200);
+    setTimeout(() => (copyBtn.textContent = 'Copy'), 1200);
   } catch {
     statusEl.textContent = 'Could not copy — select and copy manually.';
   }
