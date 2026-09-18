@@ -172,11 +172,26 @@ camBtn.addEventListener('click', async () => {
       statusEl.textContent = 'Camera access failed: ' + (err && err.message ? err.message : 'permission denied');
     }
   } else {
+    const boxW = video.clientWidth;
+    const boxH = video.clientHeight;
+    const videoRatio = video.videoWidth / video.videoHeight;
+    const boxRatio = boxW / boxH;
+    let sx, sy, sw, sh;
+    if (videoRatio > boxRatio) {
+      sh = video.videoHeight;
+      sw = sh * boxRatio;
+      sx = (video.videoWidth - sw) / 2;
+      sy = 0;
+    } else {
+      sw = video.videoWidth;
+      sh = sw / boxRatio;
+      sx = 0;
+      sy = (video.videoHeight - sh) / 2;
+    }
     const maxW = 400;
-    const scale = maxW / video.videoWidth;
     canvas.width = maxW;
-    canvas.height = video.videoHeight * scale;
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.height = maxW / boxRatio;
+    ctx.drawImage(video, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
     canvas.style.display = 'block';
     video.style.display = 'none';
     if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
@@ -222,10 +237,10 @@ async function runOcr(blob) {
         const barcodeValue = 'DSG16' + code;
         resultEl.textContent = code;
         resultEl.style.display = 'block';
-        statusEl.textContent = 'Code found:';
+        statusEl.textContent = '';
         canvas.style.display = 'none';
 
-        barcodeNoteEl.textContent = 'Barcode value: ' + barcodeValue;
+        
         try {
           JsBarcode(barcodeEl, barcodeValue, { format: 'CODE128', displayValue: true, width: 2, height: 60, fontSize: 14 });
           const w = barcodeEl.getAttribute('width');
