@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>voucher scanner</title>
+  <style>
+
+  </style>
+</head>
+<body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Barcode Display</title>
@@ -119,6 +130,29 @@
   progress { width: 100%; margin-top: 0.5rem; display: none; }
 
   #barcodeNote { font-size: 0.75rem; opacity: 0.7; margin-top: 0.25rem; }
+
+  #historyBox {
+    width: 90vw;
+    max-width: 900px;
+    margin: 20px auto 0;
+    display: none;
+  }
+  #historyBox.has-items { display: block; }
+
+  #historyList { display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+
+  .history-item {
+    border: 2px solid #4C12A1;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    color: #4C12A1;
+    padding: 12px;
+    font-size: 1.1rem;
+    letter-spacing: 0.03em;
+    touch-action: pan-y;
+    user-select: none;
+    cursor: pointer;
+  }
 </style>
 </head>
 <body>
@@ -138,6 +172,10 @@
 
     <br>
     <button id="toggle-button">Scan Voucher</button>
+
+    <div id="historyBox">
+      <div id="historyList"></div>
+    </div>
   </div>
 
 <script>
@@ -149,12 +187,98 @@ const progressEl = document.getElementById('progress');
 const barcodeEl = document.getElementById('barcode');
 const barcodeBoxEl = document.getElementById('barcodeBox');
 const barcodeNoteEl = document.getElementById('barcodeNote');
+const historyBoxEl = document.getElementById('historyBox');
+const historyListEl = document.getElementById('historyList');
 
 const camBtn = document.getElementById('toggle-button');
 const scannerContainer = document.getElementById('scanner-container');
 const video = document.getElementById('video');
 let stream = null;
 let scanning = false;
+
+const HISTORY_KEY = 'voucherHistory';
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
+  catch { return []; }
+}
+function saveHistory(arr) {
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(arr)); } catch {}
+}
+function addToHistory(code) {
+  let h = loadHistory().filter(c => c !== code);
+  h.unshift(code);
+  if (h.length > 10) h = h.slice(0, 10);
+  saveHistory(h);
+  renderHistory();
+}
+function removeFromHistory(code) {
+  saveHistory(loadHistory().filter(c => c !== code));
+  renderHistory();
+}
+
+function renderHistory() {
+  const items = loadHistory();
+  historyListEl.innerHTML = '';
+  historyBoxEl.classList.toggle('has-items', items.length > 0);
+  items.forEach(code => {
+    const item = document.createElement('div');
+    item.className = 'history-item';
+    item.textContent = code;
+    attachSwipe(item, code);
+    historyListEl.appendChild(item);
+  });
+}
+
+function attachSwipe(el, code) {
+  let startX = 0, dx = 0, dragging = false;
+  el.addEventListener('pointerdown', (e) => {
+    dragging = true; startX = e.clientX; dx = 0;
+    el.style.transition = 'none';
+    el.setPointerCapture(e.pointerId);
+  });
+  el.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    dx = e.clientX - startX;
+    el.style.transform = `translateX(${dx}px)`;
+    el.style.opacity = String(1 - Math.min(Math.abs(dx) / 150, 0.85));
+  });
+  el.addEventListener('pointerup', () => {
+    dragging = false;
+    el.style.transition = 'transform 0.2s ease, opacity 0.2s ease';
+    if (Math.abs(dx) > 80) {
+      el.style.transform = `translateX(${dx > 0 ? 500 : -500}px)`;
+      el.style.opacity = '0';
+      setTimeout(() => removeFromHistory(code), 180);
+    } else if (Math.abs(dx) < 8) {
+      el.style.transform = 'translateX(0)';
+      el.style.opacity = '1';
+      showCode(code);
+    } else {
+      el.style.transform = 'translateX(0)';
+      el.style.opacity = '1';
+    }
+  });
+}
+
+function showCode(code) {
+  const barcodeValue = 'DSG16' + code;
+  resultEl.textContent = code;
+  resultEl.style.display = 'block';
+  try {
+    JsBarcode(barcodeEl, barcodeValue, { format: 'CODE128', displayValue: true, width: 2, height: 60, fontSize: 14 });
+    const w = barcodeEl.getAttribute('width');
+    const h = barcodeEl.getAttribute('height');
+    barcodeEl.setAttribute('viewBox', `0 0 ${w} ${h}`);
+    barcodeEl.removeAttribute('width');
+    barcodeEl.removeAttribute('height');
+    barcodeBoxEl.style.display = 'flex';
+  } catch (bcErr) {
+    barcodeBoxEl.style.display = 'none';
+    barcodeNoteEl.textContent = 'Could not render barcode: ' + bcErr.message;
+  }
+}
+
+renderHistory();
 
 camBtn.addEventListener('click', async () => {
   if (!scanning) {
@@ -236,25 +360,11 @@ async function runOcr(blob) {
 
       if (matches.length) {
         const code = matches[0];
-        const barcodeValue = 'DSG16' + code;
-        resultEl.textContent = code;
         resultEl.style.display = 'block';
         statusEl.textContent = '';
         canvas.style.display = 'none';
-
-        
-        try {
-          JsBarcode(barcodeEl, barcodeValue, { format: 'CODE128', displayValue: true, width: 2, height: 60, fontSize: 14 });
-          const w = barcodeEl.getAttribute('width');
-          const h = barcodeEl.getAttribute('height');
-          barcodeEl.setAttribute('viewBox', `0 0 ${w} ${h}`);
-          barcodeEl.removeAttribute('width');
-          barcodeEl.removeAttribute('height');
-          barcodeBoxEl.style.display = 'flex';
-        } catch (bcErr) {
-          barcodeBoxEl.style.display = 'none';
-          barcodeNoteEl.textContent = 'Could not render barcode: ' + bcErr.message;
-        }
+        showCode(code);
+        addToHistory(code);
       } else {
         statusEl.textContent = 'No digit code found — try a clearer, closer photo.';
         barcodeNoteEl.textContent = '';
@@ -266,5 +376,10 @@ async function runOcr(blob) {
 }
 
 </script>
+</body>
+</html>
+  <script>
+
+  </script>
 </body>
 </html>
