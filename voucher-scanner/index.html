@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>voucher scanner</title>
+  <title>index</title>
   <style>
 
   </style>
@@ -280,21 +280,25 @@ function showCode(code) {
 
 renderHistory();
 
+async function startScanning() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    video.srcObject = stream;
+    scannerContainer.classList.add('open');
+    scannerContainer.style.display = 'block';
+    canvas.style.display = 'none';
+    video.style.display = 'block';
+    statusEl.textContent = 'Position the code, then tap Capture.';
+    camBtn.textContent = 'Capture';
+    scanning = true;
+  } catch (err) {
+    statusEl.textContent = 'Camera access failed: ' + (err && err.message ? err.message : 'permission denied');
+  }
+}
+
 camBtn.addEventListener('click', async () => {
   if (!scanning) {
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-      video.srcObject = stream;
-      scannerContainer.classList.add('open');
-      scannerContainer.style.display = 'block';
-      canvas.style.display = 'none';
-      video.style.display = 'block';
-      statusEl.textContent = 'Position the code, then tap Capture.';
-      camBtn.textContent = 'Capture';
-      scanning = true;
-    } catch (err) {
-      statusEl.textContent = 'Camera access failed: ' + (err && err.message ? err.message : 'permission denied');
-    }
+    await startScanning();
   } else {
     const boxW = video.clientWidth;
     const boxH = video.clientHeight;
@@ -366,8 +370,9 @@ async function runOcr(blob) {
         showCode(code);
         addToHistory(code);
       } else {
-        statusEl.textContent = 'No digit code found — try a clearer, closer photo.';
+        statusEl.textContent = 'No code found — rescanning…';
         barcodeNoteEl.textContent = '';
+        setTimeout(startScanning, 800);
       }
     } catch (err) {
       progressEl.style.display = 'none';
