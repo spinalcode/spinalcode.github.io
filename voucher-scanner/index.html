@@ -229,7 +229,9 @@ async function runOcr(blob) {
       });
 
       // Grab the longest run of digits found (the voucher code)
-      const matches = (data.text.match(/\d{6,}/g) || []).sort((a,b)=>b.length-a.length);
+      const allDigits = data.text.match(/\d{6,}/g) || [];
+      const fifteen = allDigits.filter(d => d.length === 15);
+      const matches = fifteen.length ? fifteen : allDigits.sort((a,b)=>b.length-a.length);
       progressEl.style.display = 'none';
 
       if (matches.length) {
