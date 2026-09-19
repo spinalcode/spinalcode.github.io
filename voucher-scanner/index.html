@@ -194,7 +194,9 @@ const camBtn = document.getElementById('toggle-button');
 const scannerContainer = document.getElementById('scanner-container');
 const video = document.getElementById('video');
 let stream = null;
-let scanning = false;
+let scanning = false;   // camera/loop is active
+let busy = false;       // an OCR pass is currently running
+let stopRequested = false;
 
 const HISTORY_KEY = 'voucherHistory';
 function loadHistory() {
@@ -281,6 +283,7 @@ function showCode(code) {
 renderHistory();
 
 async function startScanning() {
+  stopRequested = false;
   try {
     stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
     video.srcObject = stream;
@@ -288,52 +291,82 @@ async function startScanning() {
     scannerContainer.style.display = 'block';
     canvas.style.display = 'none';
     video.style.display = 'block';
-    statusEl.textContent = 'Position the code, then tap Capture.';
-    camBtn.textContent = 'Capture';
+    resultEl.style.display = 'none';
+    barcodeBoxEl.style.display = 'none';
+    statusEl.textContent = 'Position the code…';
+    camBtn.textContent = 'Stop Scanning';
     scanning = true;
+    // Give the camera a moment to focus/expose before the first grab.
+    setTimeout(captureLoop, 600);
   } catch (err) {
     statusEl.textContent = 'Camera access failed: ' + (err && err.message ? err.message : 'permission denied');
   }
 }
 
-camBtn.addEventListener('click', async () => {
+function stopScanning() {
+  stopRequested = true;
+  scanning = false;
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+  scannerContainer.classList.remove('open');
+  video.style.display = 'none';
+  progressEl.style.display = 'none';
+  camBtn.textContent = 'Scan Voucher';
+}
+
+camBtn.addEventListener('click', () => {
   if (!scanning) {
-    await startScanning();
+    startScanning();
   } else {
-    const boxW = video.clientWidth;
-    const boxH = video.clientHeight;
-    const videoRatio = video.videoWidth / video.videoHeight;
-    const boxRatio = boxW / boxH;
-    let sx, sy, sw, sh;
-    if (videoRatio > boxRatio) {
-      sh = video.videoHeight;
-      sw = sh * boxRatio;
-      sx = (video.videoWidth - sw) / 2;
-      sy = 0;
-    } else {
-      sw = video.videoWidth;
-      sh = sw / boxRatio;
-      sx = 0;
-      sy = (video.videoHeight - sh) / 2;
-    }
-    const maxW = 400;
-    canvas.width = maxW;
-    canvas.height = maxW / boxRatio;
-    ctx.drawImage(video, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
-    canvas.style.display = 'block';
-    video.style.display = 'none';
-    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
-    scannerContainer.classList.remove('open');
-    camBtn.textContent = 'Scan Voucher';
-    scanning = false;
-    canvas.toBlob(runOcr, 'image/png');
+    stopScanning();
+    statusEl.textContent = 'Tap Scan Voucher to start.';
   }
 });
 
+function captureFrame() {
+  const boxW = video.clientWidth;
+  const boxH = video.clientHeight;
+  const videoRatio = video.videoWidth / video.videoHeight;
+  const boxRatio = boxW / boxH;
+  let sx, sy, sw, sh;
+  if (videoRatio > boxRatio) {
+    sh = video.videoHeight;
+    sw = sh * boxRatio;
+    sx = (video.videoWidth - sw) / 2;
+    sy = 0;
+  } else {
+    sw = video.videoWidth;
+    sh = sw / boxRatio;
+    sx = 0;
+    sy = (video.videoHeight - sh) / 2;
+  }
+  const maxW = 400;
+  canvas.width = maxW;
+  canvas.height = maxW / boxRatio;
+  ctx.drawImage(video, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+}
+
+async function captureLoop() {
+  if (stopRequested || !scanning || busy) return;
+  busy = true;
+  captureFrame();
+  canvas.toBlob(async (blob) => {
+    const found = await runOcr(blob);
+    busy = false;
+    if (found) {
+      // Success: stop the camera and show the result.
+      stopScanning();
+    } else if (!stopRequested) {
+      // Keep looping indefinitely until a clean 15-digit code is found or the user stops.
+      setTimeout(captureLoop, 400);
+    }
+  }, 'image/png');
+}
+
+// Runs OCR on one captured frame. Returns true only for a clean 15-digit
+// match (which is the only case that gets shown/stored); returns false for
+// anything else, including OCR errors, so the loop just keeps trying again
+// and a failed capture is never recorded.
 async function runOcr(blob) {
-    resultEl.textContent = '';
-    resultEl.style.display = 'none';
-    barcodeBoxEl.style.display = 'none';
     statusEl.textContent = 'Reading code locally…';
     progressEl.style.display = 'block';
     progressEl.value = 0;
@@ -356,10 +389,9 @@ async function runOcr(blob) {
         tessedit_char_whitelist: '0123456789'
       });
 
-      // Grab the longest run of digits found (the voucher code)
+      // Only an exact 15-digit run counts as a voucher code.
       const allDigits = data.text.match(/\d{6,}/g) || [];
-      const fifteen = allDigits.filter(d => d.length === 15);
-      const matches = fifteen.length ? fifteen : allDigits.sort((a,b)=>b.length-a.length);
+      const matches = allDigits.filter(d => d.length === 15);
       progressEl.style.display = 'none';
 
       if (matches.length) {
@@ -369,14 +401,16 @@ async function runOcr(blob) {
         canvas.style.display = 'none';
         showCode(code);
         addToHistory(code);
-      } else {
-        statusEl.textContent = 'No code found — rescanning…';
-        barcodeNoteEl.textContent = '';
-        setTimeout(startScanning, 800);
+        return true;
       }
+
+      statusEl.textContent = 'No code found — still scanning…';
+      barcodeNoteEl.textContent = '';
+      return false;
     } catch (err) {
       progressEl.style.display = 'none';
-      statusEl.textContent = 'OCR failed: ' + (err && err.message ? err.message : 'unknown error');
+      statusEl.textContent = 'Read error — still scanning…';
+      return false;
     }
 }
 
