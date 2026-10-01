@@ -396,6 +396,14 @@
         </div>
 
         <!-- Consignment Table -->
+
+		<datalist id="return-types">
+		    <option value="Faulty - 7161">
+		    <option value="Returns - 7161">
+		    <option value="Trade In - 7161">
+		    <option value="Recall - 7162">
+		    <option value="Repairs - 226">
+		</datalist>
         <table class="consignment-table">
             <thead>
                 <tr>
@@ -411,7 +419,7 @@
                     for (var i = 0; i < 10; i++) {
                         document.write('<tr>' +
                             '<td><input type="text" name="consignment_number[]" class="nav-input"></td>' +
-                            '<td><input type="text" name="type_of_return[]" class="nav-input"></td>' +
+                            '<td><input type="text" name="type_of_return[]" class="nav-input" list="return-types"></td>' +
                             '<td><input type="text" name="tote_seal_1[]" class="nav-input"></td>' +
                             '<td><input type="text" name="tote_seal_2[]" class="nav-input"></td>' +
                             '<td>' +
